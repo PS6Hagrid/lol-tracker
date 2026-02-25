@@ -9,9 +9,10 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "LoL Tracker - League of Legends Stats",
+  title: "LoL Tracker — League of Legends Stats",
   description:
-    "Track your League of Legends stats, match history, and rankings.",
+    "Track League of Legends stats, match history, ranked progress, champion mastery, and live games for any summoner.",
+  keywords: ["League of Legends", "LoL", "stats", "tracker", "match history", "ranked"],
 };
 
 export default function RootLayout({
@@ -37,7 +38,26 @@ export default function RootLayout({
             </Link>
           </div>
         </nav>
-        <main>{children}</main>
+        <main className="min-h-[calc(100vh-3.5rem-3rem)]">{children}</main>
+        <footer className="border-t border-gray-800/50 py-4">
+          <div className="mx-auto flex max-w-7xl flex-col items-center gap-1 px-4 text-xs text-gray-600">
+            <p>
+              Built with Next.js &bull; Data from{" "}
+              <a
+                href="https://developer.riotgames.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-gray-500 transition-colors hover:text-gray-400"
+              >
+                Riot Games API
+              </a>
+            </p>
+            <p>
+              LoL Tracker is not endorsed by Riot Games and does not reflect the
+              views or opinions of Riot Games.
+            </p>
+          </div>
+        </footer>
       </body>
     </html>
   );

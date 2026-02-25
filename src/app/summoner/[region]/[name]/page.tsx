@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { getDataService } from "@/lib/data-service";
 import {
   getProfileIconUrl,
@@ -11,6 +12,18 @@ import TabNavigation from "@/components/TabNavigation";
 
 interface PageProps {
   params: Promise<{ region: string; name: string }>;
+}
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { region, name } = await params;
+  const decodedName = decodeURIComponent(name);
+  const lastHyphen = decodedName.lastIndexOf("-");
+  const gameName = lastHyphen > 0 ? decodedName.slice(0, lastHyphen) : decodedName;
+  const tagLine = lastHyphen > 0 ? decodedName.slice(lastHyphen + 1) : region.toUpperCase();
+  return {
+    title: `${gameName}#${tagLine} — LoL Tracker`,
+    description: `View stats, match history, and ranked progress for ${gameName}#${tagLine} on ${region.toUpperCase()}.`,
+  };
 }
 
 /** Compute champion stats from recent matches for a given puuid */
