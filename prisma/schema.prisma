@@ -18,6 +18,7 @@ model Summoner {
   region         String
   profileIconId  Int
   summonerLevel  Int
+  createdAt      DateTime @default(now())
   lastUpdated    DateTime @updatedAt
 
   rankSnapshots     RankSnapshot[]
@@ -29,7 +30,7 @@ model Summoner {
 
 model RankSnapshot {
   id         String   @id @default(cuid())
-  summoner   Summoner @relation(fields: [summonerId], references: [id])
+  summoner   Summoner @relation(fields: [summonerId], references: [id], onDelete: Cascade)
   summonerId String
   queueType  String
   tier       String
@@ -38,6 +39,9 @@ model RankSnapshot {
   wins       Int
   losses     Int
   timestamp  DateTime @default(now())
+
+  @@index([summonerId])
+  @@index([timestamp])
 }
 
 model Match {
@@ -58,7 +62,7 @@ model Match {
 
 model MatchParticipant {
   id           String    @id @default(cuid())
-  match        Match     @relation(fields: [matchId], references: [id])
+  match        Match     @relation(fields: [matchId], references: [id], onDelete: Cascade)
   matchId      String
   summoner     Summoner? @relation(fields: [summonerId], references: [id])
   summonerId   String?
@@ -72,11 +76,15 @@ model MatchParticipant {
   stats ParticipantStats?
   items ParticipantItems?
   runes ParticipantRunes?
+
+  @@index([matchId])
+  @@index([summonerId])
+  @@index([championId])
 }
 
 model ParticipantStats {
   id                     String           @id @default(cuid())
-  participant            MatchParticipant @relation(fields: [participantId], references: [id])
+  participant            MatchParticipant @relation(fields: [participantId], references: [id], onDelete: Cascade)
   participantId          String           @unique
   kills                  Int
   deaths                 Int
@@ -105,7 +113,7 @@ model ParticipantStats {
 
 model ParticipantItems {
   id            String           @id @default(cuid())
-  participant   MatchParticipant @relation(fields: [participantId], references: [id])
+  participant   MatchParticipant @relation(fields: [participantId], references: [id], onDelete: Cascade)
   participantId String           @unique
   item0         Int
   item1         Int
@@ -113,22 +121,21 @@ model ParticipantItems {
   item3         Int
   item4         Int
   item5         Int
-  item6         Int
-  trinket       Int
+  item6         Int // item6 is the trinket slot in Riot API
 }
 
 model ParticipantRunes {
   id            String           @id @default(cuid())
-  participant   MatchParticipant @relation(fields: [participantId], references: [id])
+  participant   MatchParticipant @relation(fields: [participantId], references: [id], onDelete: Cascade)
   participantId String           @unique
   primaryStyle  Int
   subStyle      Int
-  runeSlots     String
+  runeSlots     String // JSON-serialized array of PerkSelectionDTO[]
 }
 
 model MatchTeam {
   id              String @id @default(cuid())
-  match           Match  @relation(fields: [matchId], references: [id])
+  match           Match  @relation(fields: [matchId], references: [id], onDelete: Cascade)
   matchId         String
   teamId          Int
   win             Boolean
@@ -137,12 +144,14 @@ model MatchTeam {
   riftHeraldKills Int
   towerKills      Int
   inhibitorKills  Int
-  bans            String
+  bans            String // JSON-serialized array of BanDTO[]
+
+  @@index([matchId])
 }
 
 model MatchTimeline {
   id            String @id @default(cuid())
-  match         Match  @relation(fields: [matchId], references: [id])
+  match         Match  @relation(fields: [matchId], references: [id], onDelete: Cascade)
   matchId       String
   participantId Int
   timestamp     Int
@@ -152,11 +161,14 @@ model MatchTimeline {
   level         Int
   positionX     Int
   positionY     Int
+
+  @@index([matchId])
+  @@index([matchId, participantId])
 }
 
 model ChampionMastery {
   id            String   @id @default(cuid())
-  summoner      Summoner @relation(fields: [summonerId], references: [id])
+  summoner      Summoner @relation(fields: [summonerId], references: [id], onDelete: Cascade)
   summonerId    String
   championId    Int
   championLevel Int
@@ -164,4 +176,5 @@ model ChampionMastery {
   lastPlayTime  DateTime
 
   @@unique([summonerId, championId])
+  @@index([summonerId])
 }

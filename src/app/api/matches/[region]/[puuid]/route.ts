@@ -87,8 +87,7 @@ export async function GET(
                   item3: p.item3,
                   item4: p.item4,
                   item5: p.item5,
-                  item6: p.item6,
-                  trinket: p.item6, // item6 is trinket slot in Riot API
+                  item6: p.item6, // item6 is the trinket slot in Riot API
                 },
               },
               runes: {
