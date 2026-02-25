@@ -1,0 +1,167 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model Summoner {
+  id             String   @id @default(cuid())
+  puuid          String   @unique
+  gameName       String
+  tagLine        String
+  region         String
+  profileIconId  Int
+  summonerLevel  Int
+  lastUpdated    DateTime @updatedAt
+
+  rankSnapshots     RankSnapshot[]
+  matchParticipants MatchParticipant[]
+  championMasteries ChampionMastery[]
+
+  @@unique([gameName, tagLine, region])
+}
+
+model RankSnapshot {
+  id         String   @id @default(cuid())
+  summoner   Summoner @relation(fields: [summonerId], references: [id])
+  summonerId String
+  queueType  String
+  tier       String
+  rank       String
+  lp         Int
+  wins       Int
+  losses     Int
+  timestamp  DateTime @default(now())
+}
+
+model Match {
+  id           String   @id @default(cuid())
+  matchId      String   @unique
+  region       String
+  gameMode     String
+  gameType     String
+  gameDuration Int
+  gameCreation DateTime
+  gameVersion  String
+  mapId        Int
+
+  participants MatchParticipant[]
+  teams        MatchTeam[]
+  timeline     MatchTimeline[]
+}
+
+model MatchParticipant {
+  id           String    @id @default(cuid())
+  match        Match     @relation(fields: [matchId], references: [id])
+  matchId      String
+  summoner     Summoner? @relation(fields: [summonerId], references: [id])
+  summonerId   String?
+  championId   Int
+  championName String
+  teamId       Int
+  role         String
+  lane         String
+  win          Boolean
+
+  stats ParticipantStats?
+  items ParticipantItems?
+  runes ParticipantRunes?
+}
+
+model ParticipantStats {
+  id                     String           @id @default(cuid())
+  participant            MatchParticipant @relation(fields: [participantId], references: [id])
+  participantId          String           @unique
+  kills                  Int
+  deaths                 Int
+  assists                Int
+  cs                     Int
+  goldEarned             Int
+  visionScore            Int
+  wardsPlaced            Int
+  wardsKilled            Int
+  totalDamageDealt       Int
+  totalDamageToChampions Int
+  physicalDamage         Int
+  magicDamage            Int
+  trueDamage             Int
+  damageTaken            Int
+  totalHeal              Int
+  turretDamage           Int
+  objectiveDamage        Int
+  doubleKills            Int
+  tripleKills            Int
+  quadraKills            Int
+  pentaKills             Int
+  firstBlood             Boolean
+  longestTimeSpentLiving Int
+}
+
+model ParticipantItems {
+  id            String           @id @default(cuid())
+  participant   MatchParticipant @relation(fields: [participantId], references: [id])
+  participantId String           @unique
+  item0         Int
+  item1         Int
+  item2         Int
+  item3         Int
+  item4         Int
+  item5         Int
+  item6         Int
+  trinket       Int
+}
+
+model ParticipantRunes {
+  id            String           @id @default(cuid())
+  participant   MatchParticipant @relation(fields: [participantId], references: [id])
+  participantId String           @unique
+  primaryStyle  Int
+  subStyle      Int
+  runeSlots     String
+}
+
+model MatchTeam {
+  id              String @id @default(cuid())
+  match           Match  @relation(fields: [matchId], references: [id])
+  matchId         String
+  teamId          Int
+  win             Boolean
+  baronKills      Int
+  dragonKills     Int
+  riftHeraldKills Int
+  towerKills      Int
+  inhibitorKills  Int
+  bans            String
+}
+
+model MatchTimeline {
+  id            String @id @default(cuid())
+  match         Match  @relation(fields: [matchId], references: [id])
+  matchId       String
+  participantId Int
+  timestamp     Int
+  gold          Int
+  xp            Int
+  cs            Int
+  level         Int
+  positionX     Int
+  positionY     Int
+}
+
+model ChampionMastery {
+  id            String   @id @default(cuid())
+  summoner      Summoner @relation(fields: [summonerId], references: [id])
+  summonerId    String
+  championId    Int
+  championLevel Int
+  masteryPoints Int
+  lastPlayTime  DateTime
+
+  @@unique([summonerId, championId])
+}
