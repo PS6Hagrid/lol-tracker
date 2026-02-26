@@ -40,6 +40,12 @@ export interface DataService {
     matchId: string,
   ): Promise<MatchDTO>;
 
+  /** Fetch multiple match details efficiently (with caching) */
+  getMatchDetailsBatch?(
+    region: string,
+    matchIds: string[],
+  ): Promise<MatchDTO[]>;
+
   /** Fetch live/in-progress game for a summoner (null if not in game) */
   getLiveGame(
     region: string,

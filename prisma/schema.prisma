@@ -178,3 +178,12 @@ model ChampionMastery {
   @@unique([summonerId, championId])
   @@index([summonerId])
 }
+
+/// Simple JSON cache for match data — avoids repeated Riot API calls.
+/// Matches are immutable after game ends, so they can be cached forever.
+model MatchCache {
+  matchId   String   @id
+  region    String
+  data      String   // Full MatchDTO as JSON
+  createdAt DateTime @default(now())
+}

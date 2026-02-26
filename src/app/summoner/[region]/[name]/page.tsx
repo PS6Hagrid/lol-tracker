@@ -116,19 +116,11 @@ export default async function SummonerProfilePage({ params }: PageProps) {
     rankedStats = ranked;
     masteries = masteryData;
 
-    // Fetch match details in batches of 5 to avoid rate limits
-    const matches = [];
+    // Fetch match details — uses DB cache for known matches, API for new ones
     const ids = matchIds.slice(0, 10);
-    for (let i = 0; i < ids.length; i += 5) {
-      const batch = ids.slice(i, i + 5);
-      const batchResults = await Promise.all(
-        batch.map((id) => dataService.getMatchDetails(region, id)),
-      );
-      matches.push(...batchResults);
-      if (i + 5 < ids.length) {
-        await new Promise((r) => setTimeout(r, 1200));
-      }
-    }
+    const matches = dataService.getMatchDetailsBatch
+      ? await dataService.getMatchDetailsBatch(region, ids)
+      : await Promise.all(ids.map((id) => dataService.getMatchDetails(region, id)));
 
     topChampions = getTopChampionsFromMatches(matches, summoner.puuid, 3);
   } catch (error) {
