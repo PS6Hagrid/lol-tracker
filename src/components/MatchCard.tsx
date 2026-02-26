@@ -9,6 +9,8 @@ interface MatchCardProps {
   summonerPuuid: string;
 }
 
+// ── Helpers ────────────────────────────────────────────────────────────────────
+
 function formatDuration(seconds: number): string {
   const m = Math.floor(seconds / 60);
   const s = seconds % 60;
@@ -32,7 +34,11 @@ function getGameMode(gameMode: string, gameType: string): string {
   return gameMode;
 }
 
-/** Find the participant row for the searched summoner. Falls back to index 0 if puuid not found (mock data). */
+function formatNumber(n: number): string {
+  if (n >= 1000) return `${(n / 1000).toFixed(1)}k`;
+  return n.toString();
+}
+
 function findSummonerParticipant(
   match: MatchDTO,
   puuid: string,
@@ -43,8 +49,25 @@ function findSummonerParticipant(
   );
 }
 
+/** Get the highest multi-kill for a participant */
+function getMultiKillBadge(p: MatchParticipantDTO): {
+  label: string;
+  className: string;
+} | null {
+  if (p.pentaKills > 0) return { label: "PENTA", className: "bg-amber-500/20 text-amber-400" };
+  if (p.quadraKills > 0) return { label: "QUADRA", className: "bg-purple-500/20 text-purple-400" };
+  if (p.tripleKills > 0) return { label: "TRIPLE", className: "bg-cyan-500/20 text-cyan-400" };
+  if (p.doubleKills > 0) return { label: "DOUBLE", className: "bg-blue-500/20 text-blue-400" };
+  return null;
+}
+
+// ── Main Component ─────────────────────────────────────────────────────────────
+
+type DetailTab = "overview" | "damage" | "vision";
+
 export default function MatchCard({ match, summonerPuuid }: MatchCardProps) {
   const [expanded, setExpanded] = useState(false);
+  const [activeTab, setActiveTab] = useState<DetailTab>("overview");
   const player = findSummonerParticipant(match, summonerPuuid);
   const win = player.win;
   const totalCS = player.totalMinionsKilled + player.neutralMinionsKilled;
@@ -56,13 +79,8 @@ export default function MatchCard({ match, summonerPuuid }: MatchCardProps) {
       : ((player.kills + player.assists) / player.deaths).toFixed(2);
 
   const items = [
-    player.item0,
-    player.item1,
-    player.item2,
-    player.item3,
-    player.item4,
-    player.item5,
-    player.item6,
+    player.item0, player.item1, player.item2,
+    player.item3, player.item4, player.item5, player.item6,
   ];
 
   const blueTeam = match.info.participants.filter((p) => p.teamId === 100);
@@ -193,11 +211,10 @@ export default function MatchCard({ match, summonerPuuid }: MatchCardProps) {
       {/* ── Expanded View ── */}
       {expanded && (
         <div className="border-t border-gray-700/50 px-3 pb-4 pt-3 sm:px-4">
-          {/* Team objectives */}
+          {/* Team objectives summary */}
           <div className="mb-4 grid grid-cols-2 gap-4">
-            {/* Blue Team */}
             <div>
-              <div className="mb-2 flex items-center gap-2">
+              <div className="mb-1 flex items-center gap-2">
                 <span
                   className={`text-sm font-bold ${
                     blueTeamData?.win ? "text-green-400" : "text-red-400"
@@ -208,30 +225,14 @@ export default function MatchCard({ match, summonerPuuid }: MatchCardProps) {
               </div>
               {blueTeamData && (
                 <div className="flex gap-3 text-xs text-gray-400">
-                  <span>
-                    Baron:{" "}
-                    <span className="text-amber-400">
-                      {blueTeamData.objectives.baron.kills}
-                    </span>
-                  </span>
-                  <span>
-                    Dragon:{" "}
-                    <span className="text-purple-400">
-                      {blueTeamData.objectives.dragon.kills}
-                    </span>
-                  </span>
-                  <span>
-                    Tower:{" "}
-                    <span className="text-cyan-400">
-                      {blueTeamData.objectives.tower.kills}
-                    </span>
-                  </span>
+                  <span>Baron: <span className="text-amber-400">{blueTeamData.objectives.baron.kills}</span></span>
+                  <span>Dragon: <span className="text-purple-400">{blueTeamData.objectives.dragon.kills}</span></span>
+                  <span>Tower: <span className="text-cyan-400">{blueTeamData.objectives.tower.kills}</span></span>
                 </div>
               )}
             </div>
-            {/* Red Team */}
             <div>
-              <div className="mb-2 flex items-center gap-2">
+              <div className="mb-1 flex items-center gap-2">
                 <span
                   className={`text-sm font-bold ${
                     redTeamData?.win ? "text-green-400" : "text-red-400"
@@ -242,55 +243,98 @@ export default function MatchCard({ match, summonerPuuid }: MatchCardProps) {
               </div>
               {redTeamData && (
                 <div className="flex gap-3 text-xs text-gray-400">
-                  <span>
-                    Baron:{" "}
-                    <span className="text-amber-400">
-                      {redTeamData.objectives.baron.kills}
-                    </span>
-                  </span>
-                  <span>
-                    Dragon:{" "}
-                    <span className="text-purple-400">
-                      {redTeamData.objectives.dragon.kills}
-                    </span>
-                  </span>
-                  <span>
-                    Tower:{" "}
-                    <span className="text-cyan-400">
-                      {redTeamData.objectives.tower.kills}
-                    </span>
-                  </span>
+                  <span>Baron: <span className="text-amber-400">{redTeamData.objectives.baron.kills}</span></span>
+                  <span>Dragon: <span className="text-purple-400">{redTeamData.objectives.dragon.kills}</span></span>
+                  <span>Tower: <span className="text-cyan-400">{redTeamData.objectives.tower.kills}</span></span>
                 </div>
               )}
             </div>
           </div>
 
-          {/* Participants table */}
-          <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-            {/* Blue Side */}
-            <ParticipantTable
-              participants={blueTeam}
-              summonerPuuid={summonerPuuid}
-              maxDamage={maxDamage}
-              teamLabel="Blue Side"
-              teamColor="blue"
-            />
-            {/* Red Side */}
-            <ParticipantTable
-              participants={redTeam}
-              summonerPuuid={summonerPuuid}
-              maxDamage={maxDamage}
-              teamLabel="Red Side"
-              teamColor="red"
-            />
+          {/* Tab navigation */}
+          <div className="mb-4 flex gap-1 border-b border-gray-700/50">
+            {(
+              [
+                { key: "overview", label: "Overview" },
+                { key: "damage", label: "Damage" },
+                { key: "vision", label: "Vision" },
+              ] as { key: DetailTab; label: string }[]
+            ).map((tab) => (
+              <button
+                key={tab.key}
+                onClick={() => setActiveTab(tab.key)}
+                className={`px-3 py-2 text-xs font-semibold transition-colors ${
+                  activeTab === tab.key
+                    ? "border-b-2 border-cyan text-cyan"
+                    : "text-gray-400 hover:text-gray-200"
+                }`}
+              >
+                {tab.label}
+              </button>
+            ))}
           </div>
+
+          {/* Tab content */}
+          {activeTab === "overview" && (
+            <OverviewTab
+              blueTeam={blueTeam}
+              redTeam={redTeam}
+              summonerPuuid={summonerPuuid}
+              maxDamage={maxDamage}
+            />
+          )}
+          {activeTab === "damage" && (
+            <DamageTab
+              participants={match.info.participants}
+              summonerPuuid={summonerPuuid}
+            />
+          )}
+          {activeTab === "vision" && (
+            <VisionTab
+              participants={match.info.participants}
+              summonerPuuid={summonerPuuid}
+            />
+          )}
         </div>
       )}
     </div>
   );
 }
 
-function ParticipantTable({
+// ── Overview Tab ───────────────────────────────────────────────────────────────
+
+function OverviewTab({
+  blueTeam,
+  redTeam,
+  summonerPuuid,
+  maxDamage,
+}: {
+  blueTeam: MatchParticipantDTO[];
+  redTeam: MatchParticipantDTO[];
+  summonerPuuid: string;
+  maxDamage: number;
+}) {
+  return (
+    <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+      <OverviewTeamTable
+        participants={blueTeam}
+        summonerPuuid={summonerPuuid}
+        maxDamage={maxDamage}
+        teamLabel="Blue Side"
+        teamColor="blue"
+      />
+      <OverviewTeamTable
+        participants={redTeam}
+        summonerPuuid={summonerPuuid}
+        maxDamage={maxDamage}
+        teamLabel="Red Side"
+        teamColor="red"
+      />
+    </div>
+  );
+}
+
+function OverviewTeamTable({
   participants,
   summonerPuuid,
   maxDamage,
@@ -313,68 +357,377 @@ function ParticipantTable({
         {teamLabel}
       </h4>
       <div className="space-y-1">
-        {participants.map((p) => {
+        {participants.map((p, idx) => {
           const isSummoner = p.puuid === summonerPuuid;
           const cs = p.totalMinionsKilled + p.neutralMinionsKilled;
           const damagePercent =
-            maxDamage > 0
-              ? (p.totalDamageDealtToChampions / maxDamage) * 100
-              : 0;
+            maxDamage > 0 ? (p.totalDamageDealtToChampions / maxDamage) * 100 : 0;
+          const multiKill = getMultiKillBadge(p);
+          const playerItems = [p.item0, p.item1, p.item2, p.item3, p.item4, p.item5, p.item6];
 
           return (
             <div
-              key={p.puuid}
-              className={`flex items-center gap-2 rounded-lg px-2 py-1.5 text-xs ${
+              key={p.puuid || `${p.championName}-${idx}`}
+              className={`rounded-lg px-2 py-1.5 text-xs ${
                 isSummoner
                   ? "bg-cyan-500/10 ring-1 ring-cyan-500/30"
                   : "bg-gray-800/40"
               }`}
             >
-              {/* Champion icon */}
-              <img
-                src={getChampionIconUrl(p.championName)}
-                alt={p.championName}
-                width={28}
-                height={28}
-                className="flex-shrink-0 rounded"
-              />
-
-              {/* Name */}
-              <span
-                className={`w-24 min-w-0 truncate ${
-                  isSummoner ? "font-semibold text-cyan-400" : "text-gray-300"
-                }`}
-              >
-                {p.summonerName}
-              </span>
-
-              {/* KDA */}
-              <span className="w-16 flex-shrink-0 text-center text-gray-400">
-                {p.kills}/{p.deaths}/{p.assists}
-              </span>
-
-              {/* CS */}
-              <span className="w-10 flex-shrink-0 text-center text-gray-500">
-                {cs} CS
-              </span>
-
-              {/* Damage bar */}
-              <div className="flex min-w-0 flex-1 items-center gap-1">
-                <div className="h-2 flex-1 overflow-hidden rounded-full bg-gray-700/50">
-                  <div
-                    className={`h-full rounded-full ${
-                      teamColor === "blue" ? "bg-blue-500/70" : "bg-red-500/70"
-                    }`}
-                    style={{ width: `${damagePercent}%` }}
-                  />
-                </div>
-                <span className="w-10 flex-shrink-0 text-right text-gray-500">
-                  {(p.totalDamageDealtToChampions / 1000).toFixed(1)}k
+              {/* Row 1: Champion, Name, KDA, Multi-kill */}
+              <div className="flex items-center gap-2">
+                <img
+                  src={getChampionIconUrl(p.championName)}
+                  alt={p.championName}
+                  width={28}
+                  height={28}
+                  className="flex-shrink-0 rounded"
+                />
+                <span
+                  className={`w-20 min-w-0 truncate ${
+                    isSummoner ? "font-semibold text-cyan-400" : "text-gray-300"
+                  }`}
+                >
+                  {p.summonerName || p.championName}
                 </span>
+                <span className="w-16 flex-shrink-0 text-center text-gray-400">
+                  {p.kills}/{p.deaths}/{p.assists}
+                </span>
+                {multiKill && (
+                  <span className={`rounded px-1 py-0.5 text-[10px] font-bold ${multiKill.className}`}>
+                    {multiKill.label}
+                  </span>
+                )}
+                <span className="ml-auto flex-shrink-0 text-gray-500">{cs} CS</span>
+                <span className="flex-shrink-0 text-amber-400">{formatNumber(p.goldEarned)}</span>
+              </div>
+
+              {/* Row 2: Items + Damage bar */}
+              <div className="mt-1 flex items-center gap-2">
+                {/* Items */}
+                <div className="flex items-center gap-0.5">
+                  {playerItems.map((itemId, i) => (
+                    <div key={i} className="h-6 w-6 overflow-hidden rounded">
+                      {itemId > 0 ? (
+                        <img
+                          src={getItemIconUrl(itemId)}
+                          alt={`Item ${itemId}`}
+                          width={24}
+                          height={24}
+                          className="h-full w-full object-cover"
+                        />
+                      ) : (
+                        <div className="h-full w-full bg-gray-800/60" />
+                      )}
+                    </div>
+                  ))}
+                </div>
+
+                {/* Damage bar */}
+                <div className="flex min-w-0 flex-1 items-center gap-1">
+                  <div className="h-2 flex-1 overflow-hidden rounded-full bg-gray-700/50">
+                    <div
+                      className={`h-full rounded-full ${
+                        teamColor === "blue" ? "bg-blue-500/70" : "bg-red-500/70"
+                      }`}
+                      style={{ width: `${damagePercent}%` }}
+                    />
+                  </div>
+                  <span className="w-10 flex-shrink-0 text-right text-gray-500">
+                    {formatNumber(p.totalDamageDealtToChampions)}
+                  </span>
+                </div>
               </div>
             </div>
           );
         })}
+      </div>
+    </div>
+  );
+}
+
+// ── Damage Tab ─────────────────────────────────────────────────────────────────
+
+function DamageTab({
+  participants,
+  summonerPuuid,
+}: {
+  participants: MatchParticipantDTO[];
+  summonerPuuid: string;
+}) {
+  const sorted = [...participants].sort(
+    (a, b) => b.totalDamageDealtToChampions - a.totalDamageDealtToChampions,
+  );
+  const maxDealt = Math.max(...sorted.map((p) => p.totalDamageDealtToChampions));
+  const maxTaken = Math.max(...sorted.map((p) => p.totalDamageTaken));
+
+  return (
+    <div>
+      {/* Legend */}
+      <div className="mb-3 flex flex-wrap items-center gap-3 text-xs text-gray-400">
+        <span className="font-semibold text-gray-300">Damage Dealt</span>
+        <span className="flex items-center gap-1">
+          <span className="inline-block h-2.5 w-2.5 rounded-sm bg-red-500/70" /> Physical
+        </span>
+        <span className="flex items-center gap-1">
+          <span className="inline-block h-2.5 w-2.5 rounded-sm bg-blue-500/70" /> Magic
+        </span>
+        <span className="flex items-center gap-1">
+          <span className="inline-block h-2.5 w-2.5 rounded-sm bg-white/40" /> True
+        </span>
+        <span className="ml-4 font-semibold text-gray-300">Damage Taken</span>
+        <span className="flex items-center gap-1">
+          <span className="inline-block h-2.5 w-2.5 rounded-sm bg-orange-500/50" /> Total
+        </span>
+      </div>
+
+      <div className="space-y-1.5">
+        {sorted.map((p, idx) => {
+          const isSummoner = p.puuid === summonerPuuid;
+          const totalDealt = p.totalDamageDealtToChampions;
+          const physPct = maxDealt > 0 ? (p.physicalDamageDealtToChampions / maxDealt) * 100 : 0;
+          const magicPct = maxDealt > 0 ? (p.magicDamageDealtToChampions / maxDealt) * 100 : 0;
+          const truePct = maxDealt > 0 ? (p.trueDamageDealtToChampions / maxDealt) * 100 : 0;
+          const takenPct = maxTaken > 0 ? (p.totalDamageTaken / maxTaken) * 100 : 0;
+
+          return (
+            <div
+              key={p.puuid || `${p.championName}-${idx}`}
+              className={`rounded-lg px-2 py-2 text-xs ${
+                isSummoner
+                  ? "bg-cyan-500/10 ring-1 ring-cyan-500/30"
+                  : "bg-gray-800/40"
+              }`}
+            >
+              <div className="flex items-center gap-2">
+                <img
+                  src={getChampionIconUrl(p.championName)}
+                  alt={p.championName}
+                  width={24}
+                  height={24}
+                  className="flex-shrink-0 rounded"
+                />
+                <span
+                  className={`w-20 min-w-0 truncate ${
+                    isSummoner ? "font-semibold text-cyan-400" : "text-gray-300"
+                  }`}
+                >
+                  {p.summonerName || p.championName}
+                </span>
+
+                {/* Stacked damage bar */}
+                <div className="flex min-w-0 flex-1 items-center gap-1">
+                  <div className="h-3 flex-1 overflow-hidden rounded-full bg-gray-700/50">
+                    <div className="flex h-full">
+                      <div
+                        className="h-full bg-red-500/70"
+                        style={{ width: `${physPct}%` }}
+                      />
+                      <div
+                        className="h-full bg-blue-500/70"
+                        style={{ width: `${magicPct}%` }}
+                      />
+                      <div
+                        className="h-full bg-white/40"
+                        style={{ width: `${truePct}%` }}
+                      />
+                    </div>
+                  </div>
+                  <span className="w-12 flex-shrink-0 text-right font-medium text-gray-300">
+                    {formatNumber(totalDealt)}
+                  </span>
+                </div>
+              </div>
+
+              {/* Damage breakdown numbers */}
+              <div className="mt-1 flex items-center gap-2 pl-8">
+                <span className="text-red-400">{formatNumber(p.physicalDamageDealtToChampions)}</span>
+                <span className="text-gray-600">/</span>
+                <span className="text-blue-400">{formatNumber(p.magicDamageDealtToChampions)}</span>
+                <span className="text-gray-600">/</span>
+                <span className="text-gray-300">{formatNumber(p.trueDamageDealtToChampions)}</span>
+
+                {/* Damage taken bar */}
+                <div className="ml-auto flex min-w-0 flex-1 items-center gap-1" style={{ maxWidth: "40%" }}>
+                  <span className="flex-shrink-0 text-gray-500">Taken:</span>
+                  <div className="h-2 flex-1 overflow-hidden rounded-full bg-gray-700/50">
+                    <div
+                      className="h-full rounded-full bg-orange-500/50"
+                      style={{ width: `${takenPct}%` }}
+                    />
+                  </div>
+                  <span className="w-10 flex-shrink-0 text-right text-orange-400">
+                    {formatNumber(p.totalDamageTaken)}
+                  </span>
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+// ── Vision Tab ─────────────────────────────────────────────────────────────────
+
+function VisionTab({
+  participants,
+  summonerPuuid,
+}: {
+  participants: MatchParticipantDTO[];
+  summonerPuuid: string;
+}) {
+  const sortedByVision = [...participants].sort(
+    (a, b) => b.visionScore - a.visionScore,
+  );
+  const maxVision = Math.max(...sortedByVision.map((p) => p.visionScore));
+  const maxObjDmg = Math.max(
+    ...participants.map((p) => p.damageDealtToObjectives + p.damageDealtToTurrets),
+  );
+
+  return (
+    <div className="space-y-6">
+      {/* Vision Score Ranking */}
+      <div>
+        <h5 className="mb-2 text-xs font-semibold uppercase tracking-wider text-purple-400">
+          Vision Score
+        </h5>
+        <div className="space-y-1">
+          {sortedByVision.map((p, idx) => {
+            const isSummoner = p.puuid === summonerPuuid;
+            const visionPct = maxVision > 0 ? (p.visionScore / maxVision) * 100 : 0;
+
+            return (
+              <div
+                key={p.puuid || `${p.championName}-vision-${idx}`}
+                className={`flex items-center gap-2 rounded-lg px-2 py-1.5 text-xs ${
+                  isSummoner
+                    ? "bg-cyan-500/10 ring-1 ring-cyan-500/30"
+                    : "bg-gray-800/40"
+                }`}
+              >
+                <img
+                  src={getChampionIconUrl(p.championName)}
+                  alt={p.championName}
+                  width={24}
+                  height={24}
+                  className="flex-shrink-0 rounded"
+                />
+                <span
+                  className={`w-20 min-w-0 truncate ${
+                    isSummoner ? "font-semibold text-cyan-400" : "text-gray-300"
+                  }`}
+                >
+                  {p.summonerName || p.championName}
+                </span>
+
+                {/* Vision bar */}
+                <div className="flex min-w-0 flex-1 items-center gap-1">
+                  <div className="h-2.5 flex-1 overflow-hidden rounded-full bg-gray-700/50">
+                    <div
+                      className="h-full rounded-full bg-purple-500/60"
+                      style={{ width: `${visionPct}%` }}
+                    />
+                  </div>
+                  <span className="w-8 flex-shrink-0 text-right font-medium text-purple-400">
+                    {p.visionScore}
+                  </span>
+                </div>
+
+                {/* Wards */}
+                <div className="flex flex-shrink-0 items-center gap-2 text-gray-500">
+                  <span title="Wards Placed">
+                    <span className="text-green-400">{p.wardsPlaced}</span>
+                    <span className="ml-0.5">placed</span>
+                  </span>
+                  <span title="Wards Killed">
+                    <span className="text-red-400">{p.wardsKilled}</span>
+                    <span className="ml-0.5">killed</span>
+                  </span>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Objective Damage */}
+      <div>
+        <h5 className="mb-2 text-xs font-semibold uppercase tracking-wider text-amber-400">
+          Objective & Turret Damage
+        </h5>
+        <div className="space-y-1">
+          {[...participants]
+            .sort(
+              (a, b) =>
+                b.damageDealtToObjectives + b.damageDealtToTurrets -
+                (a.damageDealtToObjectives + a.damageDealtToTurrets),
+            )
+            .map((p, idx) => {
+              const isSummoner = p.puuid === summonerPuuid;
+              const objTotal = p.damageDealtToObjectives + p.damageDealtToTurrets;
+              const objPct = maxObjDmg > 0 ? (objTotal / maxObjDmg) * 100 : 0;
+              const turretPct = maxObjDmg > 0 ? (p.damageDealtToTurrets / maxObjDmg) * 100 : 0;
+
+              return (
+                <div
+                  key={p.puuid || `${p.championName}-obj-${idx}`}
+                  className={`flex items-center gap-2 rounded-lg px-2 py-1.5 text-xs ${
+                    isSummoner
+                      ? "bg-cyan-500/10 ring-1 ring-cyan-500/30"
+                      : "bg-gray-800/40"
+                  }`}
+                >
+                  <img
+                    src={getChampionIconUrl(p.championName)}
+                    alt={p.championName}
+                    width={24}
+                    height={24}
+                    className="flex-shrink-0 rounded"
+                  />
+                  <span
+                    className={`w-20 min-w-0 truncate ${
+                      isSummoner ? "font-semibold text-cyan-400" : "text-gray-300"
+                    }`}
+                  >
+                    {p.summonerName || p.championName}
+                  </span>
+
+                  {/* Stacked bar: Turret (cyan) + Other Obj (amber) */}
+                  <div className="flex min-w-0 flex-1 items-center gap-1">
+                    <div className="h-2.5 flex-1 overflow-hidden rounded-full bg-gray-700/50">
+                      <div className="flex h-full">
+                        <div
+                          className="h-full bg-cyan-500/60"
+                          style={{ width: `${turretPct}%` }}
+                        />
+                        <div
+                          className="h-full bg-amber-500/50"
+                          style={{ width: `${Math.max(0, objPct - turretPct)}%` }}
+                        />
+                      </div>
+                    </div>
+                    <span className="w-12 flex-shrink-0 text-right text-gray-400">
+                      {formatNumber(objTotal)}
+                    </span>
+                  </div>
+
+                  {/* Breakdown */}
+                  <div className="flex flex-shrink-0 items-center gap-2 text-gray-500">
+                    <span>
+                      <span className="text-cyan-400">{formatNumber(p.damageDealtToTurrets)}</span>
+                      <span className="ml-0.5">turret</span>
+                    </span>
+                    <span>
+                      <span className="text-amber-400">{formatNumber(p.damageDealtToObjectives)}</span>
+                      <span className="ml-0.5">obj</span>
+                    </span>
+                  </div>
+                </div>
+              );
+            })}
+        </div>
       </div>
     </div>
   );
