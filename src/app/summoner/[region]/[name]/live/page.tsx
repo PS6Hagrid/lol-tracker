@@ -53,7 +53,7 @@ export default async function LiveGamePage({ params }: PageProps) {
   const liveGame = await dataService.getLiveGame(region, summoner.puuid);
 
   const regionLabel = REGIONS.find((r) => r.value === region)?.label ?? region;
-  const basePath = `/summoner/${encodeURIComponent(region)}/${encodeURIComponent(name)}`;
+  const basePath = `/summoner/${region}/${name}`;
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-6">

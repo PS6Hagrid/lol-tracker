@@ -41,10 +41,17 @@ export default async function MatchHistoryPage({ params }: PageProps) {
     // Fetch match history (20 matches)
     const matchIds = await dataService.getMatchHistory(region, summoner.puuid, 20);
 
-    // Fetch match details in parallel
-    matches = await Promise.all(
-      matchIds.map((id) => dataService.getMatchDetails(region, id)),
-    );
+    // Fetch match details in batches of 5 to avoid rate limits
+    for (let i = 0; i < matchIds.length; i += 5) {
+      const batch = matchIds.slice(i, i + 5);
+      const batchResults = await Promise.all(
+        batch.map((id) => dataService.getMatchDetails(region, id)),
+      );
+      matches.push(...batchResults);
+      if (i + 5 < matchIds.length) {
+        await new Promise((r) => setTimeout(r, 1200));
+      }
+    }
   } catch (error) {
     console.error("Error fetching summoner data:", error);
     return (
@@ -61,7 +68,7 @@ export default async function MatchHistoryPage({ params }: PageProps) {
   }
 
   const regionLabel = REGIONS.find((r) => r.value === region)?.label ?? region;
-  const basePath = `/summoner/${encodeURIComponent(region)}/${encodeURIComponent(name)}`;
+  const basePath = `/summoner/${region}/${name}`;
 
   // Build KDA chart data from matches
   const kdaChartData = matches.map((match, index) => {

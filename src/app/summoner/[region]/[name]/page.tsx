@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { getDataService } from "@/lib/data-service";
+import { prisma } from "@/lib/db";
 import {
   getProfileIconUrl,
   getChampionIconUrl,
@@ -98,6 +99,13 @@ export default async function SummonerProfilePage({ params }: PageProps) {
   try {
     summoner = await dataService.getSummoner(region, gameName, tagLine);
 
+    // Persist summoner to DB for search autocomplete
+    prisma.summoner.upsert({
+      where: { gameName_tagLine_region: { gameName: summoner.gameName, tagLine: summoner.tagLine, region } },
+      update: { puuid: summoner.puuid, profileIconId: summoner.profileIconId, summonerLevel: summoner.summonerLevel },
+      create: { puuid: summoner.puuid, gameName: summoner.gameName, tagLine: summoner.tagLine, region, profileIconId: summoner.profileIconId, summonerLevel: summoner.summonerLevel },
+    }).catch(() => {}); // Fire-and-forget, don't block page render
+
     // Fetch ranked stats, match history, and champion masteries in parallel
     const [ranked, matchIds, masteryData] = await Promise.all([
       dataService.getRankedStats(region, summoner.puuid),
@@ -108,10 +116,19 @@ export default async function SummonerProfilePage({ params }: PageProps) {
     rankedStats = ranked;
     masteries = masteryData;
 
-    // Fetch match details for top champion calculation
-    const matches = await Promise.all(
-      matchIds.slice(0, 10).map((id) => dataService.getMatchDetails(region, id))
-    );
+    // Fetch match details in batches of 5 to avoid rate limits
+    const matches = [];
+    const ids = matchIds.slice(0, 10);
+    for (let i = 0; i < ids.length; i += 5) {
+      const batch = ids.slice(i, i + 5);
+      const batchResults = await Promise.all(
+        batch.map((id) => dataService.getMatchDetails(region, id)),
+      );
+      matches.push(...batchResults);
+      if (i + 5 < ids.length) {
+        await new Promise((r) => setTimeout(r, 1200));
+      }
+    }
 
     topChampions = getTopChampionsFromMatches(matches, summoner.puuid, 3);
   } catch (error) {
@@ -134,7 +151,7 @@ export default async function SummonerProfilePage({ params }: PageProps) {
   const currentLP = soloQueue?.leaguePoints ?? flexQueue?.leaguePoints ?? 0;
 
   const regionLabel = REGIONS.find((r) => r.value === region)?.label ?? region;
-  const basePath = `/summoner/${encodeURIComponent(region)}/${encodeURIComponent(name)}`;
+  const basePath = `/summoner/${region}/${name}`;
 
   // Build top champions from masteries as a fallback when match-based data is sparse
   const topChampionCards =

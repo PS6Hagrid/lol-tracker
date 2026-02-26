@@ -210,10 +210,18 @@ export default async function ChampionsPage({ params }: PageProps) {
       dataService.getChampionMasteries(region, summoner.puuid),
     ]);
 
-    // Fetch match details in parallel
-    const matches: MatchDTO[] = await Promise.all(
-      matchIds.map((id) => dataService.getMatchDetails(region, id)),
-    );
+    // Fetch match details in batches of 5 to avoid rate limits
+    const matches: MatchDTO[] = [];
+    for (let i = 0; i < matchIds.length; i += 5) {
+      const batch = matchIds.slice(i, i + 5);
+      const batchResults = await Promise.all(
+        batch.map((id) => dataService.getMatchDetails(region, id)),
+      );
+      matches.push(...batchResults);
+      if (i + 5 < matchIds.length) {
+        await new Promise((r) => setTimeout(r, 1200));
+      }
+    }
 
     championRows = aggregateChampionStats(matches, summoner.puuid, masteries);
   } catch (error) {
@@ -232,7 +240,7 @@ export default async function ChampionsPage({ params }: PageProps) {
   }
 
   const regionLabel = REGIONS.find((r) => r.value === region)?.label ?? region;
-  const basePath = `/summoner/${encodeURIComponent(region)}/${encodeURIComponent(name)}`;
+  const basePath = `/summoner/${region}/${name}`;
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-6">
