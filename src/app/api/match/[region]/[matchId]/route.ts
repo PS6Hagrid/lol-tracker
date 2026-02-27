@@ -15,7 +15,7 @@ export async function GET(
       );
     }
 
-    const dataService = getDataService();
+    const dataService = await getDataService();
     const match = await dataService.getMatchDetails(region, matchId);
 
     return NextResponse.json({ match });

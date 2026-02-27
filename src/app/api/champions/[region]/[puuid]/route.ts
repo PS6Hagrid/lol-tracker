@@ -15,7 +15,7 @@ export async function GET(
       );
     }
 
-    const dataService = getDataService();
+    const dataService = await getDataService();
     const masteries = await dataService.getChampionMasteries(region, puuid);
 
     return NextResponse.json({ masteries });

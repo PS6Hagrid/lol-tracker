@@ -28,7 +28,7 @@ export async function GET(
     const gameName = decodeURIComponent(name.slice(0, lastHyphen));
     const tagLine = decodeURIComponent(name.slice(lastHyphen + 1));
 
-    const dataService = getDataService();
+    const dataService = await getDataService();
 
     // Fetch summoner and ranked stats in parallel
     const summoner = await dataService.getSummoner(region, gameName, tagLine);

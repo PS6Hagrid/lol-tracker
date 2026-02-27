@@ -28,7 +28,7 @@ export default async function LiveGamePage({ params }: PageProps) {
   const gameName = decodeURIComponent(name.slice(0, lastHyphen));
   const tagLine = decodeURIComponent(name.slice(lastHyphen + 1));
 
-  const dataService = getDataService();
+  const dataService = await getDataService();
 
   let summoner;
 

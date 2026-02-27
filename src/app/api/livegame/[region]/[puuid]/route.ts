@@ -15,7 +15,7 @@ export async function GET(
       );
     }
 
-    const dataService = getDataService();
+    const dataService = await getDataService();
     const liveGame = await dataService.getLiveGame(region, puuid);
 
     return NextResponse.json({ liveGame });

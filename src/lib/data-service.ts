@@ -66,15 +66,14 @@ export interface DataService {
  *   "mock"  -> MockDataService  (default)
  *   anything else -> RiotApiService
  */
-export function getDataService(): DataService {
+export async function getDataService(): Promise<DataService> {
   const source = process.env.DATA_SOURCE ?? "mock";
 
   if (source === "mock") {
-    // Dynamic import avoided; use lazy singleton instead
-    const { MockDataService } = require("@/lib/mock-data-service");
+    const { MockDataService } = await import("@/lib/mock-data-service");
     return new MockDataService();
   }
 
-  const { RiotApiService } = require("@/lib/riot-api-service");
+  const { RiotApiService } = await import("@/lib/riot-api-service");
   return new RiotApiService();
 }

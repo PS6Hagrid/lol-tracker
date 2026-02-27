@@ -89,7 +89,7 @@ export default async function SummonerProfilePage({ params }: PageProps) {
   const tagLine = decodeURIComponent(name.slice(lastHyphen + 1));
 
   // Fetch data using the data service directly (server component)
-  const dataService = getDataService();
+  const dataService = await getDataService();
 
   let summoner;
   let rankedStats: LeagueEntryDTO[] = [];

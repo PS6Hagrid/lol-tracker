@@ -16,7 +16,7 @@ export async function GET(
       );
     }
 
-    const dataService = getDataService();
+    const dataService = await getDataService();
 
     // Fetch 20 match IDs
     const matchIds = await dataService.getMatchHistory(region, puuid, 20);
