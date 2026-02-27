@@ -24,8 +24,6 @@ import {
  */
 export class RiotApiService implements DataService {
   private apiKey: string;
-  // Cache summonerId lookups to avoid repeated Summoner-v4 calls
-  private summonerIdCache = new Map<string, string>();
 
   constructor() {
     const key = process.env.RIOT_API_KEY;
@@ -91,19 +89,17 @@ export class RiotApiService implements DataService {
     throw new Error("Riot API rate limit exceeded after retries.");
   }
 
-  /** Try Summoner-v4 to get summonerId + profile info. Returns null on 403. */
+  /** Try Summoner-v4 to get profile info. Returns null on 403. */
   private async tryGetSummonerByPuuid(
     region: string,
     puuid: string,
   ): Promise<{
-    id: string;
     profileIconId: number;
     summonerLevel: number;
   } | null> {
     try {
       // Cache 5 min — profile info changes rarely
       const data = await this.riotFetch<{
-        id: string;
         puuid: string;
         profileIconId: number;
         summonerLevel: number;
@@ -111,8 +107,6 @@ export class RiotApiService implements DataService {
         `${this.platformUrl(region)}/lol/summoner/v4/summoners/by-puuid/${puuid}`,
         300,
       );
-      // Cache the summonerId for getRankedStats
-      this.summonerIdCache.set(puuid, data.id);
       return data;
     } catch (e) {
       if (e instanceof RiotApiForbiddenError) {
@@ -156,23 +150,11 @@ export class RiotApiService implements DataService {
     region: string,
     puuid: string,
   ): Promise<LeagueEntryDTO[]> {
-    // Need encryptedSummonerId for League-v4
-    let summonerId = this.summonerIdCache.get(puuid);
-
-    if (!summonerId) {
-      const summoner = await this.tryGetSummonerByPuuid(region, puuid);
-      if (!summoner) {
-        // Summoner-v4 is 403, can't get ranked stats
-        console.warn("Cannot fetch ranked stats: Summoner-v4 unavailable.");
-        return [];
-      }
-      summonerId = summoner.id;
-    }
-
     try {
+      // Use PUUID-based endpoint (Riot removed summonerId from Summoner-v4)
       // Cache 2 min — ranked stats change after games
       return await this.riotFetch<LeagueEntryDTO[]>(
-        `${this.platformUrl(region)}/lol/league/v4/entries/by-summoner/${summonerId}`,
+        `${this.platformUrl(region)}/lol/league/v4/entries/by-puuid/${puuid}`,
         120,
       );
     } catch (e) {
