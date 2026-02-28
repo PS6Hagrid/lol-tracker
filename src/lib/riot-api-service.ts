@@ -91,7 +91,7 @@ export class RiotApiService implements DataService {
 
       return res.json() as Promise<T>;
     }
-    throw new Error("Riot API rate limit exceeded after retries.");
+    throw new RiotApiRateLimitError();
   }
 
   /** Try Summoner-v4 to get profile info. Returns null on 403. */
@@ -284,16 +284,23 @@ export class RiotApiService implements DataService {
   }
 }
 
-class RiotApiNotFoundError extends Error {
+export class RiotApiNotFoundError extends Error {
   constructor(message: string) {
     super(message);
     this.name = "RiotApiNotFoundError";
   }
 }
 
-class RiotApiForbiddenError extends Error {
+export class RiotApiForbiddenError extends Error {
   constructor(message: string) {
     super(message);
     this.name = "RiotApiForbiddenError";
+  }
+}
+
+export class RiotApiRateLimitError extends Error {
+  constructor(message: string = "Too many requests. Please try again shortly.") {
+    super(message);
+    this.name = "RiotApiRateLimitError";
   }
 }

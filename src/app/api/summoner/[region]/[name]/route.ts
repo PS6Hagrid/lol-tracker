@@ -76,8 +76,29 @@ export async function GET(
     return NextResponse.json({ summoner, rankedStats });
   } catch (error) {
     console.error("Error fetching summoner:", error);
+    const { RiotApiNotFoundError, RiotApiForbiddenError, RiotApiRateLimitError } =
+      await import("@/lib/riot-api-service");
+
+    if (error instanceof RiotApiNotFoundError) {
+      return NextResponse.json(
+        { error: "Summoner not found. Check the name and region.", code: "NOT_FOUND" },
+        { status: 404 },
+      );
+    }
+    if (error instanceof RiotApiRateLimitError) {
+      return NextResponse.json(
+        { error: "Too many requests. Please try again in a moment.", code: "RATE_LIMITED" },
+        { status: 429 },
+      );
+    }
+    if (error instanceof RiotApiForbiddenError) {
+      return NextResponse.json(
+        { error: "API access restricted. The API key may have expired.", code: "FORBIDDEN" },
+        { status: 403 },
+      );
+    }
     return NextResponse.json(
-      { error: "Failed to fetch summoner data" },
+      { error: "Something went wrong. Please try again later.", code: "INTERNAL" },
       { status: 500 },
     );
   }

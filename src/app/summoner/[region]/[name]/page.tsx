@@ -5,6 +5,10 @@ import {
   getChampionIconUrl,
   REGIONS,
 } from "@/lib/constants";
+import {
+  RiotApiNotFoundError,
+  RiotApiRateLimitError,
+} from "@/lib/riot-api-service";
 import type { LeagueEntryDTO, ChampionMasteryDTO } from "@/types/riot";
 import RankCard from "@/components/RankCard";
 import LPGraph from "@/components/LPGraph";
@@ -138,14 +142,45 @@ export default async function SummonerProfilePage({ params }: PageProps) {
     topChampions = getTopChampionsFromMatches(matches, summoner.puuid, 3);
   } catch (error) {
     console.error("Error fetching summoner data:", error);
+
+    let title = "Something Went Wrong";
+    let message = "An unexpected error occurred. Please try again later.";
+    let icon = "⚠️";
+
+    if (error instanceof RiotApiNotFoundError) {
+      title = "Summoner Not Found";
+      message = `Could not find "${gameName}#${tagLine}" in ${REGIONS.find((r) => r.value === region)?.label ?? region}. Check the spelling and region.`;
+      icon = "🔍";
+    } else if (error instanceof RiotApiRateLimitError) {
+      title = "Too Many Requests";
+      message = "The server is currently handling a lot of requests. Please wait a moment and try again.";
+      icon = "⏳";
+    } else if (error instanceof Error && error.message.includes("API key")) {
+      title = "Service Temporarily Unavailable";
+      message = "The Riot API connection is experiencing issues. Please try again later.";
+      icon = "🔧";
+    }
+
     return (
-      <div className="flex min-h-[calc(100vh-3.5rem)] items-center justify-center">
-        <div className="rounded-xl border border-gray-700/50 bg-gray-900/80 p-8 text-center backdrop-blur-sm">
-          <h2 className="text-xl font-bold text-loss">Summoner Not Found</h2>
-          <p className="mt-2 text-gray-400">
-            Could not find &quot;{gameName}#{tagLine}&quot; in{" "}
-            {REGIONS.find((r) => r.value === region)?.label ?? region}
-          </p>
+      <div className="flex min-h-[calc(100vh-3.5rem)] items-center justify-center px-4">
+        <div className="w-full max-w-md rounded-xl border border-gray-700/50 bg-gray-900/80 p-8 text-center backdrop-blur-sm">
+          <div className="mx-auto mb-4 text-4xl">{icon}</div>
+          <h2 className="text-xl font-bold text-loss">{title}</h2>
+          <p className="mt-2 text-sm text-gray-400">{message}</p>
+          <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-center">
+            <a
+              href={`/summoner/${region}/${name}`}
+              className="rounded-lg border border-cyan/50 bg-cyan/10 px-6 py-2.5 text-sm font-medium text-cyan transition-all duration-200 hover:bg-cyan/20"
+            >
+              Try Again
+            </a>
+            <a
+              href="/"
+              className="rounded-lg border border-gray-700 bg-gray-800/60 px-6 py-2.5 text-sm font-medium text-gray-300 transition-all duration-200 hover:bg-gray-700/60"
+            >
+              Go Home
+            </a>
+          </div>
         </div>
       </div>
     );
