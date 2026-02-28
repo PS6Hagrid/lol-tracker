@@ -15,7 +15,7 @@ export default function Home() {
         <div className="text-center">
           <h1 className="text-5xl font-extrabold tracking-tight sm:text-6xl md:text-7xl">
             <span className="bg-gradient-to-r from-gold via-yellow-300 to-cyan bg-clip-text text-transparent">
-              LoL Tracker
+              Trackerino
             </span>
           </h1>
           <p className="mt-4 text-lg text-gray-400 sm:text-xl">

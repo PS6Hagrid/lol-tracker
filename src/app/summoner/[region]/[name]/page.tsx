@@ -22,7 +22,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const gameName = lastHyphen > 0 ? decodedName.slice(0, lastHyphen) : decodedName;
   const tagLine = lastHyphen > 0 ? decodedName.slice(lastHyphen + 1) : region.toUpperCase();
   return {
-    title: `${gameName}#${tagLine} — LoL Tracker`,
+    title: `${gameName}#${tagLine} — Trackerino`,
     description: `View stats, match history, and ranked progress for ${gameName}#${tagLine} on ${region.toUpperCase()}.`,
   };
 }
