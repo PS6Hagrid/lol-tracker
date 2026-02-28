@@ -13,6 +13,7 @@ import {
   saveMatchToCache,
   saveMatchesToCache,
 } from "@/lib/match-cache";
+import { rateLimiter } from "@/lib/rate-limiter";
 
 /**
  * RiotApiService — real Riot Games API implementation of DataService.
@@ -50,6 +51,9 @@ export class RiotApiService implements DataService {
   ): Promise<T> {
     let retries = 3;
     while (retries > 0) {
+      // Wait for a rate-limit token before every outgoing request
+      await rateLimiter.acquire();
+
       const fetchOptions: RequestInit & { next?: { revalidate: number } } = {
         headers: { "X-Riot-Token": this.apiKey },
       };
@@ -62,6 +66,7 @@ export class RiotApiService implements DataService {
 
       if (res.status === 429) {
         const retryAfter = parseInt(res.headers.get("Retry-After") ?? "2", 10);
+        console.warn(`Rate limited by Riot API. Retrying in ${retryAfter}s…`);
         await new Promise((r) => setTimeout(r, retryAfter * 1000));
         retries--;
         continue;
@@ -210,6 +215,7 @@ export class RiotApiService implements DataService {
     const uncachedIds = matchIds.filter((id) => !cachedMap.has(id));
 
     // 2. Fetch uncached matches from Riot API in batches of 5
+    //    The global rate limiter handles pacing automatically.
     const newlyFetched: MatchDTO[] = [];
     for (let i = 0; i < uncachedIds.length; i += 5) {
       const batch = uncachedIds.slice(i, i + 5);
@@ -221,11 +227,6 @@ export class RiotApiService implements DataService {
         ),
       );
       newlyFetched.push(...batchResults);
-
-      // Rate limit delay only between API batches
-      if (i + 5 < uncachedIds.length) {
-        await new Promise((r) => setTimeout(r, 1200));
-      }
     }
 
     // 3. Save newly fetched matches to DB cache (fire-and-forget)
