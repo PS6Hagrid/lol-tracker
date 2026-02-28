@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { getDataService } from "@/lib/data-service";
 import { prisma } from "@/lib/db";
 import {
-  getProfileIconUrl,
   getChampionIconUrl,
   REGIONS,
 } from "@/lib/constants";
@@ -10,6 +9,7 @@ import type { LeagueEntryDTO, ChampionMasteryDTO } from "@/types/riot";
 import RankCard from "@/components/RankCard";
 import LPGraph from "@/components/LPGraph";
 import TabNavigation from "@/components/TabNavigation";
+import SummonerHeader from "@/components/SummonerHeader";
 
 interface PageProps {
   params: Promise<{ region: string; name: string }>;
@@ -160,38 +160,13 @@ export default async function SummonerProfilePage({ params }: PageProps) {
   return (
     <div className="mx-auto max-w-5xl px-4 py-6">
       {/* ── Summoner Header ── */}
-      <div className="mb-6 flex items-center gap-4">
-        {/* Profile Icon */}
-        <div className="relative">
-          <img
-            src={getProfileIconUrl(summoner.profileIconId)}
-            alt="Profile Icon"
-            width={80}
-            height={80}
-            className="rounded-xl border-2 border-gray-700"
-          />
-          <span className="absolute -bottom-2 left-1/2 -translate-x-1/2 rounded-full bg-gray-800 px-2 py-0.5 text-xs font-bold text-gold">
-            {summoner.summonerLevel}
-          </span>
-        </div>
-
-        {/* Name + Region */}
-        <div>
-          <h1 className="text-2xl font-bold text-white sm:text-3xl">
-            {summoner.gameName}
-            <span className="text-gray-500">#{summoner.tagLine}</span>
-          </h1>
-          <span className="mt-1 inline-block rounded-md bg-cyan/10 px-2 py-0.5 text-xs font-medium text-cyan">
-            {regionLabel}
-          </span>
-        </div>
-      </div>
+      <SummonerHeader summoner={summoner} regionLabel={regionLabel} rankedStats={rankedStats} />
 
       {/* ── Tab Navigation ── */}
       <TabNavigation basePath={basePath} />
 
       {/* ── Overview Content ── */}
-      <div className="mt-6 space-y-6">
+      <div className="animate-stagger mt-6 space-y-6">
         {/* Ranked Cards */}
         <section>
           <h2 className="mb-3 text-lg font-semibold text-white">Ranked</h2>
@@ -216,7 +191,7 @@ export default async function SummonerProfilePage({ params }: PageProps) {
               {topChampionCards.map((champ) => (
                 <div
                   key={champ.championName}
-                  className="flex items-center gap-3 rounded-xl border border-gray-700/50 bg-gray-900/80 p-4 backdrop-blur-sm transition-all duration-200 hover:border-gray-600/50"
+                  className="flex items-center gap-3 rounded-xl border border-gray-700/50 bg-gray-900/80 p-4 backdrop-blur-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-gray-600/50 hover:shadow-lg"
                 >
                   <img
                     src={getChampionIconUrl(champ.championName)}

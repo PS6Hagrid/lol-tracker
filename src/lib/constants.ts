@@ -90,3 +90,11 @@ export function getItemIconUrl(itemId: number): string {
 export function getProfileIconUrl(iconId: number): string {
   return `${DDRAGON_BASE_URL}/cdn/${GAME_VERSION}/img/profileicon/${iconId}.png`;
 }
+
+/**
+ * Get the ranked emblem image URL from Community Dragon CDN.
+ * @param tier - Tier name (e.g., "MASTER", "GOLD", "CHALLENGER")
+ */
+export function getRankEmblemUrl(tier: string): string {
+  return `https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-shared-components/global/default/${tier.toLowerCase()}.png`;
+}

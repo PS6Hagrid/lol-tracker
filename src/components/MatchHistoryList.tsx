@@ -111,7 +111,7 @@ export default function MatchHistoryList({
   return (
     <div>
       {/* Filter controls + win/loss summary */}
-      <div className="mb-4 flex flex-wrap items-center gap-3">
+      <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
         {/* Win/Loss filter */}
         <div className="flex items-center gap-1 rounded-lg bg-gray-800/60 p-1">
           {(["all", "wins", "losses"] as const).map((mode) => (
@@ -256,7 +256,10 @@ export default function MatchHistoryList({
       </div>
 
       {/* Match list */}
-      <div className="space-y-2">
+      <div
+        key={`${filter}-${queueFilter}-${championFilter}`}
+        className="animate-stagger space-y-2"
+      >
         {filteredMatches.length > 0 ? (
           filteredMatches.map((match) => (
             <MatchCard

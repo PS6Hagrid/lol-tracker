@@ -1,5 +1,8 @@
+"use client";
+
+import { useState } from "react";
 import type { LeagueEntryDTO } from "@/types/riot";
-import { QUEUE_TYPES } from "@/lib/constants";
+import { QUEUE_TYPES, getRankEmblemUrl } from "@/lib/constants";
 
 /** Map tier names to the CSS variable color tokens */
 const TIER_COLOR_MAP: Record<string, string> = {
@@ -29,11 +32,12 @@ interface RankCardProps {
 }
 
 export default function RankCard({ entry, queueType }: RankCardProps) {
+  const [emblemError, setEmblemError] = useState(false);
   const queueLabel = QUEUE_TYPES[queueType] ?? queueType;
 
   if (!entry) {
     return (
-      <div className="flex flex-col items-center gap-3 rounded-xl border border-gray-700/50 bg-gray-900/80 p-6 backdrop-blur-sm transition-all duration-200 hover:border-gray-600/50">
+      <div className="flex flex-col items-center gap-3 rounded-xl border border-gray-700/50 bg-gray-900/80 p-6 backdrop-blur-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-gray-600/50 hover:shadow-lg">
         <p className="text-sm font-medium text-gray-400">{queueLabel}</p>
         <div className="flex h-20 w-20 items-center justify-center rounded-full border-2 border-gray-700 bg-gray-800">
           <span className="text-2xl text-gray-600">?</span>
@@ -49,19 +53,42 @@ export default function RankCard({ entry, queueType }: RankCardProps) {
   const isApex = ["MASTER", "GRANDMASTER", "CHALLENGER"].includes(entry.tier);
 
   return (
-    <div className="flex flex-col items-center gap-3 rounded-xl border border-gray-700/50 bg-gray-900/80 p-6 backdrop-blur-sm transition-all duration-200 hover:border-gray-600/50">
+    <div className="flex flex-col items-center gap-3 rounded-xl border border-gray-700/50 bg-gray-900/80 p-6 backdrop-blur-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-gray-600/50 hover:shadow-lg">
       {/* Queue label */}
       <p className="text-sm font-medium text-gray-400">{queueLabel}</p>
 
-      {/* Rank emblem placeholder */}
-      <div
-        className="flex h-20 w-20 items-center justify-center rounded-full border-2 bg-gray-800"
-        style={{ borderColor: tierColor }}
-      >
-        <span className="text-2xl font-bold" style={{ color: tierColor }}>
-          {entry.tier.charAt(0)}
-          {!isApex && entry.rank}
-        </span>
+      {/* Rank emblem with glow */}
+      <div className="relative flex items-center justify-center">
+        {/* Glow behind emblem */}
+        <div
+          className={`absolute inset-0 rounded-full blur-xl ${isApex ? "animate-rank-glow" : ""}`}
+          style={{
+            backgroundColor: tierColor,
+            opacity: isApex ? undefined : 0.3,
+          }}
+        />
+
+        {/* Emblem image or letter fallback */}
+        {!emblemError ? (
+          <img
+            src={getRankEmblemUrl(entry.tier)}
+            alt={entry.tier}
+            width={96}
+            height={96}
+            className="relative z-10 drop-shadow-lg"
+            onError={() => setEmblemError(true)}
+          />
+        ) : (
+          <div
+            className="relative z-10 flex h-20 w-20 items-center justify-center rounded-full border-2 bg-gray-800"
+            style={{ borderColor: tierColor }}
+          >
+            <span className="text-2xl font-bold" style={{ color: tierColor }}>
+              {entry.tier.charAt(0)}
+              {!isApex && entry.rank}
+            </span>
+          </div>
+        )}
       </div>
 
       {/* Tier + Division */}
@@ -69,7 +96,7 @@ export default function RankCard({ entry, queueType }: RankCardProps) {
         <p className="text-lg font-bold" style={{ color: tierColor }}>
           {formatTier(entry.tier)} {!isApex ? entry.rank : ""}
         </p>
-        <p className="text-sm text-gold font-semibold">{entry.leaguePoints} LP</p>
+        <p className="text-sm font-semibold text-gold">{entry.leaguePoints} LP</p>
       </div>
 
       {/* Win / Loss */}

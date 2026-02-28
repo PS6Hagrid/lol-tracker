@@ -94,7 +94,7 @@ export default function MatchCard({ match, summonerPuuid }: MatchCardProps) {
 
   return (
     <div
-      className={`overflow-hidden rounded-xl border transition-all duration-200 ${
+      className={`overflow-hidden rounded-xl border transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg ${
         win
           ? "border-green-700/30 bg-green-900/20"
           : "border-red-700/30 bg-red-900/20"
@@ -147,10 +147,11 @@ export default function MatchCard({ match, summonerPuuid }: MatchCardProps) {
           </span>
         </div>
 
-        {/* CS & Gold & Vision */}
-        <div className="hidden min-w-0 flex-shrink-0 text-xs text-gray-400 sm:block">
+        {/* CS & Gold & Vision — compact on mobile, full on sm+ */}
+        <div className="min-w-0 flex-shrink-0 text-xs text-gray-400">
           <div>
-            <span className="text-white">{totalCS}</span> CS ({csPerMin}/min)
+            <span className="text-white">{totalCS}</span> CS
+            <span className="hidden sm:inline"> ({csPerMin}/min)</span>
           </div>
           <div>
             <span className="text-amber-400">
@@ -158,13 +159,13 @@ export default function MatchCard({ match, summonerPuuid }: MatchCardProps) {
             </span>{" "}
             gold
           </div>
-          <div>
+          <div className="hidden sm:block">
             <span className="text-purple-400">{player.visionScore}</span> vision
           </div>
         </div>
 
         {/* Items */}
-        <div className="ml-auto flex flex-shrink-0 items-center gap-0.5">
+        <div className="ml-auto flex flex-shrink-0 flex-wrap items-center gap-0.5">
           {items.map((itemId, idx) => (
             <div key={idx} className="h-7 w-7 overflow-hidden rounded sm:h-8 sm:w-8">
               {itemId > 0 ? (
@@ -209,10 +210,11 @@ export default function MatchCard({ match, summonerPuuid }: MatchCardProps) {
       </button>
 
       {/* ── Expanded View ── */}
-      {expanded && (
+      <div className={`expand-grid ${expanded ? "expanded" : ""}`}>
+        <div>
         <div className="border-t border-gray-700/50 px-3 pb-4 pt-3 sm:px-4">
           {/* Team objectives summary */}
-          <div className="mb-4 grid grid-cols-2 gap-4">
+          <div className="mb-4 grid grid-cols-2 gap-4 overflow-x-auto">
             <div>
               <div className="mb-1 flex items-center gap-2">
                 <span
@@ -296,7 +298,29 @@ export default function MatchCard({ match, summonerPuuid }: MatchCardProps) {
             />
           )}
         </div>
-      )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── Skeleton ──────────────────────────────────────────────────────────────────
+
+export function MatchCardSkeleton() {
+  return (
+    <div className="animate-pulse overflow-hidden rounded-xl border border-gray-700/30 bg-gray-900/40">
+      <div className="flex items-center gap-3 p-3 sm:gap-4 sm:p-4">
+        <div className="hidden h-16 w-1 rounded-full bg-gray-700 sm:block" />
+        <div className="h-12 w-12 rounded-lg bg-gray-700" />
+        <div className="space-y-2">
+          <div className="h-4 w-20 rounded bg-gray-700" />
+          <div className="h-3 w-14 rounded bg-gray-700" />
+        </div>
+        <div className="ml-auto space-y-1.5">
+          <div className="h-3 w-16 rounded bg-gray-700" />
+          <div className="h-3 w-12 rounded bg-gray-700" />
+        </div>
+      </div>
     </div>
   );
 }

@@ -1,9 +1,10 @@
 import { getDataService } from "@/lib/data-service";
-import { getProfileIconUrl, REGIONS } from "@/lib/constants";
+import { REGIONS } from "@/lib/constants";
 import TabNavigation from "@/components/TabNavigation";
+import SummonerHeader from "@/components/SummonerHeader";
 import MatchHistoryList from "@/components/MatchHistoryList";
 import KDAChart from "@/components/KDAChart";
-import type { MatchDTO } from "@/types/riot";
+import type { MatchDTO, LeagueEntryDTO } from "@/types/riot";
 
 interface PageProps {
   params: Promise<{ region: string; name: string }>;
@@ -34,12 +35,18 @@ export default async function MatchHistoryPage({ params }: PageProps) {
 
   let summoner;
   let matches: MatchDTO[] = [];
+  let rankedStats: LeagueEntryDTO[] = [];
 
   try {
     summoner = await dataService.getSummoner(region, gameName, tagLine);
 
-    // Fetch match history (20 matches)
-    const matchIds = await dataService.getMatchHistory(region, summoner.puuid, 20);
+    // Fetch match history and ranked stats in parallel
+    const [matchIds, ranked] = await Promise.all([
+      dataService.getMatchHistory(region, summoner.puuid, 20),
+      dataService.getRankedStats(region, summoner.puuid),
+    ]);
+
+    rankedStats = ranked;
 
     // Fetch match details — uses DB cache for known matches, API for new ones
     matches = dataService.getMatchDetailsBatch
@@ -80,35 +87,13 @@ export default async function MatchHistoryPage({ params }: PageProps) {
   return (
     <div className="mx-auto max-w-5xl px-4 py-6">
       {/* Summoner Header */}
-      <div className="mb-6 flex items-center gap-4">
-        <div className="relative">
-          <img
-            src={getProfileIconUrl(summoner.profileIconId)}
-            alt="Profile Icon"
-            width={80}
-            height={80}
-            className="rounded-xl border-2 border-gray-700"
-          />
-          <span className="absolute -bottom-2 left-1/2 -translate-x-1/2 rounded-full bg-gray-800 px-2 py-0.5 text-xs font-bold text-gold">
-            {summoner.summonerLevel}
-          </span>
-        </div>
-        <div>
-          <h1 className="text-2xl font-bold text-white sm:text-3xl">
-            {summoner.gameName}
-            <span className="text-gray-500">#{summoner.tagLine}</span>
-          </h1>
-          <span className="mt-1 inline-block rounded-md bg-cyan/10 px-2 py-0.5 text-xs font-medium text-cyan">
-            {regionLabel}
-          </span>
-        </div>
-      </div>
+      <SummonerHeader summoner={summoner} regionLabel={regionLabel} rankedStats={rankedStats} />
 
       {/* Tab Navigation */}
       <TabNavigation basePath={basePath} />
 
       {/* Match History Content */}
-      <div className="mt-6 space-y-6">
+      <div className="animate-stagger mt-6 space-y-6">
         {/* KDA Chart */}
         <section>
           <KDAChart data={kdaChartData} />
