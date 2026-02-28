@@ -91,6 +91,24 @@ export default function MatchCard({ match, summonerPuuid }: MatchCardProps) {
   const keystoneId = player.perks?.styles?.[0]?.selections?.[0]?.perk;
   const subStyleId = player.perks?.styles?.[1]?.style;
 
+  // Kill participation & damage share
+  const teamPlayers = match.info.participants.filter(
+    (p) => p.teamId === player.teamId,
+  );
+  const teamKills = teamPlayers.reduce((sum, p) => sum + p.kills, 0);
+  const teamDamage = teamPlayers.reduce(
+    (sum, p) => sum + p.totalDamageDealtToChampions,
+    0,
+  );
+  const killParticipation =
+    teamKills > 0
+      ? Math.round(((player.kills + player.assists) / teamKills) * 100)
+      : 0;
+  const damageShare =
+    teamDamage > 0
+      ? Math.round((player.totalDamageDealtToChampions / teamDamage) * 100)
+      : 0;
+
   const blueTeam = match.info.participants.filter((p) => p.teamId === 100);
   const redTeam = match.info.participants.filter((p) => p.teamId === 200);
   const blueTeamData = match.info.teams.find((t) => t.teamId === 100);
@@ -195,7 +213,7 @@ export default function MatchCard({ match, summonerPuuid }: MatchCardProps) {
           </span>
         </div>
 
-        {/* CS & Gold & Vision — compact on mobile, full on sm+ */}
+        {/* CS & Gold — compact on mobile, full on sm+ */}
         <div className="min-w-0 flex-shrink-0 text-xs text-gray-400">
           <div>
             <span className="text-white">{totalCS}</span> CS
@@ -207,8 +225,15 @@ export default function MatchCard({ match, summonerPuuid }: MatchCardProps) {
             </span>{" "}
             gold
           </div>
-          <div className="hidden sm:block">
-            <span className="text-purple-400">{player.visionScore}</span> vision
+        </div>
+
+        {/* KP & Damage Share — hidden on mobile */}
+        <div className="hidden min-w-0 flex-shrink-0 text-xs sm:block">
+          <div className="text-gray-400">
+            <span className="font-medium text-purple-400">{killParticipation}%</span> KP
+          </div>
+          <div className="text-gray-400">
+            <span className="font-medium text-orange-400">{damageShare}%</span> DMG
           </div>
         </div>
 

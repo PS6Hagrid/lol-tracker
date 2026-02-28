@@ -5,6 +5,8 @@ import SummonerHeader from "@/components/SummonerHeader";
 import UpdateButton from "@/components/UpdateButton";
 import MatchHistoryList from "@/components/MatchHistoryList";
 import KDAChart from "@/components/KDAChart";
+import WinRateChart from "@/components/WinRateChart";
+import RecentPerformance from "@/components/RecentPerformance";
 import type { MatchDTO, LeagueEntryDTO } from "@/types/riot";
 
 interface PageProps {
@@ -100,10 +102,14 @@ export default async function MatchHistoryPage({ params }: PageProps) {
 
       {/* Match History Content */}
       <div className="animate-stagger mt-6 space-y-6">
-        {/* KDA Chart */}
+        {/* Stats Summary + KDA Chart */}
         <section>
-          <KDAChart data={kdaChartData} />
+          <RecentPerformance matches={matches} puuid={summoner.puuid} />
         </section>
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+          <KDAChart data={kdaChartData} />
+          <WinRateChart matches={matches} puuid={summoner.puuid} />
+        </div>
 
         {/* Match List */}
         <section>

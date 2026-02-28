@@ -15,6 +15,9 @@ import LPGraph from "@/components/LPGraph";
 import TabNavigation from "@/components/TabNavigation";
 import SummonerHeader from "@/components/SummonerHeader";
 import UpdateButton from "@/components/UpdateButton";
+import RecentPerformance from "@/components/RecentPerformance";
+import RoleDistribution from "@/components/RoleDistribution";
+import type { MatchDTO } from "@/types/riot";
 
 interface PageProps {
   params: Promise<{ region: string; name: string }>;
@@ -113,6 +116,7 @@ export default async function SummonerProfilePage({ params }: PageProps) {
   let rankedStats: LeagueEntryDTO[] = [];
   let topChampions: ChampionStat[] = [];
   let masteries: ChampionMasteryDTO[] = [];
+  let recentMatches: MatchDTO[] = [];
 
   try {
     summoner = await dataService.getSummoner(region, gameName, tagLine);
@@ -140,6 +144,7 @@ export default async function SummonerProfilePage({ params }: PageProps) {
       ? await dataService.getMatchDetailsBatch(region, ids)
       : await Promise.all(ids.map((id) => dataService.getMatchDetails(region, id)));
 
+    recentMatches = matches;
     topChampions = getTopChampionsFromMatches(matches, summoner.puuid, 3);
   } catch (error) {
     console.error("Error fetching summoner data:", error);
@@ -234,6 +239,19 @@ export default async function SummonerProfilePage({ params }: PageProps) {
         <section>
           <LPGraph data={[]} currentLP={currentLP} />
         </section>
+
+        {/* Recent Performance + Role Distribution */}
+        {recentMatches.length > 0 && (
+          <section>
+            <h2 className="mb-3 text-lg font-semibold text-white">
+              Recent Performance
+            </h2>
+            <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+              <RecentPerformance matches={recentMatches} puuid={summoner.puuid} />
+              <RoleDistribution matches={recentMatches} puuid={summoner.puuid} />
+            </div>
+          </section>
+        )}
 
         {/* Top Champions Preview */}
         {topChampionCards.length > 0 && (
