@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import Link from "next/link";
+import NavSearch from "@/components/NavSearch";
 import "./globals.css";
 
 const inter = Inter({
@@ -49,7 +50,7 @@ export default function RootLayout({
     <html lang="en" className="dark">
       <body className={`${inter.variable} antialiased`}>
         <nav className="sticky top-0 z-50 border-b border-gray-700/50 bg-bg-page/80 backdrop-blur-md">
-          <div className="mx-auto flex h-14 max-w-7xl items-center px-4">
+          <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4">
             <Link
               href="/"
               className="flex items-center gap-2 transition-opacity duration-200 hover:opacity-80"
@@ -61,6 +62,15 @@ export default function RootLayout({
                 <span className="text-white">ino</span>
               </span>
             </Link>
+            <div className="flex items-center gap-3">
+              <Link
+                href="/multi"
+                className="hidden text-xs font-medium text-gray-400 transition-colors hover:text-white sm:block"
+              >
+                Multi-Search
+              </Link>
+              <NavSearch />
+            </div>
           </div>
         </nav>
         <main className="min-h-[calc(100vh-3.5rem-3rem)]">{children}</main>

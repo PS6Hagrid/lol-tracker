@@ -1,4 +1,5 @@
 import SearchBar from "@/components/SearchBar";
+import HomeSidebar from "@/components/HomeSidebar";
 
 export default function Home() {
   return (
@@ -50,6 +51,9 @@ export default function Home() {
             xPeke#EUW
           </a>
         </div>
+
+        {/* Favorites & Recent Searches */}
+        <HomeSidebar />
       </div>
     </div>
   );

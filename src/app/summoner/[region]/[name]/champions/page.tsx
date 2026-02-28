@@ -3,6 +3,8 @@ import { REGIONS } from "@/lib/constants";
 import TabNavigation from "@/components/TabNavigation";
 import SummonerHeader from "@/components/SummonerHeader";
 import UpdateButton from "@/components/UpdateButton";
+import FavoriteButton from "@/components/FavoriteButton";
+import ShareButton from "@/components/ShareButton";
 import ChampionGrid from "@/components/ChampionGrid";
 import type { ChampionStatRow } from "@/components/ChampionGrid";
 import type { MatchDTO, ChampionMasteryDTO, LeagueEntryDTO } from "@/types/riot";
@@ -247,7 +249,13 @@ export default async function ChampionsPage({ params }: PageProps) {
         summoner={summoner}
         regionLabel={regionLabel}
         rankedStats={rankedStats}
-        actions={<UpdateButton region={region} name={name} />}
+        actions={
+          <div className="flex items-center gap-1.5">
+            <UpdateButton region={region} name={name} />
+            <FavoriteButton gameName={summoner.gameName} tagLine={summoner.tagLine} region={region} profileIconId={summoner.profileIconId} />
+            <ShareButton />
+          </div>
+        }
       />
 
       {/* Tab Navigation */}

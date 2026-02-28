@@ -15,6 +15,9 @@ import LPGraph from "@/components/LPGraph";
 import TabNavigation from "@/components/TabNavigation";
 import SummonerHeader from "@/components/SummonerHeader";
 import UpdateButton from "@/components/UpdateButton";
+import FavoriteButton from "@/components/FavoriteButton";
+import ShareButton from "@/components/ShareButton";
+import TrackVisit from "@/components/TrackVisit";
 import RecentPerformance from "@/components/RecentPerformance";
 import RoleDistribution from "@/components/RoleDistribution";
 import type { MatchDTO } from "@/types/riot";
@@ -213,12 +216,21 @@ export default async function SummonerProfilePage({ params }: PageProps) {
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-6">
+      {/* Track visit for search history */}
+      <TrackVisit gameName={summoner.gameName} tagLine={summoner.tagLine} region={region} profileIconId={summoner.profileIconId} />
+
       {/* ── Summoner Header ── */}
       <SummonerHeader
         summoner={summoner}
         regionLabel={regionLabel}
         rankedStats={rankedStats}
-        actions={<UpdateButton region={region} name={name} />}
+        actions={
+          <div className="flex items-center gap-1.5">
+            <UpdateButton region={region} name={name} />
+            <FavoriteButton gameName={summoner.gameName} tagLine={summoner.tagLine} region={region} profileIconId={summoner.profileIconId} />
+            <ShareButton />
+          </div>
+        }
       />
 
       {/* ── Tab Navigation ── */}

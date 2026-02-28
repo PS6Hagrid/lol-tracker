@@ -3,6 +3,8 @@ import { REGIONS } from "@/lib/constants";
 import TabNavigation from "@/components/TabNavigation";
 import SummonerHeader from "@/components/SummonerHeader";
 import UpdateButton from "@/components/UpdateButton";
+import FavoriteButton from "@/components/FavoriteButton";
+import ShareButton from "@/components/ShareButton";
 import MatchHistoryList from "@/components/MatchHistoryList";
 import KDAChart from "@/components/KDAChart";
 import WinRateChart from "@/components/WinRateChart";
@@ -94,7 +96,13 @@ export default async function MatchHistoryPage({ params }: PageProps) {
         summoner={summoner}
         regionLabel={regionLabel}
         rankedStats={rankedStats}
-        actions={<UpdateButton region={region} name={name} />}
+        actions={
+          <div className="flex items-center gap-1.5">
+            <UpdateButton region={region} name={name} />
+            <FavoriteButton gameName={summoner.gameName} tagLine={summoner.tagLine} region={region} profileIconId={summoner.profileIconId} />
+            <ShareButton />
+          </div>
+        }
       />
 
       {/* Tab Navigation */}
