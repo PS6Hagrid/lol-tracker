@@ -21,9 +21,22 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const lastHyphen = decodedName.lastIndexOf("-");
   const gameName = lastHyphen > 0 ? decodedName.slice(0, lastHyphen) : decodedName;
   const tagLine = lastHyphen > 0 ? decodedName.slice(lastHyphen + 1) : region.toUpperCase();
+  const regionLabel = REGIONS.find((r) => r.value === region)?.label ?? region.toUpperCase();
+  const title = `${gameName}#${tagLine}`;
+  const description = `View stats, match history, and ranked progress for ${gameName}#${tagLine} on ${regionLabel}.`;
   return {
-    title: `${gameName}#${tagLine} — Trackerino`,
-    description: `View stats, match history, and ranked progress for ${gameName}#${tagLine} on ${region.toUpperCase()}.`,
+    title,
+    description,
+    openGraph: {
+      title: `${title} — Trackerino`,
+      description,
+      type: "profile",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${title} — Trackerino`,
+      description,
+    },
   };
 }
 

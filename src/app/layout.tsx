@@ -8,11 +8,36 @@ const inter = Inter({
   subsets: ["latin"],
 });
 
+const BASE_URL = "https://lol-one-hazel.vercel.app";
+
 export const metadata: Metadata = {
-  title: "Trackerino — League of Legends Stats",
+  metadataBase: new URL(BASE_URL),
+  title: {
+    default: "Trackerino — League of Legends Stats",
+    template: "%s — Trackerino",
+  },
   description:
     "Track League of Legends stats, match history, ranked progress, champion mastery, and live games for any summoner.",
   keywords: ["League of Legends", "LoL", "stats", "tracker", "match history", "ranked", "Trackerino"],
+  openGraph: {
+    type: "website",
+    siteName: "Trackerino",
+    title: "Trackerino — League of Legends Stats",
+    description:
+      "Search any summoner to view ranked stats, match history, champion performance, and live games.",
+    url: BASE_URL,
+    locale: "en_US",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Trackerino — League of Legends Stats",
+    description:
+      "Search any summoner to view ranked stats, match history, champion performance, and live games.",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export default function RootLayout({
