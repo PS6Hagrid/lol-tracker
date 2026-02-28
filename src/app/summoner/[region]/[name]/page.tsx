@@ -14,6 +14,7 @@ import RankCard from "@/components/RankCard";
 import LPGraph from "@/components/LPGraph";
 import TabNavigation from "@/components/TabNavigation";
 import SummonerHeader from "@/components/SummonerHeader";
+import UpdateButton from "@/components/UpdateButton";
 
 interface PageProps {
   params: Promise<{ region: string; name: string }>;
@@ -208,7 +209,12 @@ export default async function SummonerProfilePage({ params }: PageProps) {
   return (
     <div className="mx-auto max-w-5xl px-4 py-6">
       {/* ── Summoner Header ── */}
-      <SummonerHeader summoner={summoner} regionLabel={regionLabel} rankedStats={rankedStats} />
+      <SummonerHeader
+        summoner={summoner}
+        regionLabel={regionLabel}
+        rankedStats={rankedStats}
+        actions={<UpdateButton region={region} name={name} />}
+      />
 
       {/* ── Tab Navigation ── */}
       <TabNavigation basePath={basePath} />

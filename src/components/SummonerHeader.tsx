@@ -64,9 +64,11 @@ interface SummonerHeaderProps {
   };
   regionLabel: string;
   rankedStats?: LeagueEntryDTO[];
+  /** Slot for client-side interactive elements (e.g. UpdateButton) */
+  actions?: React.ReactNode;
 }
 
-export default function SummonerHeader({ summoner, regionLabel, rankedStats }: SummonerHeaderProps) {
+export default function SummonerHeader({ summoner, regionLabel, rankedStats, actions }: SummonerHeaderProps) {
   const soloQueue = rankedStats?.find((e) => e.queueType === "RANKED_SOLO_5x5") ?? null;
   const flexQueue = rankedStats?.find((e) => e.queueType === "RANKED_FLEX_SR") ?? null;
 
@@ -87,11 +89,14 @@ export default function SummonerHeader({ summoner, regionLabel, rankedStats }: S
       </div>
 
       {/* Name + Region + Rank badges */}
-      <div className="text-center sm:text-left">
-        <h1 className="text-2xl font-bold text-white sm:text-3xl">
-          {summoner.gameName}
-          <span className="text-gray-500">#{summoner.tagLine}</span>
-        </h1>
+      <div className="min-w-0 flex-1 text-center sm:text-left">
+        <div className="flex flex-col items-center gap-2 sm:flex-row sm:items-baseline sm:gap-3">
+          <h1 className="text-2xl font-bold text-white sm:text-3xl">
+            {summoner.gameName}
+            <span className="text-gray-500">#{summoner.tagLine}</span>
+          </h1>
+          {actions && <div className="flex-shrink-0">{actions}</div>}
+        </div>
         <div className="mt-1.5 flex flex-wrap items-center justify-center gap-2 sm:justify-start">
           <span className="rounded-md bg-cyan/10 px-2 py-0.5 text-xs font-medium text-cyan">
             {regionLabel}

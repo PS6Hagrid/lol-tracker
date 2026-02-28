@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useRef, useEffect } from "react";
+import { useState, useMemo, useRef, useEffect, useCallback } from "react";
 import type { MatchDTO } from "@/types/riot";
 import MatchCard from "@/components/MatchCard";
 import { getChampionIconUrl } from "@/lib/constants";
@@ -8,6 +8,8 @@ import { getChampionIconUrl } from "@/lib/constants";
 interface MatchHistoryListProps {
   matches: MatchDTO[];
   summonerPuuid: string;
+  region?: string;
+  puuid?: string;
 }
 
 type FilterMode = "all" | "wins" | "losses";
@@ -27,15 +29,56 @@ function findPlayer(match: MatchDTO, puuid: string) {
 }
 
 export default function MatchHistoryList({
-  matches,
+  matches: initialMatches,
   summonerPuuid,
+  region,
+  puuid,
 }: MatchHistoryListProps) {
+  const [extraMatches, setExtraMatches] = useState<MatchDTO[]>([]);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [filter, setFilter] = useState<FilterMode>("all");
   const [queueFilter, setQueueFilter] = useState<QueueFilter>("all");
   const [championFilter, setChampionFilter] = useState<string>("all");
   const [championSearch, setChampionSearch] = useState("");
   const [championDropdownOpen, setChampionDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Combine server-loaded + client-loaded matches
+  const matches = useMemo(
+    () => [...initialMatches, ...extraMatches],
+    [initialMatches, extraMatches],
+  );
+
+  // Load more matches from the API
+  const loadMore = useCallback(async () => {
+    if (!region || !puuid || isLoadingMore || !hasMore) return;
+    setIsLoadingMore(true);
+    setLoadError(null);
+    try {
+      const start = initialMatches.length + extraMatches.length;
+      const res = await fetch(
+        `/api/matches/${region}/${puuid}?start=${start}&count=10`,
+      );
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        throw new Error(body.error ?? "Failed to load more matches");
+      }
+      const data = await res.json();
+      const newMatches: MatchDTO[] = data.matches ?? [];
+      if (newMatches.length === 0) {
+        setHasMore(false);
+      } else {
+        setExtraMatches((prev) => [...prev, ...newMatches]);
+        if (newMatches.length < 10) setHasMore(false);
+      }
+    } catch (err) {
+      setLoadError(err instanceof Error ? err.message : "Failed to load more");
+    } finally {
+      setIsLoadingMore(false);
+    }
+  }, [region, puuid, isLoadingMore, hasMore, initialMatches.length, extraMatches.length]);
 
   // Close dropdown on click outside
   useEffect(() => {
@@ -276,6 +319,62 @@ export default function MatchHistoryList({
           </div>
         )}
       </div>
+
+      {/* Load More */}
+      {region && puuid && hasMore && (
+        <div className="mt-4 flex flex-col items-center gap-2">
+          {loadError && (
+            <p className="text-xs text-red-400">{loadError}</p>
+          )}
+          <button
+            onClick={loadMore}
+            disabled={isLoadingMore}
+            className="group flex items-center gap-2 rounded-xl border border-gray-700/50 bg-gray-900/80 px-6 py-3 text-sm font-medium text-gray-300 backdrop-blur-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-cyan/30 hover:text-white hover:shadow-lg disabled:pointer-events-none disabled:opacity-50"
+          >
+            {isLoadingMore ? (
+              <>
+                <svg
+                  className="h-4 w-4 animate-spin"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  />
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+                  />
+                </svg>
+                Loading…
+              </>
+            ) : (
+              <>
+                <svg
+                  className="h-4 w-4 transition-transform duration-200 group-hover:translate-y-0.5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M19 9l-7 7-7-7"
+                  />
+                </svg>
+                Load More Matches
+              </>
+            )}
+          </button>
+        </div>
+      )}
     </div>
   );
 }

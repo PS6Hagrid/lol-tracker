@@ -3,8 +3,68 @@
 /** Data Dragon CDN base URL */
 export const DDRAGON_BASE_URL = "https://ddragon.leagueoflegends.com";
 
-/** Current game version for Data Dragon assets */
+/** Fallback game version (used while fetching / in client components) */
 export const GAME_VERSION = "14.24.1";
+
+/** Cached latest game version from DDragon API */
+let _cachedVersion: string | null = null;
+let _cacheExpiry = 0;
+
+/**
+ * Get the latest game version from DDragon API.
+ * Caches for 1 hour to minimise requests. Falls back to GAME_VERSION.
+ */
+export async function getLatestGameVersion(): Promise<string> {
+  if (_cachedVersion && Date.now() < _cacheExpiry) return _cachedVersion;
+  try {
+    const res = await fetch(`${DDRAGON_BASE_URL}/api/versions.json`, {
+      next: { revalidate: 3600 },
+    });
+    if (res.ok) {
+      const versions: string[] = await res.json();
+      _cachedVersion = versions[0] ?? GAME_VERSION;
+      _cacheExpiry = Date.now() + 3_600_000;
+      return _cachedVersion;
+    }
+  } catch { /* fall through */ }
+  return _cachedVersion ?? GAME_VERSION;
+}
+
+/** Summoner Spell ID → name for DDragon icon URL */
+export const SUMMONER_SPELLS: Record<number, string> = {
+  1: "SummonerBoost",       // Cleanse
+  3: "SummonerExhaust",     // Exhaust
+  4: "SummonerFlash",       // Flash
+  6: "SummonerHaste",       // Ghost
+  7: "SummonerHeal",        // Heal
+  11: "SummonerSmite",      // Smite
+  12: "SummonerTeleport",   // Teleport
+  14: "SummonerDot",        // Ignite
+  21: "SummonerBarrier",    // Barrier
+  32: "SummonerSnowball",   // Mark (ARAM)
+};
+
+/** Get summoner spell icon URL */
+export function getSummonerSpellIconUrl(spellId: number): string {
+  const name = SUMMONER_SPELLS[spellId] ?? "SummonerFlash";
+  return `${DDRAGON_BASE_URL}/cdn/${GAME_VERSION}/img/spell/${name}.png`;
+}
+
+/** Rune style ID → Community Dragon icon path */
+const RUNE_STYLE_ICONS: Record<number, string> = {
+  8000: "7201_precision",
+  8100: "7200_domination",
+  8200: "7202_sorcery",
+  8300: "7203_whimsy",
+  8400: "7204_resolve",
+};
+
+/** Get rune style icon URL from Community Dragon */
+export function getRuneStyleIconUrl(styleId: number): string {
+  const path = RUNE_STYLE_ICONS[styleId];
+  if (!path) return "";
+  return `https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/perk-images/styles/${path}.png`;
+}
 
 /** All LoL regions with display labels */
 export const REGIONS = [

@@ -59,6 +59,10 @@ export interface MatchParticipantDTO {
   lane: string;
   win: boolean;
 
+  // Summoner Spells
+  summoner1Id: number;
+  summoner2Id: number;
+
   // KDA
   kills: number;
   deaths: number;

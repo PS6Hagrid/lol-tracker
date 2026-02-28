@@ -2,6 +2,7 @@ import { getDataService } from "@/lib/data-service";
 import { REGIONS } from "@/lib/constants";
 import TabNavigation from "@/components/TabNavigation";
 import SummonerHeader from "@/components/SummonerHeader";
+import UpdateButton from "@/components/UpdateButton";
 import MatchHistoryList from "@/components/MatchHistoryList";
 import KDAChart from "@/components/KDAChart";
 import type { MatchDTO, LeagueEntryDTO } from "@/types/riot";
@@ -87,7 +88,12 @@ export default async function MatchHistoryPage({ params }: PageProps) {
   return (
     <div className="mx-auto max-w-5xl px-4 py-6">
       {/* Summoner Header */}
-      <SummonerHeader summoner={summoner} regionLabel={regionLabel} rankedStats={rankedStats} />
+      <SummonerHeader
+        summoner={summoner}
+        regionLabel={regionLabel}
+        rankedStats={rankedStats}
+        actions={<UpdateButton region={region} name={name} />}
+      />
 
       {/* Tab Navigation */}
       <TabNavigation basePath={basePath} />
@@ -107,6 +113,8 @@ export default async function MatchHistoryPage({ params }: PageProps) {
           <MatchHistoryList
             matches={matches}
             summonerPuuid={summoner.puuid}
+            region={region}
+            puuid={summoner.puuid}
           />
         </section>
       </div>

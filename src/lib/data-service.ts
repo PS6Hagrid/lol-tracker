@@ -32,6 +32,7 @@ export interface DataService {
     region: string,
     puuid: string,
     count?: number,
+    start?: number,
   ): Promise<string[]>;
 
   /** Fetch full match details by match ID */

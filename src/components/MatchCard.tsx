@@ -2,7 +2,12 @@
 
 import { useState } from "react";
 import type { MatchDTO, MatchParticipantDTO } from "@/types/riot";
-import { getChampionIconUrl, getItemIconUrl } from "@/lib/constants";
+import {
+  getChampionIconUrl,
+  getItemIconUrl,
+  getSummonerSpellIconUrl,
+  getRuneStyleIconUrl,
+} from "@/lib/constants";
 
 interface MatchCardProps {
   match: MatchDTO;
@@ -78,10 +83,13 @@ export default function MatchCard({ match, summonerPuuid }: MatchCardProps) {
       ? "Perfect"
       : ((player.kills + player.assists) / player.deaths).toFixed(2);
 
+  const isRemake = match.info.gameDuration < 300;
   const items = [
     player.item0, player.item1, player.item2,
     player.item3, player.item4, player.item5, player.item6,
   ];
+  const keystoneId = player.perks?.styles?.[0]?.selections?.[0]?.perk;
+  const subStyleId = player.perks?.styles?.[1]?.style;
 
   const blueTeam = match.info.participants.filter((p) => p.teamId === 100);
   const redTeam = match.info.participants.filter((p) => p.teamId === 200);
@@ -95,9 +103,11 @@ export default function MatchCard({ match, summonerPuuid }: MatchCardProps) {
   return (
     <div
       className={`overflow-hidden rounded-xl border transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg ${
-        win
-          ? "border-green-700/30 bg-green-900/20"
-          : "border-red-700/30 bg-red-900/20"
+        isRemake
+          ? "border-gray-700/30 bg-gray-900/20"
+          : win
+            ? "border-green-700/30 bg-green-900/20"
+            : "border-red-700/30 bg-red-900/20"
       }`}
     >
       {/* ── Compact View ── */}
@@ -112,8 +122,8 @@ export default function MatchCard({ match, summonerPuuid }: MatchCardProps) {
           }`}
         />
 
-        {/* Champion icon */}
-        <div className="relative flex-shrink-0">
+        {/* Champion icon + Spells + Runes */}
+        <div className="flex flex-shrink-0 items-center gap-1">
           <img
             src={getChampionIconUrl(player.championName)}
             alt={player.championName}
@@ -121,6 +131,44 @@ export default function MatchCard({ match, summonerPuuid }: MatchCardProps) {
             height={48}
             className="rounded-lg"
           />
+          {/* Summoner Spells */}
+          <div className="flex flex-col gap-0.5">
+            <img
+              src={getSummonerSpellIconUrl(player.summoner1Id)}
+              alt="Spell 1"
+              width={22}
+              height={22}
+              className="rounded"
+            />
+            <img
+              src={getSummonerSpellIconUrl(player.summoner2Id)}
+              alt="Spell 2"
+              width={22}
+              height={22}
+              className="rounded"
+            />
+          </div>
+          {/* Runes (primary + sub style) */}
+          <div className="hidden flex-col gap-0.5 sm:flex">
+            {player.perks?.styles?.[0]?.style && (
+              <img
+                src={getRuneStyleIconUrl(player.perks.styles[0].style)}
+                alt="Primary"
+                width={22}
+                height={22}
+                className="rounded"
+              />
+            )}
+            {subStyleId && (
+              <img
+                src={getRuneStyleIconUrl(subStyleId)}
+                alt="Sub Style"
+                width={22}
+                height={22}
+                className="rounded opacity-60"
+              />
+            )}
+          </div>
         </div>
 
         {/* KDA */}
@@ -185,8 +233,16 @@ export default function MatchCard({ match, summonerPuuid }: MatchCardProps) {
 
         {/* Game info */}
         <div className="flex flex-shrink-0 flex-col items-end text-xs text-gray-400">
-          <span className={`font-semibold ${win ? "text-green-400" : "text-red-400"}`}>
-            {win ? "Victory" : "Defeat"}
+          <span
+            className={`font-semibold ${
+              isRemake
+                ? "text-gray-400"
+                : win
+                  ? "text-green-400"
+                  : "text-red-400"
+            }`}
+          >
+            {isRemake ? "Remake" : win ? "Victory" : "Defeat"}
           </span>
           <span>{formatDuration(match.info.gameDuration)}</span>
           <span>{timeAgo(match.info.gameCreation)}</span>

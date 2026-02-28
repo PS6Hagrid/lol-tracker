@@ -2,6 +2,7 @@ import { getDataService } from "@/lib/data-service";
 import { REGIONS } from "@/lib/constants";
 import TabNavigation from "@/components/TabNavigation";
 import SummonerHeader from "@/components/SummonerHeader";
+import UpdateButton from "@/components/UpdateButton";
 import ChampionGrid from "@/components/ChampionGrid";
 import type { ChampionStatRow } from "@/components/ChampionGrid";
 import type { MatchDTO, ChampionMasteryDTO, LeagueEntryDTO } from "@/types/riot";
@@ -242,7 +243,12 @@ export default async function ChampionsPage({ params }: PageProps) {
   return (
     <div className="mx-auto max-w-5xl px-4 py-6">
       {/* Summoner Header */}
-      <SummonerHeader summoner={summoner} regionLabel={regionLabel} rankedStats={rankedStats} />
+      <SummonerHeader
+        summoner={summoner}
+        regionLabel={regionLabel}
+        rankedStats={rankedStats}
+        actions={<UpdateButton region={region} name={name} />}
+      />
 
       {/* Tab Navigation */}
       <TabNavigation basePath={basePath} />

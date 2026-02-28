@@ -175,10 +175,15 @@ export class RiotApiService implements DataService {
     region: string,
     puuid: string,
     count: number = 20,
+    start: number = 0,
   ): Promise<string[]> {
     // Cache 1 min — new matches appear frequently
+    const params = new URLSearchParams({
+      count: String(count),
+      start: String(start),
+    });
     return this.riotFetch<string[]>(
-      `${this.routingUrl(region)}/lol/match/v5/matches/by-puuid/${puuid}/ids?count=${count}`,
+      `${this.routingUrl(region)}/lol/match/v5/matches/by-puuid/${puuid}/ids?${params}`,
       60,
     );
   }

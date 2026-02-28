@@ -314,10 +314,11 @@ export class MockDataService implements DataService {
     region: string,
     puuid: string,
     count: number = 20,
+    start: number = 0,
   ): Promise<string[]> {
     const routingPrefix = region.toUpperCase().replace(/[0-9]/g, "");
     const ids: string[] = [];
-    for (let i = 0; i < count; i++) {
+    for (let i = start; i < start + count; i++) {
       const hash = hashString(`match:${puuid}:${i}`);
       ids.push(`${routingPrefix}_${5000000000 + hash % 1000000}`);
     }
@@ -486,6 +487,8 @@ export class MockDataService implements DataService {
         item4: shuffledItems[4],
         item5: shuffledItems[5],
         item6: trinket,
+        summoner1Id: seededPick(rng, [4, 14, 12, 7, 3, 6, 11, 21, 1]),
+        summoner2Id: seededPick(rng, [4, 14, 12, 7, 3, 6, 11, 21, 1]),
         perks,
         doubleKills,
         tripleKills,

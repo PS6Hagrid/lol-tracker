@@ -3,7 +3,7 @@ import { getDataService } from "@/lib/data-service";
 import { prisma } from "@/lib/db";
 
 export async function GET(
-  _request: Request,
+  request: Request,
   { params }: { params: Promise<{ region: string; puuid: string }> },
 ) {
   try {
@@ -16,10 +16,15 @@ export async function GET(
       );
     }
 
+    // Support pagination via query params
+    const { searchParams } = new URL(request.url);
+    const count = Math.min(parseInt(searchParams.get("count") ?? "20", 10), 50);
+    const start = Math.max(parseInt(searchParams.get("start") ?? "0", 10), 0);
+
     const dataService = await getDataService();
 
-    // Fetch 20 match IDs
-    const matchIds = await dataService.getMatchHistory(region, puuid, 20);
+    // Fetch match IDs with pagination
+    const matchIds = await dataService.getMatchHistory(region, puuid, count, start);
 
     // Fetch details for each match
     const matches = await Promise.all(
