@@ -33,9 +33,9 @@ function SummonerLink({ s }: { s: StoredSummoner }) {
         </div>
       )}
       <div className="min-w-0 flex-1">
-        <p className="truncate text-sm font-medium text-gray-200">
-          {s.gameName}
-          <span className="text-gray-500">#{s.tagLine}</span>
+        <p className="text-sm font-medium text-gray-200">
+          <span className="truncate">{s.gameName}</span>
+          <span className="flex-shrink-0 text-gray-500">#{s.tagLine}</span>
         </p>
       </div>
       <span className="rounded bg-cyan/10 px-1.5 py-0.5 text-[9px] font-medium text-cyan">

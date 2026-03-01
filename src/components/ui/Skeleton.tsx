@@ -4,11 +4,11 @@ interface SkeletonProps {
   className?: string;
 }
 
-/** Generic rectangular skeleton block. */
+/** Generic rectangular skeleton block with shimmer. */
 export function Skeleton({ className = "" }: SkeletonProps) {
   return (
     <div
-      className={`animate-pulse rounded bg-gray-800/50 ${className}`}
+      className={`animate-pulse rounded bg-gray-800/50 animate-shimmer ${className}`}
       aria-hidden="true"
     />
   );
@@ -18,7 +18,7 @@ export function Skeleton({ className = "" }: SkeletonProps) {
 export function SkeletonCircle({ className = "" }: SkeletonProps) {
   return (
     <div
-      className={`animate-pulse rounded-full bg-gray-800/50 ${className}`}
+      className={`animate-pulse rounded-full bg-gray-800/50 animate-shimmer ${className}`}
       aria-hidden="true"
     />
   );
@@ -28,7 +28,7 @@ export function SkeletonCircle({ className = "" }: SkeletonProps) {
 export function SkeletonText({ className = "" }: SkeletonProps) {
   return (
     <div
-      className={`h-4 animate-pulse rounded bg-gray-800/50 ${className}`}
+      className={`h-4 animate-pulse rounded bg-gray-800/50 animate-shimmer ${className}`}
       aria-hidden="true"
     />
   );

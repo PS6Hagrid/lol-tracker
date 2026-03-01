@@ -131,6 +131,8 @@ export default function MatchCard({ match, summonerPuuid }: MatchCardProps) {
       {/* ── Compact View ── */}
       <button
         onClick={() => setExpanded(!expanded)}
+        aria-expanded={expanded}
+        aria-label={`${player.championName} - ${win ? "Victory" : "Defeat"} - ${player.kills}/${player.deaths}/${player.assists} - Click to ${expanded ? "collapse" : "expand"} details`}
         className="flex w-full items-center gap-3 p-3 text-left transition-all duration-200 hover:bg-white/5 sm:gap-4 sm:p-4"
       >
         {/* Win/Loss indicator bar */}

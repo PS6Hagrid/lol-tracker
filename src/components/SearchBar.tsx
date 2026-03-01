@@ -210,9 +210,9 @@ export default function SearchBar() {
                   className="rounded-lg border border-gray-700"
                 />
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm font-medium">
-                    {s.gameName}
-                    <span className="text-gray-500">#{s.tagLine}</span>
+                  <p className="text-sm font-medium">
+                    <span className="truncate">{s.gameName}</span>
+                    <span className="flex-shrink-0 text-gray-500">#{s.tagLine}</span>
                   </p>
                   <p className="text-xs text-gray-500">Level {s.summonerLevel}</p>
                 </div>

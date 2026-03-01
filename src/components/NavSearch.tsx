@@ -191,9 +191,9 @@ export default function NavSearch() {
                     height={24}
                     className="rounded"
                   />
-                  <span className="truncate font-medium">
-                    {s.gameName}
-                    <span className="text-gray-500">#{s.tagLine}</span>
+                  <span className="font-medium">
+                    <span className="truncate">{s.gameName}</span>
+                    <span className="flex-shrink-0 text-gray-500">#{s.tagLine}</span>
                   </span>
                   <span className="ml-auto rounded bg-cyan/10 px-1.5 py-0.5 text-[9px] text-cyan">
                     {REGIONS.find((r) => r.value === s.region)?.label ?? s.region}

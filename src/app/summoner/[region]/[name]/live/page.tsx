@@ -1,6 +1,10 @@
 import { getDataService } from "@/lib/data-service";
-import { getProfileIconUrl, REGIONS } from "@/lib/constants";
+import { REGIONS } from "@/lib/constants";
 import TabNavigation from "@/components/TabNavigation";
+import SummonerHeader from "@/components/SummonerHeader";
+import UpdateButton from "@/components/UpdateButton";
+import FavoriteButton from "@/components/FavoriteButton";
+import ShareButton from "@/components/ShareButton";
 import LiveGamePanel from "@/components/LiveGamePanel";
 
 interface PageProps {
@@ -31,9 +35,11 @@ export default async function LiveGamePage({ params }: PageProps) {
   const dataService = await getDataService();
 
   let summoner;
+  let rankedStats;
 
   try {
     summoner = await dataService.getSummoner(region, gameName, tagLine);
+    rankedStats = await dataService.getRankedStats(region, summoner.puuid);
   } catch (error) {
     console.error("Error fetching summoner data:", error);
     return (
@@ -58,29 +64,18 @@ export default async function LiveGamePage({ params }: PageProps) {
   return (
     <div className="mx-auto max-w-5xl px-4 py-6">
       {/* Summoner Header */}
-      <div className="mb-6 flex items-center gap-4">
-        <div className="relative">
-          <img
-            src={getProfileIconUrl(summoner.profileIconId)}
-            alt="Profile Icon"
-            width={80}
-            height={80}
-            className="rounded-xl border-2 border-gray-700"
-          />
-          <span className="absolute -bottom-2 left-1/2 -translate-x-1/2 rounded-full bg-gray-800 px-2 py-0.5 text-xs font-bold text-gold">
-            {summoner.summonerLevel}
-          </span>
-        </div>
-        <div>
-          <h1 className="text-2xl font-bold text-white sm:text-3xl">
-            {summoner.gameName}
-            <span className="text-gray-500">#{summoner.tagLine}</span>
-          </h1>
-          <span className="mt-1 inline-block rounded-md bg-cyan/10 px-2 py-0.5 text-xs font-medium text-cyan">
-            {regionLabel}
-          </span>
-        </div>
-      </div>
+      <SummonerHeader
+        summoner={summoner}
+        regionLabel={regionLabel}
+        rankedStats={rankedStats}
+        actions={
+          <div className="flex items-center gap-1.5">
+            <UpdateButton region={region} name={name} />
+            <FavoriteButton gameName={summoner.gameName} tagLine={summoner.tagLine} region={region} profileIconId={summoner.profileIconId} />
+            <ShareButton />
+          </div>
+        }
+      />
 
       {/* Tab Navigation */}
       <TabNavigation basePath={basePath} />

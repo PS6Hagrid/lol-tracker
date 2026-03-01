@@ -156,10 +156,12 @@ export default function MatchHistoryList({
       {/* Filter controls + win/loss summary */}
       <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
         {/* Win/Loss filter */}
-        <div className="flex items-center gap-1 rounded-lg bg-gray-800/60 p-1">
+        <div className="flex items-center gap-1 rounded-lg bg-gray-800/60 p-1" role="tablist" aria-label="Filter by result">
           {(["all", "wins", "losses"] as const).map((mode) => (
             <button
               key={mode}
+              role="tab"
+              aria-selected={filter === mode}
               onClick={() => setFilter(mode)}
               className={`rounded-md px-3 py-1.5 text-xs font-medium capitalize transition-all duration-200 ${
                 filter === mode
@@ -173,10 +175,12 @@ export default function MatchHistoryList({
         </div>
 
         {/* Queue type filter */}
-        <div className="flex items-center gap-1 rounded-lg bg-gray-800/60 p-1">
+        <div className="flex items-center gap-1 rounded-lg bg-gray-800/60 p-1" role="tablist" aria-label="Filter by queue type">
           {(["all", "ranked", "normal", "aram"] as const).map((mode) => (
             <button
               key={mode}
+              role="tab"
+              aria-selected={queueFilter === mode}
               onClick={() => setQueueFilter(mode)}
               className={`rounded-md px-3 py-1.5 text-xs font-medium transition-all duration-200 ${
                 queueFilter === mode
