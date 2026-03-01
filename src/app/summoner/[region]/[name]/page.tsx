@@ -4,6 +4,7 @@ import { prisma } from "@/lib/db";
 import {
   getChampionIconUrl,
   REGIONS,
+  toTotalLP,
 } from "@/lib/constants";
 import {
   RiotApiNotFoundError,
@@ -124,12 +125,12 @@ export default async function SummonerProfilePage({ params }: PageProps) {
   try {
     summoner = await dataService.getSummoner(region, gameName, tagLine);
 
-    // Persist summoner to DB for search autocomplete
-    prisma.summoner.upsert({
+    // Persist summoner to DB (need the ID for rank snapshots + LP history)
+    const dbSummoner = await prisma.summoner.upsert({
       where: { gameName_tagLine_region: { gameName: summoner.gameName, tagLine: summoner.tagLine, region } },
       update: { puuid: summoner.puuid, profileIconId: summoner.profileIconId, summonerLevel: summoner.summonerLevel },
       create: { puuid: summoner.puuid, gameName: summoner.gameName, tagLine: summoner.tagLine, region, profileIconId: summoner.profileIconId, summonerLevel: summoner.summonerLevel },
-    }).catch(() => {}); // Fire-and-forget, don't block page render
+    }).catch(() => null);
 
     // Fetch ranked stats, match history, and champion masteries in parallel
     const [ranked, matchIds, masteryData] = await Promise.all([
@@ -140,6 +141,30 @@ export default async function SummonerProfilePage({ params }: PageProps) {
 
     rankedStats = ranked;
     masteries = masteryData;
+
+    // Save rank snapshots (deduplicated: max 1 per 2 hours per queue)
+    if (dbSummoner) {
+      for (const entry of rankedStats) {
+        const TWO_HOURS_AGO = new Date(Date.now() - 2 * 60 * 60 * 1000);
+        const recent = await prisma.rankSnapshot.findFirst({
+          where: { summonerId: dbSummoner.id, queueType: entry.queueType, timestamp: { gte: TWO_HOURS_AGO } },
+          orderBy: { timestamp: "desc" },
+        });
+        if (!recent) {
+          prisma.rankSnapshot.create({
+            data: {
+              summonerId: dbSummoner.id,
+              queueType: entry.queueType,
+              tier: entry.tier,
+              rank: entry.rank,
+              lp: entry.leaguePoints,
+              wins: entry.wins,
+              losses: entry.losses,
+            },
+          }).catch(() => {}); // Fire-and-forget
+        }
+      }
+    }
 
     // Fetch match details — uses DB cache for known matches, API for new ones
     const ids = matchIds.slice(0, 10);
@@ -197,7 +222,35 @@ export default async function SummonerProfilePage({ params }: PageProps) {
 
   const soloQueue = rankedStats.find((e) => e.queueType === "RANKED_SOLO_5x5") ?? null;
   const flexQueue = rankedStats.find((e) => e.queueType === "RANKED_FLEX_SR") ?? null;
-  const currentLP = soloQueue?.leaguePoints ?? flexQueue?.leaguePoints ?? 0;
+
+  // Query LP history from DB for the graph
+  let lpHistory: { tier: string; rank: string; lp: number; totalLP: number; timestamp: string }[] = [];
+  {
+    const dbSum = await prisma.summoner.findFirst({
+      where: { puuid: summoner.puuid },
+      select: { id: true },
+    }).catch(() => null);
+
+    if (dbSum) {
+      const ninetyDaysAgo = new Date(Date.now() - 90 * 24 * 60 * 60 * 1000);
+      const snapshots = await prisma.rankSnapshot.findMany({
+        where: {
+          summonerId: dbSum.id,
+          queueType: "RANKED_SOLO_5x5",
+          timestamp: { gte: ninetyDaysAgo },
+        },
+        orderBy: { timestamp: "asc" },
+      }).catch(() => []);
+
+      lpHistory = snapshots.map((s) => ({
+        tier: s.tier,
+        rank: s.rank,
+        lp: s.lp,
+        totalLP: toTotalLP(s.tier, s.rank, s.lp),
+        timestamp: `${s.timestamp.getMonth() + 1}/${s.timestamp.getDate()}`,
+      }));
+    }
+  }
 
   const regionLabel = REGIONS.find((r) => r.value === region)?.label ?? region;
   const basePath = `/summoner/${region}/${name}`;
@@ -249,7 +302,7 @@ export default async function SummonerProfilePage({ params }: PageProps) {
 
         {/* LP Graph */}
         <section>
-          <LPGraph data={[]} currentLP={currentLP} />
+          <LPGraph data={lpHistory} currentEntry={soloQueue ?? flexQueue} />
         </section>
 
         {/* Recent Performance + Role Distribution */}

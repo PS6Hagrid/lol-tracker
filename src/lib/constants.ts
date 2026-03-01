@@ -158,3 +158,34 @@ export function getProfileIconUrl(iconId: number): string {
 export function getRankEmblemUrl(tier: string): string {
   return `https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-shared-components/global/default/${tier.toLowerCase()}.png`;
 }
+
+// ─── LP Conversion Utilities ──────────────────────────────────────────────────
+
+const DIVISION_MAP: Record<string, number> = { IV: 0, III: 1, II: 2, I: 3 };
+
+/**
+ * Convert tier + division + LP into a single absolute LP number.
+ * Iron IV 0 LP = 0, Bronze IV 0 LP = 400, …, Diamond I 100 LP = 2800.
+ * Apex tiers (Master/GM/Challenger) all start at 2800 + LP.
+ */
+export function toTotalLP(tier: string, rank: string, lp: number): number {
+  const tierIndex = RANKED_TIERS.indexOf(tier.toUpperCase() as (typeof RANKED_TIERS)[number]);
+  if (tierIndex < 0) return lp;
+  // Apex tiers (Master, Grandmaster, Challenger) — single division
+  if (tierIndex >= 7) return 2800 + lp;
+  return tierIndex * 400 + (DIVISION_MAP[rank] ?? 0) * 100 + lp;
+}
+
+/**
+ * Get a formatted tier label from an absolute LP total.
+ * e.g. 1350 → "Gold II", 2900 → "Master"
+ */
+export function labelFromTotalLP(totalLP: number): string {
+  if (totalLP >= 2800) return "Master+";
+  const tierIndex = Math.min(Math.floor(totalLP / 400), 6);
+  const tierName = RANKED_TIERS[tierIndex] ?? "IRON";
+  const divLP = totalLP - tierIndex * 400;
+  const divIndex = Math.min(Math.floor(divLP / 100), 3);
+  const divNames = ["IV", "III", "II", "I"];
+  return `${tierName.charAt(0) + tierName.slice(1).toLowerCase()} ${divNames[divIndex]}`;
+}
