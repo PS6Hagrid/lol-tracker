@@ -250,3 +250,35 @@ export type QueueType =
   | "RANKED_SOLO_5x5"
   | "RANKED_FLEX_SR"
   | "RANKED_TFT_DOUBLE_UP";
+
+// ─── Live Game Enrichment ───────────────────────────────────────────────────
+
+/** Player tag types for live game analysis */
+export type PlayerTagType =
+  | "HOT_STREAK"
+  | "VETERAN"
+  | "FRESH_BLOOD"
+  | "OTP"
+  | "FIRST_TIMER";
+
+export interface PlayerTag {
+  type: PlayerTagType;
+  label: string;
+  emoji: string;
+  variant: "positive" | "warning" | "neutral";
+}
+
+/** Enriched participant with ranked data and player tags */
+export interface EnrichedParticipant extends CurrentGameParticipant {
+  ranked: { soloQueue: LeagueEntryDTO | null; flexQueue: LeagueEntryDTO | null } | null;
+  winrate: number | null;
+  totalGames: number | null;
+  tags: PlayerTag[];
+  championMasteryLevel: number | null;
+  championMasteryPoints: number | null;
+}
+
+/** Enriched live game with enriched participants */
+export interface EnrichedCurrentGameInfo extends Omit<CurrentGameInfo, "participants"> {
+  participants: EnrichedParticipant[];
+}
