@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import type { MatchDTO, MatchParticipantDTO } from "@/types/riot";
+import type { MatchDTO, MatchParticipantDTO, MatchTeamDTO } from "@/types/riot";
 import {
   getChampionIconUrl,
   getItemIconUrl,
@@ -64,6 +64,25 @@ function getMultiKillBadge(p: MatchParticipantDTO): {
   if (p.tripleKills > 0) return { label: "TRIPLE", className: "bg-cyan-500/20 text-cyan-400" };
   if (p.doubleKills > 0) return { label: "DOUBLE", className: "bg-blue-500/20 text-blue-400" };
   return null;
+}
+
+/** Kill participation: (kills + assists) / team total kills */
+function computeKillParticipation(player: MatchParticipantDTO, team: MatchParticipantDTO[]): number {
+  const teamKills = team.reduce((s, p) => s + p.kills, 0);
+  return teamKills === 0 ? 0 : Math.round(((player.kills + player.assists) / teamKills) * 100);
+}
+
+/** Gold share: player gold / team total gold */
+function computeGoldShare(player: MatchParticipantDTO, team: MatchParticipantDTO[]): number {
+  const teamGold = team.reduce((s, p) => s + p.goldEarned, 0);
+  return teamGold === 0 ? 0 : Math.round((player.goldEarned / teamGold) * 100);
+}
+
+/** CS per minute */
+function computeCsPerMin(player: MatchParticipantDTO, durationSec: number): string {
+  const cs = player.totalMinionsKilled + player.neutralMinionsKilled;
+  const min = durationSec / 60;
+  return min > 0 ? (cs / min).toFixed(1) : "0.0";
 }
 
 // ── Main Component ─────────────────────────────────────────────────────────────
@@ -364,8 +383,11 @@ export default function MatchCard({ match, summonerPuuid }: MatchCardProps) {
             <OverviewTab
               blueTeam={blueTeam}
               redTeam={redTeam}
+              blueTeamData={blueTeamData}
+              redTeamData={redTeamData}
               summonerPuuid={summonerPuuid}
               maxDamage={maxDamage}
+              gameDuration={match.info.gameDuration}
             />
           )}
           {activeTab === "damage" && (
@@ -413,13 +435,19 @@ export function MatchCardSkeleton() {
 function OverviewTab({
   blueTeam,
   redTeam,
+  blueTeamData,
+  redTeamData,
   summonerPuuid,
   maxDamage,
+  gameDuration,
 }: {
   blueTeam: MatchParticipantDTO[];
   redTeam: MatchParticipantDTO[];
+  blueTeamData?: MatchTeamDTO;
+  redTeamData?: MatchTeamDTO;
   summonerPuuid: string;
   maxDamage: number;
+  gameDuration: number;
 }) {
   return (
     <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
@@ -429,6 +457,8 @@ function OverviewTab({
         maxDamage={maxDamage}
         teamLabel="Blue Side"
         teamColor="blue"
+        gameDuration={gameDuration}
+        teamData={blueTeamData}
       />
       <OverviewTeamTable
         participants={redTeam}
@@ -436,6 +466,8 @@ function OverviewTab({
         maxDamage={maxDamage}
         teamLabel="Red Side"
         teamColor="red"
+        gameDuration={gameDuration}
+        teamData={redTeamData}
       />
     </div>
   );
@@ -447,22 +479,53 @@ function OverviewTeamTable({
   maxDamage,
   teamLabel,
   teamColor,
+  gameDuration,
+  teamData,
 }: {
   participants: MatchParticipantDTO[];
   summonerPuuid: string;
   maxDamage: number;
   teamLabel: string;
   teamColor: "blue" | "red";
+  gameDuration: number;
+  teamData?: MatchTeamDTO;
 }) {
+  const teamKills = participants.reduce((s, p) => s + p.kills, 0);
+  const teamGold = participants.reduce((s, p) => s + p.goldEarned, 0);
+
   return (
     <div>
-      <h4
-        className={`mb-2 text-xs font-semibold uppercase tracking-wider ${
-          teamColor === "blue" ? "text-blue-400" : "text-red-400"
-        }`}
-      >
-        {teamLabel}
-      </h4>
+      {/* ── Team Header ── */}
+      <div className="mb-2 flex items-center gap-2">
+        {teamData && (
+          <span
+            className={`rounded px-1.5 py-0.5 text-[10px] font-bold uppercase ${
+              teamData.win
+                ? "bg-green-500/20 text-green-400"
+                : "bg-red-500/20 text-red-400"
+            }`}
+          >
+            {teamData.win ? "WIN" : "LOSS"}
+          </span>
+        )}
+        <h4
+          className={`text-xs font-semibold uppercase tracking-wider ${
+            teamColor === "blue" ? "text-blue-400" : "text-red-400"
+          }`}
+        >
+          {teamLabel}
+        </h4>
+        <span className="ml-auto flex items-center gap-3 text-[11px] text-gray-500">
+          <span>
+            <span className="text-gray-300">{teamKills}</span> kills
+          </span>
+          <span>
+            <span className="text-amber-400">{formatNumber(teamGold)}</span> gold
+          </span>
+        </span>
+      </div>
+
+      {/* ── Player Rows ── */}
       <div className="space-y-1">
         {participants.map((p, idx) => {
           const isSummoner = p.puuid === summonerPuuid;
@@ -471,6 +534,10 @@ function OverviewTeamTable({
             maxDamage > 0 ? (p.totalDamageDealtToChampions / maxDamage) * 100 : 0;
           const multiKill = getMultiKillBadge(p);
           const playerItems = [p.item0, p.item1, p.item2, p.item3, p.item4, p.item5, p.item6];
+          const kp = computeKillParticipation(p, participants);
+          const csMin = computeCsPerMin(p, gameDuration);
+          const goldShare = computeGoldShare(p, participants);
+          const keystoneStyleId = p.perks?.styles?.[0]?.style;
 
           return (
             <div
@@ -481,46 +548,110 @@ function OverviewTeamTable({
                   : "bg-gray-800/40"
               }`}
             >
-              {/* Row 1: Champion, Name, KDA, Multi-kill */}
-              <div className="flex items-center gap-2">
-                <img
-                  src={getChampionIconUrl(p.championName)}
-                  alt={p.championName}
-                  width={28}
-                  height={28}
-                  className="flex-shrink-0 rounded"
-                />
+              {/* Row 1: Champion + Spells + Rune | Name | KDA | KP | CS | Gold */}
+              <div className="flex items-center gap-1.5">
+                {/* Champion icon + Summoner Spells + Keystone Rune */}
+                <div className="flex flex-shrink-0 items-center gap-0.5">
+                  <img
+                    src={getChampionIconUrl(p.championName)}
+                    alt={p.championName}
+                    width={28}
+                    height={28}
+                    className="rounded"
+                  />
+                  <div className="flex flex-col gap-px">
+                    <img
+                      src={getSummonerSpellIconUrl(p.summoner1Id)}
+                      alt="D"
+                      width={14}
+                      height={14}
+                      className="rounded-sm"
+                    />
+                    <img
+                      src={getSummonerSpellIconUrl(p.summoner2Id)}
+                      alt="F"
+                      width={14}
+                      height={14}
+                      className="rounded-sm"
+                    />
+                  </div>
+                  {keystoneStyleId && (
+                    <img
+                      src={getRuneStyleIconUrl(keystoneStyleId)}
+                      alt="Rune"
+                      width={16}
+                      height={16}
+                      className="hidden rounded-sm opacity-70 sm:block"
+                    />
+                  )}
+                </div>
+
+                {/* Player name */}
                 <span
-                  className={`w-20 min-w-0 truncate ${
+                  className={`w-16 min-w-0 truncate sm:w-20 ${
                     isSummoner ? "font-semibold text-cyan-400" : "text-gray-300"
                   }`}
                 >
                   {p.summonerName || p.championName}
                 </span>
-                <span className="w-16 flex-shrink-0 text-center text-gray-400">
+
+                {/* KDA */}
+                <span className="w-14 flex-shrink-0 text-center text-gray-400 sm:w-16">
                   {p.kills}/{p.deaths}/{p.assists}
                 </span>
+
+                {/* Multikill badge */}
                 {multiKill && (
-                  <span className={`rounded px-1 py-0.5 text-[10px] font-bold ${multiKill.className}`}>
+                  <span
+                    className={`hidden rounded px-1 py-0.5 text-[10px] font-bold sm:inline ${multiKill.className}`}
+                  >
                     {multiKill.label}
                   </span>
                 )}
-                <span className="ml-auto flex-shrink-0 text-gray-500">{cs} CS</span>
-                <span className="flex-shrink-0 text-amber-400">{formatNumber(p.goldEarned)}</span>
+
+                {/* KP% — hidden on mobile */}
+                <span
+                  className="hidden w-8 flex-shrink-0 text-center text-purple-400 md:inline"
+                  title="Kill Participation"
+                >
+                  {kp}%
+                </span>
+
+                {/* CS + CS/min — hidden on mobile */}
+                <span
+                  className="hidden w-16 flex-shrink-0 text-center text-gray-400 md:inline"
+                  title="CS (CS/min)"
+                >
+                  {cs}{" "}
+                  <span className="text-gray-600">({csMin})</span>
+                </span>
+
+                {/* Gold share — hidden on smaller screens */}
+                <span
+                  className="hidden w-8 flex-shrink-0 text-center text-amber-400 lg:inline"
+                  title="Gold Share"
+                >
+                  {goldShare}%
+                </span>
+
+                {/* Gold amount — push right */}
+                <span className="ml-auto flex-shrink-0 text-amber-400">
+                  {formatNumber(p.goldEarned)}
+                </span>
               </div>
 
               {/* Row 2: Items + Damage bar */}
               <div className="mt-1 flex items-center gap-2">
-                {/* Items */}
+                {/* Items (22×22) */}
                 <div className="flex items-center gap-0.5">
                   {playerItems.map((itemId, i) => (
-                    <div key={i} className="h-6 w-6 overflow-hidden rounded">
+                    <div key={i} className="h-[22px] w-[22px] overflow-hidden rounded">
                       {itemId > 0 ? (
                         <img
                           src={getItemIconUrl(itemId)}
                           alt={`Item ${itemId}`}
-                          width={24}
-                          height={24}
+                          width={22}
+                          height={22}
                           className="h-full w-full object-cover"
                         />
                       ) : (
