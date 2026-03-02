@@ -3,6 +3,7 @@ import { getDataService } from "@/lib/data-service";
 import { prisma } from "@/lib/db";
 import {
   getChampionIconUrl,
+  getChampionNameById,
   REGIONS,
   toTotalLP,
 } from "@/lib/constants";
@@ -366,48 +367,3 @@ export default async function SummonerProfilePage({ params }: PageProps) {
   );
 }
 
-/**
- * Simple reverse lookup for champion name by ID.
- * In a full app this would come from Data Dragon champion data.
- * For now, map common IDs used in the mock service.
- */
-function getChampionNameById(championId: number): string {
-  const MAP: Record<number, string> = {
-    103: "Ahri",
-    84: "Akali",
-    12: "Alistar",
-    32: "Amumu",
-    22: "Ashe",
-    53: "Blitzcrank",
-    63: "Brand",
-    51: "Caitlyn",
-    122: "Darius",
-    119: "Draven",
-    81: "Ezreal",
-    114: "Fiora",
-    86: "Garen",
-    104: "Graves",
-    39: "Irelia",
-    202: "Jhin",
-    222: "Jinx",
-    145: "Kaisa",
-    55: "Katarina",
-    64: "LeeSin",
-    99: "Lux",
-    21: "MissFortune",
-    25: "Morgana",
-    111: "Nautilus",
-    61: "Orianna",
-    555: "Pyke",
-    92: "Riven",
-    235: "Senna",
-    412: "Thresh",
-    4: "TwistedFate",
-    110: "Varus",
-    67: "Vayne",
-    254: "Vi",
-    157: "Yasuo",
-    238: "Zed",
-  };
-  return MAP[championId] ?? `Champion${championId}`;
-}

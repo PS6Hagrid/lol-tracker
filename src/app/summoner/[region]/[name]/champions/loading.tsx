@@ -27,7 +27,24 @@ export default function ChampionsLoading() {
       </div>
 
       {/* Content */}
-      <div className="mt-6 space-y-4">
+      <div className="mt-6 space-y-6">
+        {/* Highlight card skeletons */}
+        <div>
+          <SkeletonText className="mb-3 h-6 w-24" />
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <SkeletonCard key={i} className="flex items-center gap-3 p-4">
+                <Skeleton className="h-12 w-12 flex-shrink-0 rounded-lg" />
+                <div className="flex-1 space-y-2">
+                  <Skeleton className="h-3 w-16" />
+                  <Skeleton className="h-4 w-24" />
+                  <Skeleton className="h-3 w-20" />
+                </div>
+              </SkeletonCard>
+            ))}
+          </div>
+        </div>
+
         <SkeletonText className="h-6 w-44" />
         <SkeletonText className="h-4 w-64" />
 

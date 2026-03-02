@@ -159,6 +159,52 @@ export function getRankEmblemUrl(tier: string): string {
   return `https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-shared-components/global/default/${tier.toLowerCase()}.png`;
 }
 
+// ─── Champion ID to Name Mapping ─────────────────────────────────────────────
+
+/** Map champion numeric IDs to their internal Data Dragon names. */
+export const CHAMPION_ID_TO_NAME: Record<number, string> = {
+  103: "Ahri",
+  84: "Akali",
+  12: "Alistar",
+  32: "Amumu",
+  22: "Ashe",
+  53: "Blitzcrank",
+  63: "Brand",
+  51: "Caitlyn",
+  122: "Darius",
+  119: "Draven",
+  81: "Ezreal",
+  114: "Fiora",
+  86: "Garen",
+  104: "Graves",
+  39: "Irelia",
+  202: "Jhin",
+  222: "Jinx",
+  145: "Kaisa",
+  55: "Katarina",
+  64: "LeeSin",
+  99: "Lux",
+  21: "MissFortune",
+  25: "Morgana",
+  111: "Nautilus",
+  61: "Orianna",
+  555: "Pyke",
+  92: "Riven",
+  235: "Senna",
+  412: "Thresh",
+  4: "TwistedFate",
+  110: "Varus",
+  67: "Vayne",
+  254: "Vi",
+  157: "Yasuo",
+  238: "Zed",
+};
+
+/** Reverse-lookup a champion's Data Dragon name by numeric ID. */
+export function getChampionNameById(championId: number): string {
+  return CHAMPION_ID_TO_NAME[championId] ?? `Champion${championId}`;
+}
+
 // ─── LP Conversion Utilities ──────────────────────────────────────────────────
 
 const DIVISION_MAP: Record<string, number> = { IV: 0, III: 1, II: 2, I: 3 };

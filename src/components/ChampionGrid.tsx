@@ -17,6 +17,10 @@ export interface ChampionStatRow {
   avgCSPerMin: number;
   avgGoldPerMin: number;
   masteryLevel: number;
+  avgDamagePerMin: number;
+  avgVisionScore: number;
+  mostPlayedRole: string;
+  bestMultikill: string;
 }
 
 interface ChampionGridProps {
@@ -29,17 +33,21 @@ type SortKey =
   | "winrate"
   | "avgKDA"
   | "avgCSPerMin"
-  | "avgGoldPerMin";
+  | "avgGoldPerMin"
+  | "avgDamagePerMin"
+  | "avgVisionScore";
 
 type SortDir = "asc" | "desc";
 
-const COLUMN_HEADERS: { key: SortKey; label: string; shortLabel?: string }[] = [
+const COLUMN_HEADERS: { key: SortKey; label: string; shortLabel?: string; hideClass?: string }[] = [
   { key: "championName", label: "Champion" },
   { key: "gamesPlayed", label: "Games", shortLabel: "G" },
   { key: "winrate", label: "Winrate", shortLabel: "WR" },
   { key: "avgKDA", label: "KDA" },
-  { key: "avgCSPerMin", label: "CS/min" },
-  { key: "avgGoldPerMin", label: "Gold/min" },
+  { key: "avgCSPerMin", label: "CS/min", hideClass: "hidden lg:table-cell" },
+  { key: "avgGoldPerMin", label: "Gold/min", hideClass: "hidden lg:table-cell" },
+  { key: "avgDamagePerMin", label: "Dmg/min", hideClass: "hidden lg:table-cell" },
+  { key: "avgVisionScore", label: "Vision", hideClass: "hidden lg:table-cell" },
 ];
 
 export default function ChampionGrid({ champions }: ChampionGridProps) {
@@ -103,13 +111,20 @@ export default function ChampionGrid({ champions }: ChampionGridProps) {
               <th
                 key={col.key}
                 onClick={() => handleSort(col.key)}
-                className="cursor-pointer select-none px-3 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-400 transition-colors hover:text-gray-200"
+                className={`cursor-pointer select-none px-3 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-400 transition-colors hover:text-gray-200 ${col.hideClass ?? ""}`}
               >
                 <span className="hidden sm:inline">{col.label}</span>
                 <span className="sm:hidden">{col.shortLabel ?? col.label}</span>
                 <SortIcon columnKey={col.key} />
               </th>
             ))}
+            {/* Non-sortable display columns */}
+            <th className="hidden px-3 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-400 xl:table-cell">
+              Role
+            </th>
+            <th className="hidden px-3 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-400 xl:table-cell">
+              Best
+            </th>
           </tr>
         </thead>
         <tbody>
@@ -204,13 +219,49 @@ export default function ChampionGrid({ champions }: ChampionGridProps) {
               </td>
 
               {/* CS/min */}
-              <td className="px-3 py-2.5 text-gray-300">
+              <td className="hidden px-3 py-2.5 text-gray-300 lg:table-cell">
                 {champ.avgCSPerMin.toFixed(1)}
               </td>
 
               {/* Gold/min */}
-              <td className="px-3 py-2.5 text-amber-400">
+              <td className="hidden px-3 py-2.5 text-amber-400 lg:table-cell">
                 {champ.avgGoldPerMin.toFixed(0)}
+              </td>
+
+              {/* Dmg/min */}
+              <td className="hidden px-3 py-2.5 text-orange-400 lg:table-cell">
+                {champ.avgDamagePerMin.toFixed(0)}
+              </td>
+
+              {/* Vision */}
+              <td className="hidden px-3 py-2.5 text-purple-400 lg:table-cell">
+                {champ.avgVisionScore.toFixed(1)}
+              </td>
+
+              {/* Role (xl only) */}
+              <td className="hidden px-3 py-2.5 text-xs text-gray-400 xl:table-cell">
+                {champ.mostPlayedRole || "\u2014"}
+              </td>
+
+              {/* Best Multikill (xl only) */}
+              <td className="hidden px-3 py-2.5 xl:table-cell">
+                {champ.bestMultikill !== "None" ? (
+                  <span
+                    className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${
+                      champ.bestMultikill === "Penta"
+                        ? "bg-amber-500/20 text-amber-400"
+                        : champ.bestMultikill === "Quadra"
+                          ? "bg-purple-500/20 text-purple-400"
+                          : champ.bestMultikill === "Triple"
+                            ? "bg-cyan-500/20 text-cyan-400"
+                            : "bg-gray-700/40 text-gray-400"
+                    }`}
+                  >
+                    {champ.bestMultikill}
+                  </span>
+                ) : (
+                  <span className="text-xs text-gray-600">{"\u2014"}</span>
+                )}
               </td>
             </tr>
           ))}
