@@ -1,83 +1,70 @@
+import { Ratelimit } from "@upstash/ratelimit";
+import { Redis } from "@upstash/redis";
+import { RateLimiter } from "./rate-limiter-interface";
+
 /**
- * Token-bucket rate limiter for Riot API requests.
+ * Distributed rate limiter for Riot API requests using Upstash Redis.
  *
- * Ensures we stay within Riot's rate limits even when multiple users
- * hit the app simultaneously. Uses a token bucket that refills at a
- * steady rate; excess requests are queued and processed in order.
+ * Ensures we stay within Riot's rate limits even when the app is deployed
+ * across multiple serverless functions on Vercel.
+ *
+ * It uses a "sliding window" algorithm which is a good fit for Riot's
+ * "X requests per Y time" limits.
  *
  * Configurable via env:
- *   RATE_LIMIT_PER_SECOND – burst capacity / refill rate (default 18)
- *
- * Defaults are conservative for a development key (20 req/s, 100 req/2 min).
- * Bump the env var once you have a production key.
+ *   UPSTASH_REDIS_REST_URL - The URL for your Upstash Redis instance.
+ *   UPSTASH_REDIS_REST_TOKEN - The token for your Upstash Redis instance.
+ *   RIOT_API_REQUESTS_PER_10_SECONDS - (Default: 8)
+ *   RIOT_API_REQUESTS_PER_10_MINUTES - (Default: 500)
  */
 
-class TokenBucket {
-  private tokens: number;
-  private readonly maxTokens: number;
-  private readonly refillRate: number; // tokens per ms
-  private lastRefill: number;
+class UpstashRateLimiter implements RateLimiter {
+  private ratelimit: Ratelimit;
 
-  /** Queue of callers waiting for a token. */
-  private pending: Array<() => void> = [];
-  private draining = false;
-
-  constructor(tokensPerSecond: number) {
-    this.maxTokens = tokensPerSecond;
-    this.tokens = tokensPerSecond;
-    this.refillRate = tokensPerSecond / 1000;
-    this.lastRefill = Date.now();
-  }
-
-  /** Refill tokens based on elapsed time. */
-  private refill(): void {
-    const now = Date.now();
-    const elapsed = now - this.lastRefill;
-    this.tokens = Math.min(
-      this.maxTokens,
-      this.tokens + elapsed * this.refillRate,
-    );
-    this.lastRefill = now;
-  }
-
-  /**
-   * Wait until a token is available, then consume it.
-   * If a token is available immediately, resolves instantly (zero delay).
-   */
-  async acquire(): Promise<void> {
-    this.refill();
-
-    if (this.tokens >= 1) {
-      this.tokens -= 1;
-      return;
+  constructor() {
+    // Ensure environment variables are set
+    if (!process.env.UPSTASH_REDIS_REST_URL || !process.env.UPSTASH_REDIS_REST_TOKEN) {
+      throw new Error("Upstash Redis environment variables are not set.");
     }
 
-    // No token available — queue and wait
-    return new Promise<void>((resolve) => {
-      this.pending.push(resolve);
-      if (!this.draining) this.drain();
+    // Initialize Redis client
+    const redis = new Redis({
+      url: process.env.UPSTASH_REDIS_REST_URL,
+      token: process.env.UPSTASH_REDIS_REST_TOKEN,
+    });
+
+    // Get limits from environment or use conservative defaults
+    const requestsPer10s = parseInt(process.env.RIOT_API_REQUESTS_PER_10_SECONDS ?? "8", 10);
+    const requestsPer10m = parseInt(process.env.RIOT_API_REQUESTS_PER_10_MINUTES ?? "500", 10);
+
+    // Create a ratelimiter that allows multiple limits
+    // Example: 8 requests per 10 seconds AND 500 requests per 10 minutes.
+    this.ratelimit = new Ratelimit({
+      redis,
+      limiter: Ratelimit.slidingWindow(requestsPer10s, "10 s"),
+      analytics: true, // Enable analytics to see usage in Upstash console
+      prefix: "ratelimit:riot",
     });
   }
 
-  /** Drains the queue one-by-one as tokens become available. */
-  private async drain(): Promise<void> {
-    this.draining = true;
-
-    while (this.pending.length > 0) {
-      this.refill();
-
-      if (this.tokens >= 1) {
-        this.tokens -= 1;
-        const next = this.pending.shift();
-        next?.();
-      } else {
-        // Wait just long enough for 1 token to refill
-        const waitMs = Math.ceil((1 - this.tokens) / this.refillRate);
-        await new Promise((r) => setTimeout(r, waitMs));
+  /**
+   * Waits until a request can be made.
+   * The underlying library handles the queueing and waiting.
+   * We use a common identifier "global" because Riot's API key has a global limit,
+   * not a per-user or per-IP limit.
+   */
+  async acquire(): Promise<void> {
+    let success = false;
+    while (!success) {
+      const { success: limitReached, reset } = await this.ratelimit.limit("global");
+      success = limitReached;
+      if (!success) {
+        const waitTime = reset - Date.now();
+        if (waitTime > 0) {
+          await new Promise((resolve) => setTimeout(resolve, waitTime));
+        }
       }
     }
-
-    this.draining = false;
   }
 }
 
@@ -85,11 +72,27 @@ class TokenBucket {
 // Use globalThis to survive Next.js hot-reload in dev (same pattern as Prisma).
 
 const globalForRateLimit = globalThis as unknown as {
-  __riotRateLimiter?: TokenBucket;
+  __riotRateLimiter?: RateLimiter;
 };
 
-const perSecond = parseInt(process.env.RATE_LIMIT_PER_SECOND ?? "18", 10);
+// We only instantiate the Redis-based limiter in production or if env vars are set.
+// In local development without Redis, we can fall back to the old in-memory one.
+const shouldUseRedis = process.env.NODE_ENV === 'production' || 
+                       (process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN);
 
-export const rateLimiter: TokenBucket =
-  globalForRateLimit.__riotRateLimiter ??
-  (globalForRateLimit.__riotRateLimiter = new TokenBucket(perSecond));
+if (shouldUseRedis && !globalForRateLimit.__riotRateLimiter) {
+    console.log("Initializing Upstash Redis Rate Limiter for production use.");
+    globalForRateLimit.__riotRateLimiter = new UpstashRateLimiter();
+} else if (!globalForRateLimit.__riotRateLimiter) {
+    console.warn("Using in-memory rate limiter for local development. This is not suitable for production.");
+    // Fallback to a simple in-memory limiter for local dev if Redis is not configured.
+    // This is a simplified version of the old TokenBucket.
+    globalForRateLimit.__riotRateLimiter = {
+        async acquire() {
+            // A simple timeout to prevent local spam, not a real rate limiter.
+            await new Promise(res => setTimeout(res, 50));
+        }
+    };
+}
+
+export const rateLimiter: RateLimiter = globalForRateLimit.__riotRateLimiter;

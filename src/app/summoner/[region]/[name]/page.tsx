@@ -1,28 +1,25 @@
+import { Suspense } from "react";
 import type { Metadata } from "next";
 import { getDataService } from "@/lib/data-service";
 import { prisma } from "@/lib/db";
-import {
-  getChampionIconUrl,
-  getChampionNameById,
-  REGIONS,
-  toTotalLP,
-} from "@/lib/constants";
+import { REGIONS } from "@/lib/constants";
 import {
   RiotApiNotFoundError,
   RiotApiRateLimitError,
+  RiotApiForbiddenError,
+  RiotApiServiceUnavailableError,
 } from "@/lib/riot-api-service";
-import type { LeagueEntryDTO, ChampionMasteryDTO } from "@/types/riot";
-import RankCard from "@/components/RankCard";
-import LPGraph from "@/components/LPGraph";
 import TabNavigation from "@/components/TabNavigation";
 import SummonerHeader from "@/components/SummonerHeader";
 import UpdateButton from "@/components/UpdateButton";
 import FavoriteButton from "@/components/FavoriteButton";
 import ShareButton from "@/components/ShareButton";
 import TrackVisit from "@/components/TrackVisit";
-import RecentPerformance from "@/components/RecentPerformance";
-import RoleDistribution from "@/components/RoleDistribution";
-import type { MatchDTO } from "@/types/riot";
+
+// Sections
+import RankedSection, { RankedSectionSkeleton } from "@/components/summoner/RankedSection";
+import RecentPerformanceSection, { RecentPerformanceSectionSkeleton } from "@/components/summoner/RecentPerformanceSection";
+import TopChampionsSection, { TopChampionsSectionSkeleton } from "@/components/summoner/TopChampionsSection";
 
 interface PageProps {
   params: Promise<{ region: string; name: string }>;
@@ -53,46 +50,6 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   };
 }
 
-/** Compute champion stats from recent matches for a given puuid */
-interface ChampionStat {
-  championName: string;
-  games: number;
-  wins: number;
-  losses: number;
-  winrate: number;
-}
-
-function getTopChampionsFromMatches(
-  matches: { info: { participants: { puuid: string; championName: string; win: boolean }[] } }[],
-  puuid: string,
-  count: number
-): ChampionStat[] {
-  const champMap = new Map<string, { games: number; wins: number }>();
-
-  for (const match of matches) {
-    const participant = match.info.participants.find((p) => p.puuid === puuid);
-    if (!participant) continue;
-
-    const existing = champMap.get(participant.championName) ?? { games: 0, wins: 0 };
-    existing.games++;
-    if (participant.win) existing.wins++;
-    champMap.set(participant.championName, existing);
-  }
-
-  const stats: ChampionStat[] = Array.from(champMap.entries())
-    .map(([championName, { games, wins }]) => ({
-      championName,
-      games,
-      wins,
-      losses: games - wins,
-      winrate: games > 0 ? (wins / games) * 100 : 0,
-    }))
-    .sort((a, b) => b.games - a.games)
-    .slice(0, count);
-
-  return stats;
-}
-
 export default async function SummonerProfilePage({ params }: PageProps) {
   const { region, name } = await params;
 
@@ -118,63 +75,18 @@ export default async function SummonerProfilePage({ params }: PageProps) {
   const dataService = await getDataService();
 
   let summoner;
-  let rankedStats: LeagueEntryDTO[] = [];
-  let topChampions: ChampionStat[] = [];
-  let masteries: ChampionMasteryDTO[] = [];
-  let recentMatches: MatchDTO[] = [];
+  let dbSummoner;
 
   try {
     summoner = await dataService.getSummoner(region, gameName, tagLine);
 
     // Persist summoner to DB (need the ID for rank snapshots + LP history)
-    const dbSummoner = await prisma.summoner.upsert({
+    dbSummoner = await prisma.summoner.upsert({
       where: { gameName_tagLine_region: { gameName: summoner.gameName, tagLine: summoner.tagLine, region } },
       update: { puuid: summoner.puuid, profileIconId: summoner.profileIconId, summonerLevel: summoner.summonerLevel },
       create: { puuid: summoner.puuid, gameName: summoner.gameName, tagLine: summoner.tagLine, region, profileIconId: summoner.profileIconId, summonerLevel: summoner.summonerLevel },
-    }).catch(() => null);
+    });
 
-    // Fetch ranked stats, match history, and champion masteries in parallel
-    const [ranked, matchIds, masteryData] = await Promise.all([
-      dataService.getRankedStats(region, summoner.puuid),
-      dataService.getMatchHistory(region, summoner.puuid, 10),
-      dataService.getChampionMasteries(region, summoner.puuid),
-    ]);
-
-    rankedStats = ranked;
-    masteries = masteryData;
-
-    // Save rank snapshots (deduplicated: max 1 per 2 hours per queue)
-    if (dbSummoner) {
-      for (const entry of rankedStats) {
-        const TWO_HOURS_AGO = new Date(Date.now() - 2 * 60 * 60 * 1000);
-        const recent = await prisma.rankSnapshot.findFirst({
-          where: { summonerId: dbSummoner.id, queueType: entry.queueType, timestamp: { gte: TWO_HOURS_AGO } },
-          orderBy: { timestamp: "desc" },
-        });
-        if (!recent) {
-          prisma.rankSnapshot.create({
-            data: {
-              summonerId: dbSummoner.id,
-              queueType: entry.queueType,
-              tier: entry.tier,
-              rank: entry.rank,
-              lp: entry.leaguePoints,
-              wins: entry.wins,
-              losses: entry.losses,
-            },
-          }).catch(() => {}); // Fire-and-forget
-        }
-      }
-    }
-
-    // Fetch match details — uses DB cache for known matches, API for new ones
-    const ids = matchIds.slice(0, 10);
-    const matches = dataService.getMatchDetailsBatch
-      ? await dataService.getMatchDetailsBatch(region, ids)
-      : await Promise.all(ids.map((id) => dataService.getMatchDetails(region, id)));
-
-    recentMatches = matches;
-    topChampions = getTopChampionsFromMatches(matches, summoner.puuid, 3);
   } catch (error) {
     console.error("Error fetching summoner data:", error);
 
@@ -190,10 +102,19 @@ export default async function SummonerProfilePage({ params }: PageProps) {
       title = "Too Many Requests";
       message = "The server is currently handling a lot of requests. Please wait a moment and try again.";
       icon = "⏳";
+    } else if (error instanceof RiotApiForbiddenError) {
+      title = "Access Denied";
+      message = "The API key is invalid or expired. Please contact the administrator.";
+      icon = "🚫";
+    } else if (error instanceof RiotApiServiceUnavailableError) {
+      title = "Riot API Unavailable";
+      message = "Riot services are currently down. Please try again later.";
+      icon = "🔌";
     } else if (error instanceof Error && error.message.includes("API key")) {
-      title = "Service Temporarily Unavailable";
-      message = "The Riot API connection is experiencing issues. Please try again later.";
-      icon = "🔧";
+        // Fallback for generic errors that might be key related
+        title = "Configuration Error";
+        message = "There is an issue with the API configuration.";
+        icon = "🔧";
     }
 
     return (
@@ -221,52 +142,8 @@ export default async function SummonerProfilePage({ params }: PageProps) {
     );
   }
 
-  const soloQueue = rankedStats.find((e) => e.queueType === "RANKED_SOLO_5x5") ?? null;
-  const flexQueue = rankedStats.find((e) => e.queueType === "RANKED_FLEX_SR") ?? null;
-
-  // Query LP history from DB for the graph
-  let lpHistory: { tier: string; rank: string; lp: number; totalLP: number; timestamp: string }[] = [];
-  {
-    const dbSum = await prisma.summoner.findFirst({
-      where: { puuid: summoner.puuid },
-      select: { id: true },
-    }).catch(() => null);
-
-    if (dbSum) {
-      const ninetyDaysAgo = new Date(Date.now() - 90 * 24 * 60 * 60 * 1000);
-      const snapshots = await prisma.rankSnapshot.findMany({
-        where: {
-          summonerId: dbSum.id,
-          queueType: "RANKED_SOLO_5x5",
-          timestamp: { gte: ninetyDaysAgo },
-        },
-        orderBy: { timestamp: "asc" },
-      }).catch(() => []);
-
-      lpHistory = snapshots.map((s) => ({
-        tier: s.tier,
-        rank: s.rank,
-        lp: s.lp,
-        totalLP: toTotalLP(s.tier, s.rank, s.lp),
-        timestamp: `${s.timestamp.getMonth() + 1}/${s.timestamp.getDate()}`,
-      }));
-    }
-  }
-
   const regionLabel = REGIONS.find((r) => r.value === region)?.label ?? region;
   const basePath = `/summoner/${region}/${name}`;
-
-  // Build top champions from masteries as a fallback when match-based data is sparse
-  const topChampionCards =
-    topChampions.length > 0
-      ? topChampions
-      : masteries.slice(0, 3).map((m) => ({
-          championName: getChampionNameById(m.championId),
-          games: Math.floor(m.championPoints / 1000),
-          wins: Math.floor((m.championPoints / 1000) * 0.55),
-          losses: Math.floor((m.championPoints / 1000) * 0.45),
-          winrate: 55,
-        }));
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-6">
@@ -277,7 +154,7 @@ export default async function SummonerProfilePage({ params }: PageProps) {
       <SummonerHeader
         summoner={summoner}
         regionLabel={regionLabel}
-        rankedStats={rankedStats}
+        rankedStats={undefined} // Pass undefined so header doesn't show "Unranked" badges prematurely
         actions={
           <div className="flex items-center gap-1.5">
             <UpdateButton region={region} name={name} />
@@ -292,78 +169,20 @@ export default async function SummonerProfilePage({ params }: PageProps) {
 
       {/* ── Overview Content ── */}
       <div className="animate-stagger mt-6 space-y-6">
-        {/* Ranked Cards */}
-        <section>
-          <h2 className="mb-3 text-lg font-semibold text-white">Ranked</h2>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <RankCard entry={soloQueue} queueType="RANKED_SOLO_5x5" />
-            <RankCard entry={flexQueue} queueType="RANKED_FLEX_SR" />
-          </div>
-        </section>
+        
+        <Suspense fallback={<RankedSectionSkeleton />}>
+          <RankedSection region={region} puuid={summoner.puuid} summonerId={dbSummoner.id} />
+        </Suspense>
 
-        {/* LP Graph */}
-        <section>
-          <LPGraph data={lpHistory} currentEntry={soloQueue ?? flexQueue} />
-        </section>
+        <Suspense fallback={<RecentPerformanceSectionSkeleton />}>
+          <RecentPerformanceSection region={region} puuid={summoner.puuid} />
+        </Suspense>
 
-        {/* Recent Performance + Role Distribution */}
-        {recentMatches.length > 0 && (
-          <section>
-            <h2 className="mb-3 text-lg font-semibold text-white">
-              Recent Performance
-            </h2>
-            <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-              <RecentPerformance matches={recentMatches} puuid={summoner.puuid} />
-              <RoleDistribution matches={recentMatches} puuid={summoner.puuid} />
-            </div>
-          </section>
-        )}
+        <Suspense fallback={<TopChampionsSectionSkeleton />}>
+          <TopChampionsSection region={region} puuid={summoner.puuid} />
+        </Suspense>
 
-        {/* Top Champions Preview */}
-        {topChampionCards.length > 0 && (
-          <section>
-            <h2 className="mb-3 text-lg font-semibold text-white">
-              Top Champions
-            </h2>
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-              {topChampionCards.map((champ) => (
-                <div
-                  key={champ.championName}
-                  className="flex items-center gap-3 rounded-xl border border-gray-700/50 bg-gray-900/80 p-4 backdrop-blur-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-gray-600/50 hover:shadow-lg"
-                >
-                  <img
-                    src={getChampionIconUrl(champ.championName)}
-                    alt={champ.championName}
-                    width={40}
-                    height={40}
-                    className="rounded-lg"
-                  />
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-medium text-white">
-                      {champ.championName}
-                    </p>
-                    <div className="flex items-center gap-2 text-xs">
-                      <span className="text-gray-400">{champ.games} games</span>
-                      <span
-                        className="font-medium"
-                        style={{
-                          color:
-                            champ.winrate >= 50
-                              ? "var(--color-win)"
-                              : "var(--color-loss)",
-                        }}
-                      >
-                        {champ.winrate.toFixed(0)}% WR
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </section>
-        )}
       </div>
     </div>
   );
 }
-

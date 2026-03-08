@@ -6,7 +6,7 @@ import UpdateButton from "@/components/UpdateButton";
 import FavoriteButton from "@/components/FavoriteButton";
 import ShareButton from "@/components/ShareButton";
 import LiveGamePanel from "@/components/LiveGamePanel";
-import { enrichLiveGame } from "@/app/api/livegame/[region]/[puuid]/route";
+import { enrichLiveGame } from "@/lib/live-game-enrichment";
 
 interface PageProps {
   params: Promise<{ region: string; name: string }>;

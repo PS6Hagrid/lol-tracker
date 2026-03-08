@@ -9,6 +9,7 @@ import MatchHistoryList from "@/components/MatchHistoryList";
 import KDAChart from "@/components/KDAChart";
 import WinRateChart from "@/components/WinRateChart";
 import RecentPerformance from "@/components/RecentPerformance";
+import PerformanceRadar from "@/components/PerformanceRadar";
 import type { MatchDTO, LeagueEntryDTO } from "@/types/riot";
 
 interface PageProps {
@@ -118,6 +119,7 @@ export default async function MatchHistoryPage({ params }: PageProps) {
           <KDAChart data={kdaChartData} />
           <WinRateChart matches={matches} puuid={summoner.puuid} />
         </div>
+        <PerformanceRadar matches={matches} puuid={summoner.puuid} />
 
         {/* Match List */}
         <section>
