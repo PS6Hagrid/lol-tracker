@@ -727,6 +727,7 @@ function DamageTab({
           const magicPct = maxDealt > 0 ? (p.magicDamageDealtToChampions / maxDealt) * 100 : 0;
           const truePct = maxDealt > 0 ? (p.trueDamageDealtToChampions / maxDealt) * 100 : 0;
           const takenPct = maxTaken > 0 ? (p.totalDamageTaken / maxTaken) * 100 : 0;
+          const keystoneStyleId = p.perks?.styles?.[0]?.style;
 
           return (
             <div
@@ -738,19 +739,53 @@ function DamageTab({
               }`}
             >
               <div className="flex items-center gap-2">
-                <img
-                  src={getChampionIconUrl(p.championName)}
-                  alt={p.championName}
-                  width={24}
-                  height={24}
-                  className="flex-shrink-0 rounded"
-                />
+                {/* Champion + Spells + Rune */}
+                <div className="flex flex-shrink-0 items-center gap-0.5">
+                  <img
+                    src={getChampionIconUrl(p.championName)}
+                    alt={p.championName}
+                    width={28}
+                    height={28}
+                    className="rounded"
+                  />
+                  <div className="flex flex-col gap-px">
+                    <img
+                      src={getSummonerSpellIconUrl(p.summoner1Id)}
+                      alt="D"
+                      width={14}
+                      height={14}
+                      className="rounded-sm"
+                    />
+                    <img
+                      src={getSummonerSpellIconUrl(p.summoner2Id)}
+                      alt="F"
+                      width={14}
+                      height={14}
+                      className="rounded-sm"
+                    />
+                  </div>
+                  {keystoneStyleId && (
+                    <img
+                      src={getRuneStyleIconUrl(keystoneStyleId)}
+                      alt="Rune"
+                      width={16}
+                      height={16}
+                      className="hidden rounded-sm opacity-70 sm:block"
+                    />
+                  )}
+                </div>
+
                 <span
-                  className={`w-20 min-w-0 truncate ${
+                  className={`w-16 min-w-0 truncate sm:w-20 ${
                     isSummoner ? "font-semibold text-cyan-400" : "text-gray-300"
                   }`}
                 >
                   {p.summonerName || p.championName}
+                </span>
+
+                {/* KDA */}
+                <span className="w-14 flex-shrink-0 text-center text-gray-300">
+                  {p.kills}/{p.deaths}/{p.assists}
                 </span>
 
                 {/* Stacked damage bar */}
@@ -778,7 +813,7 @@ function DamageTab({
               </div>
 
               {/* Damage breakdown numbers */}
-              <div className="mt-1 flex items-center gap-2 pl-8">
+              <div className="mt-1 flex items-center gap-2 pl-[72px]">
                 <span className="text-red-400">{formatNumber(p.physicalDamageDealtToChampions)}</span>
                 <span className="text-gray-600">/</span>
                 <span className="text-blue-400">{formatNumber(p.magicDamageDealtToChampions)}</span>
@@ -835,6 +870,7 @@ function VisionTab({
           {sortedByVision.map((p, idx) => {
             const isSummoner = p.puuid === summonerPuuid;
             const visionPct = maxVision > 0 ? (p.visionScore / maxVision) * 100 : 0;
+            const keystoneStyleId = p.perks?.styles?.[0]?.style;
 
             return (
               <div
@@ -845,19 +881,53 @@ function VisionTab({
                     : "bg-gray-800/40"
                 }`}
               >
-                <img
-                  src={getChampionIconUrl(p.championName)}
-                  alt={p.championName}
-                  width={24}
-                  height={24}
-                  className="flex-shrink-0 rounded"
-                />
+                {/* Champion + Spells + Rune */}
+                <div className="flex flex-shrink-0 items-center gap-0.5">
+                  <img
+                    src={getChampionIconUrl(p.championName)}
+                    alt={p.championName}
+                    width={28}
+                    height={28}
+                    className="rounded"
+                  />
+                  <div className="flex flex-col gap-px">
+                    <img
+                      src={getSummonerSpellIconUrl(p.summoner1Id)}
+                      alt="D"
+                      width={14}
+                      height={14}
+                      className="rounded-sm"
+                    />
+                    <img
+                      src={getSummonerSpellIconUrl(p.summoner2Id)}
+                      alt="F"
+                      width={14}
+                      height={14}
+                      className="rounded-sm"
+                    />
+                  </div>
+                  {keystoneStyleId && (
+                    <img
+                      src={getRuneStyleIconUrl(keystoneStyleId)}
+                      alt="Rune"
+                      width={16}
+                      height={16}
+                      className="hidden rounded-sm opacity-70 sm:block"
+                    />
+                  )}
+                </div>
+
                 <span
-                  className={`w-20 min-w-0 truncate ${
+                  className={`w-16 min-w-0 truncate sm:w-20 ${
                     isSummoner ? "font-semibold text-cyan-400" : "text-gray-300"
                   }`}
                 >
                   {p.summonerName || p.championName}
+                </span>
+
+                {/* KDA */}
+                <span className="w-14 flex-shrink-0 text-center text-gray-300">
+                  {p.kills}/{p.deaths}/{p.assists}
                 </span>
 
                 {/* Vision bar */}
@@ -874,7 +944,7 @@ function VisionTab({
                 </div>
 
                 {/* Wards */}
-                <div className="flex flex-shrink-0 items-center gap-2 text-gray-500">
+                <div className="hidden flex-shrink-0 items-center gap-2 text-gray-500 md:flex">
                   <span title="Wards Placed">
                     <span className="text-green-400">{p.wardsPlaced}</span>
                     <span className="ml-0.5">placed</span>
@@ -907,6 +977,7 @@ function VisionTab({
               const objTotal = p.damageDealtToObjectives + p.damageDealtToTurrets;
               const objPct = maxObjDmg > 0 ? (objTotal / maxObjDmg) * 100 : 0;
               const turretPct = maxObjDmg > 0 ? (p.damageDealtToTurrets / maxObjDmg) * 100 : 0;
+              const keystoneStyleId = p.perks?.styles?.[0]?.style;
 
               return (
                 <div
@@ -917,19 +988,53 @@ function VisionTab({
                       : "bg-gray-800/40"
                   }`}
                 >
-                  <img
-                    src={getChampionIconUrl(p.championName)}
-                    alt={p.championName}
-                    width={24}
-                    height={24}
-                    className="flex-shrink-0 rounded"
-                  />
+                  {/* Champion + Spells + Rune */}
+                  <div className="flex flex-shrink-0 items-center gap-0.5">
+                    <img
+                      src={getChampionIconUrl(p.championName)}
+                      alt={p.championName}
+                      width={28}
+                      height={28}
+                      className="rounded"
+                    />
+                    <div className="flex flex-col gap-px">
+                      <img
+                        src={getSummonerSpellIconUrl(p.summoner1Id)}
+                        alt="D"
+                        width={14}
+                        height={14}
+                        className="rounded-sm"
+                      />
+                      <img
+                        src={getSummonerSpellIconUrl(p.summoner2Id)}
+                        alt="F"
+                        width={14}
+                        height={14}
+                        className="rounded-sm"
+                      />
+                    </div>
+                    {keystoneStyleId && (
+                      <img
+                        src={getRuneStyleIconUrl(keystoneStyleId)}
+                        alt="Rune"
+                        width={16}
+                        height={16}
+                        className="hidden rounded-sm opacity-70 sm:block"
+                      />
+                    )}
+                  </div>
+
                   <span
-                    className={`w-20 min-w-0 truncate ${
+                    className={`w-16 min-w-0 truncate sm:w-20 ${
                       isSummoner ? "font-semibold text-cyan-400" : "text-gray-300"
                     }`}
                   >
                     {p.summonerName || p.championName}
+                  </span>
+
+                  {/* KDA */}
+                  <span className="w-14 flex-shrink-0 text-center text-gray-300">
+                    {p.kills}/{p.deaths}/{p.assists}
                   </span>
 
                   {/* Stacked bar: Turret (cyan) + Other Obj (amber) */}
@@ -952,7 +1057,7 @@ function VisionTab({
                   </div>
 
                   {/* Breakdown */}
-                  <div className="flex flex-shrink-0 items-center gap-2 text-gray-500">
+                  <div className="hidden flex-shrink-0 items-center gap-2 text-gray-500 md:flex">
                     <span>
                       <span className="text-cyan-400">{formatNumber(p.damageDealtToTurrets)}</span>
                       <span className="ml-0.5">turret</span>
