@@ -8,10 +8,12 @@ import {
   getSummonerSpellIconUrl,
   getRuneStyleIconUrl,
 } from "@/lib/constants";
+import TimelineTab from "@/components/TimelineTab";
 
 interface MatchCardProps {
   match: MatchDTO;
   summonerPuuid: string;
+  region?: string;
 }
 
 // ── Helpers ────────────────────────────────────────────────────────────────────
@@ -87,9 +89,9 @@ function computeCsPerMin(player: MatchParticipantDTO, durationSec: number): stri
 
 // ── Main Component ─────────────────────────────────────────────────────────────
 
-type DetailTab = "overview" | "damage" | "vision";
+type DetailTab = "overview" | "damage" | "vision" | "timeline";
 
-export default function MatchCard({ match, summonerPuuid }: MatchCardProps) {
+export default function MatchCard({ match, summonerPuuid, region }: MatchCardProps) {
   const [expanded, setExpanded] = useState(false);
   const [activeTab, setActiveTab] = useState<DetailTab>("overview");
   const player = findSummonerParticipant(match, summonerPuuid);
@@ -362,6 +364,7 @@ export default function MatchCard({ match, summonerPuuid }: MatchCardProps) {
                 { key: "overview", label: "Overview" },
                 { key: "damage", label: "Damage" },
                 { key: "vision", label: "Vision" },
+                { key: "timeline", label: "Timeline" },
               ] as { key: DetailTab; label: string }[]
             ).map((tab) => (
               <button
@@ -400,6 +403,14 @@ export default function MatchCard({ match, summonerPuuid }: MatchCardProps) {
             <VisionTab
               participants={match.info.participants}
               summonerPuuid={summonerPuuid}
+            />
+          )}
+          {activeTab === "timeline" && (
+            <TimelineTab
+              matchId={match.metadata.matchId}
+              region={region ?? "na1"}
+              participants={match.info.participants}
+              gameDuration={match.info.gameDuration}
             />
           )}
         </div>

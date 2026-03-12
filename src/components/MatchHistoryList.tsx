@@ -313,6 +313,7 @@ export default function MatchHistoryList({
               key={match.metadata.matchId}
               match={match}
               summonerPuuid={summonerPuuid}
+              region={region}
             />
           ))
         ) : (

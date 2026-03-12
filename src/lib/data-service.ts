@@ -2,6 +2,7 @@ import type {
   SummonerDTO,
   LeagueEntryDTO,
   MatchDTO,
+  MatchTimelineDTO,
   CurrentGameInfo,
   ChampionMasteryDTO,
 } from "@/types/riot";
@@ -58,6 +59,12 @@ export interface DataService {
     region: string,
     puuid: string,
   ): Promise<ChampionMasteryDTO[]>;
+
+  /** Fetch match timeline data (gold/xp frames + events) */
+  getMatchTimeline(
+    region: string,
+    matchId: string,
+  ): Promise<MatchTimelineDTO>;
 }
 
 /**

@@ -2,6 +2,7 @@ import type {
   SummonerDTO,
   LeagueEntryDTO,
   MatchDTO,
+  MatchTimelineDTO,
   CurrentGameInfo,
   ChampionMasteryDTO,
 } from "@/types/riot";
@@ -439,5 +440,15 @@ export class RiotApiService implements DataService {
       }
       throw e;
     }
+  }
+
+  async getMatchTimeline(
+    region: string,
+    matchId: string,
+  ): Promise<MatchTimelineDTO> {
+    return this.riotFetch<MatchTimelineDTO>(
+      `${this.routingUrl(region)}/lol/match/v5/matches/${matchId}/timeline`,
+      { cacheTtl: 31536000 },
+    );
   }
 }

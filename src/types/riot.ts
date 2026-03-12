@@ -282,3 +282,46 @@ export interface EnrichedParticipant extends CurrentGameParticipant {
 export interface EnrichedCurrentGameInfo extends Omit<CurrentGameInfo, "participants"> {
   participants: EnrichedParticipant[];
 }
+
+// ─── Match Timeline V5 ────────────────────────────────────────────────────────
+
+export interface MatchTimelineDTO {
+  metadata: { matchId: string; participants: string[]; dataVersion: string };
+  info: MatchTimelineInfo;
+}
+
+export interface MatchTimelineInfo {
+  frameInterval: number;
+  frames: TimelineFrame[];
+}
+
+export interface TimelineFrame {
+  timestamp: number;
+  participantFrames: Record<string, TimelineParticipantFrame>;
+  events: TimelineEvent[];
+}
+
+export interface TimelineParticipantFrame {
+  participantId: number;
+  totalGold: number;
+  currentGold: number;
+  minionsKilled: number;
+  jungleMinionsKilled: number;
+  xp: number;
+  level: number;
+  position: { x: number; y: number };
+}
+
+export interface TimelineEvent {
+  type: string;
+  timestamp: number;
+  killerId?: number;
+  victimId?: number;
+  assistingParticipantIds?: number[];
+  teamId?: number;
+  buildingType?: string;
+  laneType?: string;
+  towerType?: string;
+  monsterType?: string;
+  monsterSubType?: string;
+}

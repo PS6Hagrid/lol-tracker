@@ -2,11 +2,15 @@ import type {
   SummonerDTO,
   LeagueEntryDTO,
   MatchDTO,
+  MatchTimelineDTO,
   MatchParticipantDTO,
   MatchTeamDTO,
   CurrentGameInfo,
   ChampionMasteryDTO,
   PerksDTO,
+  TimelineFrame,
+  TimelineParticipantFrame,
+  TimelineEvent,
 } from "@/types/riot";
 import type { DataService } from "@/lib/data-service";
 
@@ -623,6 +627,132 @@ export class MockDataService implements DataService {
         puuid,
       };
     });
+  }
+
+  async getMatchTimeline(
+    _region: string,
+    matchId: string,
+  ): Promise<MatchTimelineDTO> {
+    const rng = seededRandom(hashString(`timeline:${matchId}`));
+
+    // Derive game duration consistently with getMatchDetails
+    const matchRng = seededRandom(hashString(`details:${matchId}`));
+    const gameDuration = seededInt(matchRng, 1200, 2400);
+    const frameInterval = 60000;
+    const frameCount = Math.ceil(gameDuration / 60);
+
+    const participantPuuids: string[] = [];
+    for (let i = 0; i < 10; i++) {
+      participantPuuids.push(`mock-puuid-${matchId}-${i}`.padEnd(48, "0"));
+    }
+
+    const frames: TimelineFrame[] = [];
+    const goldAccum = Array.from({ length: 10 }, () => 500);
+    const xpAccum = Array.from({ length: 10 }, () => 0);
+
+    for (let f = 0; f <= frameCount; f++) {
+      const timestamp = f * frameInterval;
+      const participantFrames: Record<string, TimelineParticipantFrame> = {};
+
+      for (let p = 0; p < 10; p++) {
+        if (f > 0) {
+          goldAccum[p] += seededInt(rng, 250, 550);
+          xpAccum[p] += seededInt(rng, 350, 750);
+        }
+
+        const level = Math.min(18, Math.max(1, Math.floor(xpAccum[p] / 600) + 1));
+
+        participantFrames[String(p + 1)] = {
+          participantId: p + 1,
+          totalGold: goldAccum[p],
+          currentGold: seededInt(rng, 0, Math.min(goldAccum[p], 3000)),
+          minionsKilled: Math.round((5 + rng() * 4) * f * (0.7 + rng() * 0.3)),
+          jungleMinionsKilled: p % 5 === 1 ? seededInt(rng, 0, f * 4) : seededInt(rng, 0, f),
+          xp: xpAccum[p],
+          level,
+          position: { x: seededInt(rng, 0, 14000), y: seededInt(rng, 0, 14000) },
+        };
+      }
+
+      const events: TimelineEvent[] = [];
+
+      if (f > 2) {
+        // Champion kill ~30% per frame
+        if (rng() < 0.3) {
+          const killerId = seededInt(rng, 1, 10);
+          let victimId = seededInt(rng, 1, 10);
+          while (Math.ceil(victimId / 5) === Math.ceil(killerId / 5)) {
+            victimId = seededInt(rng, 1, 10);
+          }
+          const sameTeam = Array.from({ length: 5 }, (_, i) =>
+            killerId <= 5 ? i + 1 : i + 6,
+          ).filter((id) => id !== killerId);
+          const assists = seededShuffle(rng, sameTeam).slice(0, seededInt(rng, 0, 3));
+
+          events.push({
+            type: "CHAMPION_KILL",
+            timestamp: timestamp + seededInt(rng, 0, frameInterval),
+            killerId,
+            victimId,
+            assistingParticipantIds: assists,
+          });
+        }
+
+        // Dragon every ~5 min after min 5
+        if (f >= 5 && f % 5 === 0 && rng() < 0.6) {
+          const dragonTypes = ["FIRE_DRAGON", "WATER_DRAGON", "EARTH_DRAGON", "AIR_DRAGON", "HEXTECH_DRAGON", "CHEMTECH_DRAGON"];
+          events.push({
+            type: "ELITE_MONSTER_KILL",
+            timestamp: timestamp + seededInt(rng, 0, frameInterval),
+            killerId: seededInt(rng, 1, 10),
+            monsterType: "DRAGON",
+            monsterSubType: seededPick(rng, dragonTypes),
+          });
+        }
+
+        // Baron after 20 min
+        if (f >= 20 && f % 7 === 0 && rng() < 0.4) {
+          events.push({
+            type: "ELITE_MONSTER_KILL",
+            timestamp: timestamp + seededInt(rng, 0, frameInterval),
+            killerId: seededInt(rng, 1, 10),
+            monsterType: "BARON_NASHOR",
+          });
+        }
+
+        // Rift Herald min 8-20
+        if (f >= 8 && f <= 20 && f % 6 === 0 && rng() < 0.5) {
+          events.push({
+            type: "ELITE_MONSTER_KILL",
+            timestamp: timestamp + seededInt(rng, 0, frameInterval),
+            killerId: seededInt(rng, 1, 10),
+            monsterType: "RIFTHERALD",
+          });
+        }
+
+        // Tower kills after min 10
+        if (f >= 10 && rng() < 0.15) {
+          const lanes = ["TOP_LANE", "MID_LANE", "BOT_LANE"] as const;
+          const towerTypes = ["OUTER_TURRET", "INNER_TURRET", "BASE_TURRET"] as const;
+          events.push({
+            type: "BUILDING_KILL",
+            timestamp: timestamp + seededInt(rng, 0, frameInterval),
+            killerId: seededInt(rng, 1, 10),
+            teamId: rng() > 0.5 ? 100 : 200,
+            buildingType: "TOWER_BUILDING",
+            laneType: seededPick(rng, lanes),
+            towerType: seededPick(rng, towerTypes),
+          });
+        }
+      }
+
+      frames.push({ timestamp, participantFrames, events });
+    }
+
+    return {
+      metadata: { matchId, participants: participantPuuids, dataVersion: "2" },
+      info: { frameInterval, frames },
+    };
   }
 }
 
