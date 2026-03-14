@@ -76,6 +76,12 @@ export default function RootLayout({
             </Link>
             <div className="flex items-center gap-3">
               <Link
+                href="/leaderboard"
+                className="hidden text-xs font-medium text-gray-400 transition-colors hover:text-white sm:block"
+              >
+                Leaderboard
+              </Link>
+              <Link
                 href="/multi"
                 className="hidden text-xs font-medium text-gray-400 transition-colors hover:text-white sm:block"
               >
@@ -94,6 +100,12 @@ export default function RootLayout({
                 <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
               </svg>
               <span className="text-[10px] font-medium">Home</span>
+            </Link>
+            <Link href="/leaderboard" className="flex flex-col items-center gap-0.5 px-3 py-1 text-gray-400 transition-colors hover:text-white">
+              <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 18.75h-9m9 0a3 3 0 013 3h-15a3 3 0 013-3m9 0v-3.375c0-.621-.503-1.125-1.125-1.125h-.871M7.5 18.75v-3.375c0-.621.504-1.125 1.125-1.125h.872m5.007 0H9.497m5.007 0a7.454 7.454 0 01-.982-3.172M9.497 14.25a7.454 7.454 0 00.981-3.172M5.25 4.236c-.982.143-1.954.317-2.916.52A6.003 6.003 0 007.73 9.728M5.25 4.236V4.5c0 2.108.966 3.99 2.48 5.228M5.25 4.236V2.721C7.456 2.41 9.71 2.25 12 2.25c2.291 0 4.545.16 6.75.47v1.516M18.75 4.236c.982.143 1.954.317 2.916.52A6.003 6.003 0 0016.27 9.728M18.75 4.236V4.5c0 2.108-.966 3.99-2.48 5.228m0 0a6.023 6.023 0 01-2.77.672 6.023 6.023 0 01-2.77-.672" />
+              </svg>
+              <span className="text-[10px] font-medium">Leaderboard</span>
             </Link>
             <Link href="/multi" className="flex flex-col items-center gap-0.5 px-3 py-1 text-gray-400 transition-colors hover:text-white">
               <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
