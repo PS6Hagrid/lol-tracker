@@ -5,6 +5,7 @@ import type {
   MatchTimelineDTO,
   CurrentGameInfo,
   ChampionMasteryDTO,
+  LeagueListDTO,
 } from "@/types/riot";
 
 /**
@@ -65,6 +66,13 @@ export interface DataService {
     region: string,
     matchId: string,
   ): Promise<MatchTimelineDTO>;
+
+  /** Fetch apex-tier league (challenger/grandmaster/master) for a queue */
+  getLeagueByTier(
+    region: string,
+    queue: string,
+    tier: "challenger" | "grandmaster" | "master",
+  ): Promise<LeagueListDTO>;
 }
 
 /**

@@ -5,6 +5,7 @@ import type {
   MatchTimelineDTO,
   CurrentGameInfo,
   ChampionMasteryDTO,
+  LeagueListDTO,
 } from "@/types/riot";
 import type { DataService } from "@/lib/data-service";
 import { REGION_TO_ROUTING } from "@/lib/constants";
@@ -449,6 +450,24 @@ export class RiotApiService implements DataService {
     return this.riotFetch<MatchTimelineDTO>(
       `${this.routingUrl(region)}/lol/match/v5/matches/${matchId}/timeline`,
       { cacheTtl: 31536000 },
+    );
+  }
+
+  async getLeagueByTier(
+    region: string,
+    queue: string,
+    tier: "challenger" | "grandmaster" | "master",
+  ): Promise<LeagueListDTO> {
+    const endpoint =
+      tier === "challenger"
+        ? "challengerleagues"
+        : tier === "grandmaster"
+          ? "grandmasterleagues"
+          : "masterleagues";
+
+    return this.riotFetch<LeagueListDTO>(
+      `${this.platformUrl(region)}/lol/league/v4/${endpoint}/by-queue/${queue}`,
+      { cacheTtl: 300 },
     );
   }
 }

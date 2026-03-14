@@ -325,3 +325,26 @@ export interface TimelineEvent {
   monsterType?: string;
   monsterSubType?: string;
 }
+
+// ─── League Leaderboard ──────────────────────────────────────────────────────
+
+export interface LeagueListDTO {
+  tier: string;
+  leagueId: string;
+  queue: string;
+  name: string;
+  entries: LeagueItemDTO[];
+}
+
+export interface LeagueItemDTO {
+  summonerId: string;
+  summonerName: string;
+  leaguePoints: number;
+  rank: string;
+  wins: number;
+  losses: number;
+  veteran: boolean;
+  freshBlood: boolean;
+  hotStreak: boolean;
+  inactive: boolean;
+}

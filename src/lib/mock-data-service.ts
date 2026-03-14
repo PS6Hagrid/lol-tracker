@@ -11,6 +11,8 @@ import type {
   TimelineFrame,
   TimelineParticipantFrame,
   TimelineEvent,
+  LeagueListDTO,
+  LeagueItemDTO,
 } from "@/types/riot";
 import type { DataService } from "@/lib/data-service";
 
@@ -752,6 +754,60 @@ export class MockDataService implements DataService {
     return {
       metadata: { matchId, participants: participantPuuids, dataVersion: "2" },
       info: { frameInterval, frames },
+    };
+  }
+
+  async getLeagueByTier(
+    region: string,
+    queue: string,
+    tier: "challenger" | "grandmaster" | "master",
+  ): Promise<LeagueListDTO> {
+    const seed = hashString(`leaderboard:${region}:${queue}:${tier}`);
+    const rng = seededRandom(seed);
+
+    const count =
+      tier === "challenger" ? 300 : tier === "grandmaster" ? 700 : 3000;
+    const baseLp =
+      tier === "challenger" ? 800 : tier === "grandmaster" ? 400 : 0;
+
+    const FAKE_NAMES = [
+      "HideonBush", "Ruler", "Deft", "Chovy", "Zeus", "Keria", "Canyon",
+      "Gumayusi", "ShowMaker", "Viper", "BeryL", "Lehends", "Peyz", "Oner",
+      "Faker", "Peanut", "Doran", "Prince", "Aiming", "Delight", "Life",
+      "Lucid", "Zeka", "Kanavi", "TheShy", "Meiko", "Scout", "Jiejie", "Elk",
+      "ON", "Caps", "Jankos", "Rekkles", "Mikyx", "Wunder", "HansSama",
+      "Elyoya", "Humanoid", "Comp", "Trymbi", "Upset", "Razork", "Oscarinin",
+      "Noah", "Inspired", "Bwipo", "CoreJJ", "Blaber", "Berserker", "Impact",
+    ];
+
+    const entries: LeagueItemDTO[] = Array.from({ length: count }, (_, i) => {
+      const nameBase = FAKE_NAMES[i % FAKE_NAMES.length];
+      const suffix =
+        i >= FAKE_NAMES.length
+          ? `${Math.floor(i / FAKE_NAMES.length)}`
+          : "";
+      return {
+        summonerId: `mock-${region}-${tier}-${i}`,
+        summonerName: `${nameBase}${suffix}`,
+        leaguePoints: baseLp + Math.floor(rng() * 600) + (count - i),
+        rank: "I",
+        wins: seededInt(rng, 100, 500),
+        losses: seededInt(rng, 80, 400),
+        veteran: rng() > 0.7,
+        freshBlood: rng() > 0.85,
+        hotStreak: rng() > 0.8,
+        inactive: false,
+      };
+    });
+
+    entries.sort((a, b) => b.leaguePoints - a.leaguePoints);
+
+    return {
+      tier: tier.toUpperCase(),
+      leagueId: `mock-league-${region}-${tier}`,
+      queue,
+      name: `${tier.charAt(0).toUpperCase() + tier.slice(1)} ${region.toUpperCase()}`,
+      entries,
     };
   }
 }
