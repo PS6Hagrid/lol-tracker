@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import Link from "next/link";
 import NavSearch from "@/components/NavSearch";
@@ -40,6 +40,16 @@ export const metadata: Metadata = {
     index: true,
     follow: true,
   },
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "Trackerino",
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#0a0e17",
 };
 
 export default function RootLayout({
