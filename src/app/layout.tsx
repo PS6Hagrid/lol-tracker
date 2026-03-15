@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import Link from "next/link";
 import NavSearch from "@/components/NavSearch";
 import ScrollToTop from "@/components/ScrollToTop";
+import Footer from "@/components/Footer";
 import "./globals.css";
 
 const inter = Inter({
@@ -98,6 +99,7 @@ export default function RootLayout({
           </div>
         </nav>
         <main className="min-h-[calc(100vh-3.5rem-3rem)]">{children}</main>
+        <Footer />
         {/* Mobile bottom nav */}
         <div className="fixed bottom-0 left-0 right-0 z-50 border-t border-gray-700/50 bg-bg-page/95 backdrop-blur-md sm:hidden" role="navigation" aria-label="Mobile navigation">
           <div className="flex items-center justify-around py-2">
@@ -128,28 +130,6 @@ export default function RootLayout({
           </div>
         </div>
         <ScrollToTop />
-        <footer className="border-t border-gray-800/50 pb-16 pt-6 sm:pb-6">
-          <div className="mx-auto flex max-w-7xl flex-col items-center gap-2 px-4 text-center text-xs text-gray-600">
-            <p>
-              Trackerino &bull; Data from{" "}
-              <a
-                href="https://developer.riotgames.com/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-gray-500 transition-colors hover:text-gray-400"
-              >
-                Riot Games API
-              </a>
-            </p>
-            <p className="max-w-2xl leading-relaxed text-gray-700">
-              Trackerino isn&apos;t endorsed by Riot Games and doesn&apos;t
-              reflect the views or opinions of Riot Games or anyone officially
-              involved in producing or managing Riot Games properties. Riot
-              Games, and all associated properties are trademarks or registered
-              trademarks of Riot Games, Inc.
-            </p>
-          </div>
-        </footer>
       </body>
     </html>
   );

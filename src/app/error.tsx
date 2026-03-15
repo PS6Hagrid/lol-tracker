@@ -1,55 +1,10 @@
 "use client";
 
-import { useEffect, useMemo } from "react";
+import { useEffect } from "react";
 
 interface ErrorBoundaryProps {
   error: Error & { digest?: string };
   reset: () => void;
-}
-
-/** Determine a user-friendly title + message from the error. */
-function classifyError(error: Error) {
-  const msg = error.message?.toLowerCase() ?? "";
-
-  if (msg.includes("rate limit") || msg.includes("429") || msg.includes("too many")) {
-    return {
-      icon: "\u23F3",
-      title: "Too Many Requests",
-      message:
-        "The server is handling a lot of traffic right now. Please wait a moment and try again.",
-    };
-  }
-  if (msg.includes("not found") || msg.includes("404")) {
-    return {
-      icon: "\uD83D\uDD0D",
-      title: "Not Found",
-      message:
-        "The summoner or page you are looking for could not be found. Check the name and region.",
-    };
-  }
-  if (msg.includes("api key") || msg.includes("forbidden") || msg.includes("403")) {
-    return {
-      icon: "\uD83D\uDD27",
-      title: "Service Temporarily Unavailable",
-      message:
-        "The connection to Riot Games is experiencing issues. Please try again later.",
-    };
-  }
-  if (msg.includes("fetch") || msg.includes("network") || msg.includes("econnrefused")) {
-    return {
-      icon: "\uD83C\uDF10",
-      title: "Connection Error",
-      message:
-        "Could not connect to the server. Check your internet connection and try again.",
-    };
-  }
-
-  return {
-    icon: "\u26A0\uFE0F",
-    title: "Something Went Wrong",
-    message:
-      "An unexpected error occurred. Please try again or return to the home page.",
-  };
 }
 
 /** Root-level error boundary for the entire application. */
@@ -58,30 +13,47 @@ export default function RootError({ error, reset }: ErrorBoundaryProps) {
     console.error("Application error:", error);
   }, [error]);
 
-  const { icon, title, message } = useMemo(() => classifyError(error), [error]);
-
   return (
-    <div className="flex min-h-[calc(100vh-3.5rem)] items-center justify-center px-4">
-      <div className="w-full max-w-md rounded-xl border border-gray-700/40 bg-gray-900/90 p-8 text-center backdrop-blur-sm">
+    <div className="flex min-h-[calc(100vh-3.5rem)] items-center justify-center bg-[#0a0e17] px-4">
+      <div className="w-full max-w-md rounded-xl border border-gray-700/50 bg-[#111827] p-8 text-center">
         {/* Icon */}
-        <div className="mx-auto mb-4 text-5xl">{icon}</div>
+        <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full border-2 border-red-700/50 bg-red-900/20">
+          <svg
+            className="h-8 w-8 text-red-400"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth={2}
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4.5c-.77-.833-2.694-.833-3.464 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z"
+            />
+          </svg>
+        </div>
 
         {/* Title */}
-        <h2 className="text-xl font-bold text-white">{title}</h2>
-        <p className="mt-2 text-sm text-gray-400">{message}</p>
+        <h2 className="text-xl font-bold text-gray-100">
+          Something Went Wrong
+        </h2>
+        <p className="mt-2 text-sm text-gray-400">
+          An unexpected error occurred. Please try again or return to the home
+          page.
+        </p>
 
-        {/* Error detail (only in dev, subtle) */}
-        {process.env.NODE_ENV === "development" && error.message && (
-          <p className="mt-3 rounded-lg bg-gray-800/60 px-3 py-2 text-xs text-gray-500">
-            {error.message}
-          </p>
+        {/* Error detail in code block */}
+        {error.message && (
+          <pre className="mt-4 overflow-x-auto rounded-lg bg-[#0a0e17] px-4 py-3 text-left text-xs text-gray-400">
+            <code>{error.message}</code>
+          </pre>
         )}
 
         {/* Actions */}
         <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-center">
           <button
             onClick={reset}
-            className="rounded-lg border border-cyan/50 bg-cyan/10 px-6 py-2.5 text-sm font-medium text-cyan transition-all duration-200 hover:bg-cyan/20 hover:shadow-[0_0_12px_rgba(0,212,255,0.2)]"
+            className="rounded-lg border border-blue-500/50 bg-blue-500/10 px-6 py-2.5 text-sm font-medium text-blue-400 transition-all duration-200 hover:bg-blue-500/20 hover:shadow-[0_0_12px_rgba(59,130,246,0.2)]"
           >
             Try Again
           </button>
@@ -89,7 +61,7 @@ export default function RootError({ error, reset }: ErrorBoundaryProps) {
             href="/"
             className="rounded-lg border border-gray-700 bg-gray-800/60 px-6 py-2.5 text-sm font-medium text-gray-300 transition-all duration-200 hover:bg-gray-700/60"
           >
-            Go Home
+            Back to Home
           </a>
         </div>
       </div>
