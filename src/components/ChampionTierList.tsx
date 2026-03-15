@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import type { ChampionMeta, ChampionTier, Lane } from "@/lib/champion-data";
 import { TIER_CONFIG, LANE_CONFIG, TIER_ORDER } from "@/lib/champion-data";
 
@@ -223,7 +224,8 @@ function ChampionCard({ champion }: { champion: ChampionMeta }) {
   const tierCfg = TIER_CONFIG[champion.tier];
 
   return (
-    <div
+    <Link
+      href={`/champions/${champion.id}`}
       className={`flex items-center gap-3 rounded-xl border border-gray-700/50 bg-[#111827] p-3 transition hover:scale-[1.02] ${TIER_HOVER_BORDER[champion.tier]}`}
     >
       <Image
@@ -262,6 +264,6 @@ function ChampionCard({ champion }: { champion: ChampionMeta }) {
           ))}
         </div>
       </div>
-    </div>
+    </Link>
   );
 }
