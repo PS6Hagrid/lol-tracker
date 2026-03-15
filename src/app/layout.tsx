@@ -11,7 +11,7 @@ const inter = Inter({
   subsets: ["latin"],
 });
 
-const BASE_URL = "https://lol-one-hazel.vercel.app";
+const BASE_URL = "https://trackerino.gg";
 
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),
@@ -37,6 +37,9 @@ export const metadata: Metadata = {
     description:
       "Search any summoner to view ranked stats, match history, champion performance, and live games.",
   },
+  alternates: {
+    canonical: "https://trackerino.gg",
+  },
   robots: {
     index: true,
     follow: true,
@@ -60,6 +63,28 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="dark">
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "WebApplication",
+              name: "Trackerino",
+              url: "https://trackerino.gg",
+              description:
+                "Search any League of Legends summoner to view ranked stats, match history, live game, and more.",
+              applicationCategory: "GameApplication",
+              operatingSystem: "Any",
+              offers: {
+                "@type": "Offer",
+                price: "0",
+                priceCurrency: "USD",
+              },
+            }),
+          }}
+        />
+      </head>
       <body className={`${inter.variable} antialiased`}>
         <nav className="sticky top-0 z-50 border-b border-gray-700/50 bg-bg-page/80 backdrop-blur-md" role="navigation" aria-label="Main navigation">
           <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4">
