@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { REGIONS, getProfileIconUrl } from "@/lib/constants";
+import { useSearchHistory } from "@/hooks/useSearchHistory";
 
 interface Suggestion {
   gameName: string;
@@ -20,9 +21,22 @@ export default function NavSearch() {
   const [open, setOpen] = useState(false);
   const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
   const [highlighted, setHighlighted] = useState(-1);
+  const [showHistory, setShowHistory] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const blurTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const { history, addEntry, removeEntry, clearHistory } = useSearchHistory();
+
+  const regionShortLabel = (value: string) => {
+    const map: Record<string, string> = {
+      na1: "NA", euw1: "EUW", eun1: "EUNE", kr: "KR", jp1: "JP",
+      br1: "BR", la1: "LAN", la2: "LAS", oc1: "OCE", tr1: "TR",
+      ru: "RU", ph2: "PH", sg2: "SG", th2: "TH", tw2: "TW", vn2: "VN",
+    };
+    return map[value] ?? value.toUpperCase();
+  };
 
   // Don't render on homepage (it has its own search)
   const isHome = pathname === "/";
@@ -32,6 +46,7 @@ export default function NavSearch() {
     function handleClick(e: MouseEvent) {
       if (wrapperRef.current && !wrapperRef.current.contains(e.target as Node)) {
         setOpen(false);
+        setShowHistory(false);
       }
     }
     document.addEventListener("mousedown", handleClick);
@@ -46,6 +61,7 @@ export default function NavSearch() {
       setSuggestions([]);
       return;
     }
+    setShowHistory(false);
     debounceRef.current = setTimeout(async () => {
       try {
         const res = await fetch(
@@ -67,8 +83,10 @@ export default function NavSearch() {
 
   function navigate(gameName: string, tagLine: string, reg: string) {
     setOpen(false);
+    setShowHistory(false);
     setQuery("");
     setSuggestions([]);
+    addEntry({ gameName, tagLine, region: reg });
     router.push(
       `/summoner/${encodeURIComponent(reg)}/${encodeURIComponent(gameName)}-${encodeURIComponent(tagLine)}`,
     );
@@ -91,6 +109,7 @@ export default function NavSearch() {
     }
     if (!gameName) return;
     if (!tagLine) tagLine = region.toUpperCase().replace(/[0-9]/g, "");
+    setShowHistory(false);
     navigate(gameName, tagLine, region);
   }
 
@@ -157,7 +176,13 @@ export default function NavSearch() {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={handleKeyDown}
-            onFocus={() => suggestions.length > 0 && setOpen(true)}
+            onFocus={() => {
+              if (suggestions.length > 0) setOpen(true);
+              else if (query.trim().length < 2 && history.length > 0) setShowHistory(true);
+            }}
+            onBlur={() => {
+              blurTimeoutRef.current = setTimeout(() => setShowHistory(false), 200);
+            }}
             placeholder="Search..."
             className="h-8 w-36 rounded-md border border-gray-700/50 bg-gray-800/60 px-3 pr-8 text-xs text-white placeholder-gray-500 outline-none transition-all focus:w-48 focus:border-gold/50 focus:ring-1 focus:ring-gold/20 lg:w-44 lg:focus:w-56"
           />
@@ -199,6 +224,69 @@ export default function NavSearch() {
                     {REGIONS.find((r) => r.value === s.region)?.label ?? s.region}
                   </span>
                 </button>
+              ))}
+            </div>
+          )}
+
+          {/* Search history dropdown */}
+          {showHistory && suggestions.length === 0 && history.length > 0 && (
+            <div className="absolute left-0 right-0 top-full z-50 mt-1 min-w-[280px] overflow-hidden rounded-xl border border-gray-700/50 bg-[#111827] shadow-xl backdrop-blur-md">
+              <div className="flex items-center justify-between border-b border-gray-700/50 px-3 py-1.5">
+                <span className="flex items-center gap-1.5 text-[10px] font-medium text-gray-400">
+                  <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6l4 2m6-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  Recent Searches
+                </span>
+                <button
+                  type="button"
+                  onMouseDown={(e) => e.preventDefault()}
+                  onClick={() => {
+                    clearHistory();
+                    setShowHistory(false);
+                  }}
+                  className="text-[9px] text-gray-500 transition-colors hover:text-gray-300"
+                >
+                  Clear all
+                </button>
+              </div>
+              {history.map((entry, index) => (
+                <div
+                  key={`${entry.gameName}-${entry.tagLine}-${entry.region}-${entry.timestamp}`}
+                  className="group flex w-full items-center gap-2 px-3 py-2 text-left transition-colors duration-150 hover:bg-gray-700/50"
+                >
+                  <button
+                    type="button"
+                    onMouseDown={(e) => e.preventDefault()}
+                    onClick={() => {
+                      setShowHistory(false);
+                      navigate(entry.gameName, entry.tagLine, entry.region);
+                    }}
+                    className="flex min-w-0 flex-1 items-center gap-2"
+                  >
+                    <svg className="h-3.5 w-3.5 flex-shrink-0 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6l4 2m6-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span className="truncate text-xs text-gray-100">
+                      {entry.gameName}
+                      <span className="text-gray-500">#{entry.tagLine}</span>
+                    </span>
+                    <span className="ml-auto rounded-full bg-gray-700/60 px-1.5 py-0.5 text-[9px] font-medium text-gray-400">
+                      {regionShortLabel(entry.region)}
+                    </span>
+                  </button>
+                  <button
+                    type="button"
+                    onMouseDown={(e) => e.preventDefault()}
+                    onClick={() => removeEntry(index)}
+                    className="flex-shrink-0 rounded p-0.5 text-gray-600 opacity-0 transition-all hover:bg-gray-600/50 hover:text-gray-300 group-hover:opacity-100"
+                    aria-label={`Remove ${entry.gameName}#${entry.tagLine}`}
+                  >
+                    <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </div>
               ))}
             </div>
           )}

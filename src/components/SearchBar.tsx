@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { REGIONS, getProfileIconUrl } from "@/lib/constants";
+import { useSearchHistory } from "@/hooks/useSearchHistory";
 
 interface SuggestionItem {
   gameName: string;
@@ -19,9 +20,22 @@ export default function SearchBar() {
   const [suggestions, setSuggestions] = useState<SuggestionItem[]>([]);
   const [showDropdown, setShowDropdown] = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
+  const [showHistory, setShowHistory] = useState(false);
 
   const wrapperRef = useRef<HTMLDivElement>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const blurTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const { history, addEntry, removeEntry, clearHistory } = useSearchHistory();
+
+  const regionShortLabel = (value: string) => {
+    const map: Record<string, string> = {
+      na1: "NA", euw1: "EUW", eun1: "EUNE", kr: "KR", jp1: "JP",
+      br1: "BR", la1: "LAN", la2: "LAS", oc1: "OCE", tr1: "TR",
+      ru: "RU", ph2: "PH", sg2: "SG", th2: "TH", tw2: "TW", vn2: "VN",
+    };
+    return map[value] ?? value.toUpperCase();
+  };
 
   // Debounced search suggestions
   useEffect(() => {
@@ -31,8 +45,11 @@ export default function SearchBar() {
     if (trimmed.length < 2) {
       setSuggestions([]);
       setShowDropdown(false);
+      // Show history when input is focused but no query
       return;
     }
+    // Hide history when typing
+    setShowHistory(false);
 
     debounceRef.current = setTimeout(async () => {
       try {
@@ -59,6 +76,7 @@ export default function SearchBar() {
     function handleClickOutside(e: MouseEvent) {
       if (wrapperRef.current && !wrapperRef.current.contains(e.target as Node)) {
         setShowDropdown(false);
+        setShowHistory(false);
       }
     }
     document.addEventListener("mousedown", handleClickOutside);
@@ -67,7 +85,9 @@ export default function SearchBar() {
 
   function navigateToSuggestion(s: SuggestionItem) {
     setShowDropdown(false);
+    setShowHistory(false);
     setQuery("");
+    addEntry({ gameName: s.gameName, tagLine: s.tagLine, region: s.region });
     router.push(
       `/summoner/${encodeURIComponent(s.region)}/${encodeURIComponent(s.gameName)}-${encodeURIComponent(s.tagLine)}`,
     );
@@ -121,6 +141,8 @@ export default function SearchBar() {
     if (!gameName) return;
     if (!tagLine) tagLine = region.toUpperCase().replace(/[0-9]/g, "");
 
+    addEntry({ gameName, tagLine, region });
+    setShowHistory(false);
     router.push(
       `/summoner/${encodeURIComponent(region)}/${encodeURIComponent(gameName)}-${encodeURIComponent(tagLine)}`,
     );
@@ -149,7 +171,13 @@ export default function SearchBar() {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={handleKeyDown}
-            onFocus={() => suggestions.length > 0 && setShowDropdown(true)}
+            onFocus={() => {
+              if (suggestions.length > 0) setShowDropdown(true);
+              else if (query.trim().length < 2 && history.length > 0) setShowHistory(true);
+            }}
+            onBlur={() => {
+              blurTimeoutRef.current = setTimeout(() => setShowHistory(false), 200);
+            }}
             placeholder="Search summoner... (e.g. Faker#KR1)"
             role="combobox"
             aria-expanded={showDropdown}
@@ -220,6 +248,73 @@ export default function SearchBar() {
                   {REGIONS.find((r) => r.value === s.region)?.label ?? s.region}
                 </span>
               </button>
+            ))}
+          </div>
+        )}
+
+        {/* Search history dropdown */}
+        {showHistory && !showDropdown && history.length > 0 && (
+          <div className="absolute left-0 right-0 top-full z-50 mt-1 overflow-hidden rounded-xl border border-gray-700/50 bg-[#111827] shadow-xl backdrop-blur-md animate-fade-in-scale">
+            <div className="flex items-center justify-between border-b border-gray-700/50 px-4 py-2">
+              <span className="flex items-center gap-2 text-xs font-medium text-gray-400">
+                <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6l4 2m6-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                Recent Searches
+              </span>
+              <button
+                type="button"
+                onMouseDown={(e) => e.preventDefault()}
+                onClick={() => {
+                  clearHistory();
+                  setShowHistory(false);
+                }}
+                className="text-[10px] text-gray-500 transition-colors hover:text-gray-300"
+              >
+                Clear all
+              </button>
+            </div>
+            {history.map((entry, index) => (
+              <div
+                key={`${entry.gameName}-${entry.tagLine}-${entry.region}-${entry.timestamp}`}
+                className="group flex w-full items-center gap-3 px-4 py-2.5 text-left transition-colors duration-150 hover:bg-gray-700/50"
+              >
+                <button
+                  type="button"
+                  onMouseDown={(e) => e.preventDefault()}
+                  onClick={() => {
+                    addEntry({ gameName: entry.gameName, tagLine: entry.tagLine, region: entry.region });
+                    setShowHistory(false);
+                    setQuery("");
+                    router.push(
+                      `/summoner/${encodeURIComponent(entry.region)}/${encodeURIComponent(entry.gameName)}-${encodeURIComponent(entry.tagLine)}`,
+                    );
+                  }}
+                  className="flex min-w-0 flex-1 items-center gap-3"
+                >
+                  <svg className="h-4 w-4 flex-shrink-0 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6l4 2m6-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <span className="truncate text-sm text-gray-100">
+                    {entry.gameName}
+                    <span className="text-gray-500">#{entry.tagLine}</span>
+                  </span>
+                  <span className="ml-auto rounded-full bg-gray-700/60 px-2 py-0.5 text-[10px] font-medium text-gray-400">
+                    {regionShortLabel(entry.region)}
+                  </span>
+                </button>
+                <button
+                  type="button"
+                  onMouseDown={(e) => e.preventDefault()}
+                  onClick={() => removeEntry(index)}
+                  className="flex-shrink-0 rounded p-0.5 text-gray-600 opacity-0 transition-all hover:bg-gray-600/50 hover:text-gray-300 group-hover:opacity-100"
+                  aria-label={`Remove ${entry.gameName}#${entry.tagLine}`}
+                >
+                  <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
             ))}
           </div>
         )}
