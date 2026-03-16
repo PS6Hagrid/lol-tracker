@@ -104,7 +104,7 @@ export default function LeaderboardTable({ region }: LeaderboardTableProps) {
       </div>
 
       {/* Tier tabs */}
-      <div className="mb-6 flex gap-2">
+      <div className="mb-6 flex gap-2 overflow-x-auto">
         {TIERS.map((t) => {
           const isActive = tier === t.value;
           const count = !loading && tier === t.value ? entries.length : null;
@@ -112,7 +112,7 @@ export default function LeaderboardTable({ region }: LeaderboardTableProps) {
             <button
               key={t.value}
               onClick={() => setTier(t.value)}
-              className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
+              className={`whitespace-nowrap rounded-lg px-3 py-1.5 text-xs font-medium transition-colors sm:px-4 sm:py-2 sm:text-sm ${
                 isActive
                   ? "bg-blue-500 text-white"
                   : "border border-gray-700/50 bg-[#111827] text-gray-400 hover:text-gray-200"
@@ -121,7 +121,7 @@ export default function LeaderboardTable({ region }: LeaderboardTableProps) {
               {t.label}
               {count !== null && (
                 <span
-                  className={`ml-2 rounded-full px-2 py-0.5 text-xs ${
+                  className={`ml-1.5 rounded-full px-1.5 py-0.5 text-[10px] sm:ml-2 sm:px-2 sm:text-xs ${
                     isActive
                       ? "bg-blue-400/20 text-blue-100"
                       : "bg-gray-700/50 text-gray-400"
@@ -140,12 +140,12 @@ export default function LeaderboardTable({ region }: LeaderboardTableProps) {
         <table className="w-full text-left text-sm">
           <thead>
             <tr className="border-b border-gray-800 text-xs uppercase tracking-wider text-gray-400">
-              <th className="px-4 py-3 font-medium">#</th>
-              <th className="px-4 py-3 font-medium">Summoner Name</th>
-              <th className="px-4 py-3 font-medium">LP</th>
-              <th className="px-4 py-3 font-medium">W/L</th>
-              <th className="px-4 py-3 font-medium">Winrate</th>
-              <th className="px-4 py-3 font-medium">Badges</th>
+              <th className="px-2 py-2 font-medium sm:px-4 sm:py-3">#</th>
+              <th className="px-2 py-2 font-medium sm:px-4 sm:py-3">Summoner Name</th>
+              <th className="px-2 py-2 font-medium sm:px-4 sm:py-3">LP</th>
+              <th className="hidden px-2 py-2 font-medium sm:table-cell sm:px-4 sm:py-3">W/L</th>
+              <th className="hidden px-2 py-2 font-medium sm:table-cell sm:px-4 sm:py-3">Winrate</th>
+              <th className="px-2 py-2 font-medium sm:px-4 sm:py-3">Badges</th>
             </tr>
           </thead>
           <tbody>
@@ -155,11 +155,17 @@ export default function LeaderboardTable({ region }: LeaderboardTableProps) {
                     key={i}
                     className="border-b border-gray-800/50"
                   >
-                    {Array.from({ length: 6 }).map((_, j) => (
-                      <td key={j} className="px-4 py-3">
-                        <div className="h-4 w-20 animate-pulse rounded bg-gray-700/50" />
+                    {Array.from({ length: 4 }).map((_, j) => (
+                      <td key={j} className="px-2 py-2 sm:px-4 sm:py-3">
+                        <div className="h-4 w-16 animate-pulse rounded bg-gray-700/50 sm:w-20" />
                       </td>
                     ))}
+                    <td className="hidden px-2 py-2 sm:table-cell sm:px-4 sm:py-3">
+                      <div className="h-4 w-20 animate-pulse rounded bg-gray-700/50" />
+                    </td>
+                    <td className="hidden px-2 py-2 sm:table-cell sm:px-4 sm:py-3">
+                      <div className="h-4 w-20 animate-pulse rounded bg-gray-700/50" />
+                    </td>
                   </tr>
                 ))
               : displayedEntries.map((entry, idx) => {
@@ -198,27 +204,27 @@ export default function LeaderboardTable({ region }: LeaderboardTableProps) {
                       key={entry.summonerId}
                       className={`border-b border-gray-800/50 transition-colors hover:bg-gray-800/30 ${rankBgClass}`}
                     >
-                      <td className={`px-4 py-3 ${rankCellClass}`}>
+                      <td className={`px-2 py-2 text-xs sm:px-4 sm:py-3 sm:text-sm ${rankCellClass}`}>
                         {rankPrefix}{globalRank}
                       </td>
-                      <td className="px-4 py-3">
+                      <td className="px-2 py-2 sm:px-4 sm:py-3">
                         <Link
                           href={`/summoner/${region}/${encodeURIComponent(summonerTag)}`}
-                          className="text-blue-400 hover:text-blue-300 hover:underline"
+                          className="text-xs text-blue-400 hover:text-blue-300 hover:underline sm:text-sm"
                         >
                           {entry.summonerName}
                         </Link>
                       </td>
-                      <td className="px-4 py-3 font-bold text-gray-100">
+                      <td className="px-2 py-2 text-xs font-bold text-gray-100 sm:px-4 sm:py-3 sm:text-sm">
                         {entry.leaguePoints.toLocaleString()}
                       </td>
-                      <td className="px-4 py-3 text-gray-300">
+                      <td className="hidden px-2 py-2 text-gray-300 sm:table-cell sm:px-4 sm:py-3">
                         {entry.wins}W {entry.losses}L
                       </td>
-                      <td className={`px-4 py-3 ${winrateColor}`}>
+                      <td className={`hidden px-2 py-2 sm:table-cell sm:px-4 sm:py-3 ${winrateColor}`}>
                         {winrate.toFixed(1)}%
                       </td>
-                      <td className="px-4 py-3 text-base">
+                      <td className="px-2 py-2 text-base sm:px-4 sm:py-3">
                         {entry.hotStreak && (
                           <span title="Hot Streak">🔥</span>
                         )}
@@ -248,7 +254,7 @@ export default function LeaderboardTable({ region }: LeaderboardTableProps) {
 
       {/* Pagination (master tier only) */}
       {isMaster && !loading && totalPages > 1 && (
-        <div className="mt-4 flex items-center justify-center gap-2">
+        <div className="mt-4 flex flex-wrap items-center justify-center gap-1.5 sm:gap-2">
           <button
             onClick={() => setPage((p) => Math.max(1, p - 1))}
             disabled={page === 1}

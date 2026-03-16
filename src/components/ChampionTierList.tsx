@@ -88,18 +88,18 @@ export default function ChampionTierList({
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center gap-3">
-        <h1 className="text-2xl font-bold text-gray-100">Champion Tier List</h1>
+      <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+        <h1 className="text-xl font-bold text-gray-100 sm:text-2xl">Champion Tier List</h1>
         <span className="rounded-full bg-blue-500/20 px-3 py-1 text-xs font-medium text-blue-400">
           Patch {patch}
         </span>
       </div>
 
       {/* Lane Tabs */}
-      <div className="flex flex-wrap gap-2">
+      <div className="-mx-4 flex gap-2 overflow-x-auto px-4 sm:mx-0 sm:flex-wrap sm:px-0">
         <button
           onClick={() => setLane("all")}
-          className={`rounded-lg px-4 py-2 text-sm font-medium transition ${
+          className={`shrink-0 rounded-lg px-3 py-1.5 text-xs font-medium transition sm:px-4 sm:py-2 sm:text-sm ${
             lane === "all"
               ? "bg-blue-500 text-white"
               : "border border-gray-700/50 bg-[#111827] text-gray-400 hover:text-gray-200"
@@ -111,7 +111,7 @@ export default function ChampionTierList({
           <button
             key={l}
             onClick={() => setLane(l)}
-            className={`rounded-lg px-4 py-2 text-sm font-medium transition ${
+            className={`shrink-0 whitespace-nowrap rounded-lg px-3 py-1.5 text-xs font-medium transition sm:px-4 sm:py-2 sm:text-sm ${
               lane === l
                 ? "bg-blue-500 text-white"
                 : "border border-gray-700/50 bg-[#111827] text-gray-400 hover:text-gray-200"
@@ -123,7 +123,7 @@ export default function ChampionTierList({
       </div>
 
       {/* Filter Row */}
-      <div className="flex flex-wrap items-center gap-3">
+      <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
         {/* Tier Dropdown */}
         <select
           value={tierFilter}
@@ -144,7 +144,7 @@ export default function ChampionTierList({
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Search champions..."
-          className="rounded-lg border border-gray-700/50 bg-[#111827] px-3 py-2 text-sm text-gray-300 outline-none placeholder:text-gray-600 focus:border-blue-500"
+          className="w-full rounded-lg border border-gray-700/50 bg-[#111827] px-3 py-2 text-sm text-gray-300 outline-none placeholder:text-gray-600 focus:border-blue-500 sm:w-auto"
         />
 
         {/* Sort Toggle */}
@@ -186,14 +186,14 @@ export default function ChampionTierList({
             return (
               <section key={tier}>
                 <div
-                  className={`mb-3 flex items-center gap-3 border-l-4 ${TIER_SECTION_BORDER[tier]} pl-3`}
+                  className={`mb-3 flex flex-wrap items-center gap-1.5 border-l-4 sm:gap-3 ${TIER_SECTION_BORDER[tier]} pl-3`}
                 >
                   <span
-                    className={`text-lg font-bold ${TIER_CONFIG[tier].color}`}
+                    className={`text-base font-bold sm:text-lg ${TIER_CONFIG[tier].color}`}
                   >
                     {tier} Tier
                   </span>
-                  <span className="text-sm text-gray-500">
+                  <span className="hidden text-sm text-gray-500 sm:inline">
                     &mdash; {TIER_DESCRIPTIONS[tier]}
                   </span>
                   <span className="text-xs text-gray-600">

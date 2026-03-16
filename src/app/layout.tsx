@@ -4,6 +4,7 @@ import Link from "next/link";
 import NavSearch from "@/components/NavSearch";
 import ScrollToTop from "@/components/ScrollToTop";
 import Footer from "@/components/Footer";
+import PageTransition from "@/components/PageTransition";
 import "./globals.css";
 
 const inter = Inter({
@@ -85,7 +86,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className={`${inter.variable} antialiased`}>
+      <body className={`${inter.variable} overflow-x-hidden antialiased`}>
         <nav className="sticky top-0 z-50 border-b border-gray-700/50 bg-bg-page/80 backdrop-blur-md" role="navigation" aria-label="Main navigation">
           <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4">
             <Link
@@ -123,7 +124,9 @@ export default function RootLayout({
             </div>
           </div>
         </nav>
-        <main className="min-h-[calc(100vh-3.5rem-3rem)]">{children}</main>
+        <main className="min-h-[calc(100vh-3.5rem-3rem)]">
+          <PageTransition>{children}</PageTransition>
+        </main>
         <Footer />
         {/* Mobile bottom nav */}
         <div className="fixed bottom-0 left-0 right-0 z-50 border-t border-gray-700/50 bg-bg-page/95 backdrop-blur-md sm:hidden" role="navigation" aria-label="Mobile navigation">
