@@ -64,6 +64,7 @@ export default function ChampionDetailView({
           src={splashUrl}
           alt={`${champion.name} splash art`}
           fill
+          sizes="100vw"
           className="object-cover object-top"
           unoptimized
           priority
@@ -193,6 +194,7 @@ export default function ChampionDetailView({
                   height={48}
                   className="rounded"
                   unoptimized
+                  loading="lazy"
                 />
                 <span
                   className={`absolute -top-1.5 -right-1.5 flex h-5 w-5 items-center justify-center rounded text-[10px] font-bold ${
@@ -218,6 +220,7 @@ export default function ChampionDetailView({
                   height={48}
                   className="rounded"
                   unoptimized
+                  loading="lazy"
                 />
                 <div>
                   <h3 className="text-lg font-semibold text-gray-100">
@@ -323,8 +326,10 @@ export default function ChampionDetailView({
                     src={`${DDRAGON_BASE_URL}/cdn/img/champion/splash/${champion.id}_${skin.num}.jpg`}
                     alt={skin.name === "default" ? champion.name : skin.name}
                     fill
+                    sizes="288px"
                     className="object-cover"
                     unoptimized
+                    loading="lazy"
                   />
                 </div>
                 <p className="mt-2 text-sm text-gray-400">

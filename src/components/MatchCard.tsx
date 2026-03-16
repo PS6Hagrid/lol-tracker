@@ -8,7 +8,11 @@ import {
   getSummonerSpellIconUrl,
   getRuneStyleIconUrl,
 } from "@/lib/constants";
-import TimelineTab from "@/components/TimelineTab";
+import dynamic from "next/dynamic";
+
+const TimelineTab = dynamic(() => import("@/components/TimelineTab"), {
+  loading: () => <div className="animate-pulse bg-gray-700/50 h-64 rounded-lg" />,
+});
 
 interface MatchCardProps {
   match: MatchDTO;
@@ -171,6 +175,7 @@ export default function MatchCard({ match, summonerPuuid, region }: MatchCardPro
             width={48}
             height={48}
             className="rounded-lg"
+            loading="lazy"
           />
           {/* Summoner Spells */}
           <div className="flex flex-col gap-0.5">
@@ -358,7 +363,7 @@ export default function MatchCard({ match, summonerPuuid, region }: MatchCardPro
           </div>
 
           {/* Tab navigation */}
-          <div className="mb-4 flex gap-1 border-b border-gray-700/50">
+          <div className="mb-4 flex gap-1 border-b border-gray-700/50" role="tablist" aria-label="Match details">
             {(
               [
                 { key: "overview", label: "Overview" },
@@ -369,6 +374,8 @@ export default function MatchCard({ match, summonerPuuid, region }: MatchCardPro
             ).map((tab) => (
               <button
                 key={tab.key}
+                role="tab"
+                aria-selected={activeTab === tab.key}
                 onClick={() => setActiveTab(tab.key)}
                 className={`px-3 py-2 text-xs font-semibold transition-colors ${
                   activeTab === tab.key

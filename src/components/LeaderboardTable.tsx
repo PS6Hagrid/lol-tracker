@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { REGIONS } from "@/lib/constants";
@@ -57,9 +57,10 @@ export default function LeaderboardTable({ region }: LeaderboardTableProps) {
 
   const isMaster = tier === "master";
   const totalPages = isMaster ? Math.max(1, Math.ceil(entries.length / PAGE_SIZE)) : 1;
-  const displayedEntries = isMaster
-    ? entries.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
-    : entries;
+  const displayedEntries = useMemo(
+    () => isMaster ? entries.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE) : entries,
+    [entries, page, isMaster],
+  );
 
   const handleRegionChange = (newRegion: string) => {
     router.push(`/leaderboard/${newRegion}`);
@@ -104,13 +105,15 @@ export default function LeaderboardTable({ region }: LeaderboardTableProps) {
       </div>
 
       {/* Tier tabs */}
-      <div className="mb-6 flex gap-2 overflow-x-auto">
+      <div className="mb-6 flex gap-2 overflow-x-auto" role="tablist" aria-label="Tier filter">
         {TIERS.map((t) => {
           const isActive = tier === t.value;
           const count = !loading && tier === t.value ? entries.length : null;
           return (
             <button
               key={t.value}
+              role="tab"
+              aria-selected={isActive}
               onClick={() => setTier(t.value)}
               className={`whitespace-nowrap rounded-lg px-3 py-1.5 text-xs font-medium transition-colors sm:px-4 sm:py-2 sm:text-sm ${
                 isActive
@@ -136,16 +139,16 @@ export default function LeaderboardTable({ region }: LeaderboardTableProps) {
       </div>
 
       {/* Table */}
-      <div className="overflow-x-auto rounded-xl border border-gray-700/50 bg-[#0d1117]">
-        <table className="w-full text-left text-sm">
+      <div className="overflow-x-auto rounded-xl border border-gray-700/50 bg-[#0d1117]" role="tabpanel">
+        <table className="w-full text-left text-sm" aria-label="Leaderboard rankings">
           <thead>
             <tr className="border-b border-gray-800 text-xs uppercase tracking-wider text-gray-400">
-              <th className="px-2 py-2 font-medium sm:px-4 sm:py-3">#</th>
-              <th className="px-2 py-2 font-medium sm:px-4 sm:py-3">Summoner Name</th>
-              <th className="px-2 py-2 font-medium sm:px-4 sm:py-3">LP</th>
-              <th className="hidden px-2 py-2 font-medium sm:table-cell sm:px-4 sm:py-3">W/L</th>
-              <th className="hidden px-2 py-2 font-medium sm:table-cell sm:px-4 sm:py-3">Winrate</th>
-              <th className="px-2 py-2 font-medium sm:px-4 sm:py-3">Badges</th>
+              <th scope="col" className="px-2 py-2 font-medium sm:px-4 sm:py-3">#</th>
+              <th scope="col" className="px-2 py-2 font-medium sm:px-4 sm:py-3">Summoner Name</th>
+              <th scope="col" className="px-2 py-2 font-medium sm:px-4 sm:py-3">LP</th>
+              <th scope="col" className="hidden px-2 py-2 font-medium sm:table-cell sm:px-4 sm:py-3">W/L</th>
+              <th scope="col" className="hidden px-2 py-2 font-medium sm:table-cell sm:px-4 sm:py-3">Winrate</th>
+              <th scope="col" className="px-2 py-2 font-medium sm:px-4 sm:py-3">Badges</th>
             </tr>
           </thead>
           <tbody>
@@ -258,6 +261,7 @@ export default function LeaderboardTable({ region }: LeaderboardTableProps) {
           <button
             onClick={() => setPage((p) => Math.max(1, p - 1))}
             disabled={page === 1}
+            aria-label="Previous page"
             className="rounded-lg border border-gray-700/50 bg-[#111827] px-3 py-1.5 text-sm text-gray-300 transition-colors hover:text-white disabled:cursor-not-allowed disabled:opacity-40"
           >
             Prev
@@ -286,6 +290,7 @@ export default function LeaderboardTable({ region }: LeaderboardTableProps) {
           <button
             onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
             disabled={page === totalPages}
+            aria-label="Next page"
             className="rounded-lg border border-gray-700/50 bg-[#111827] px-3 py-1.5 text-sm text-gray-300 transition-colors hover:text-white disabled:cursor-not-allowed disabled:opacity-40"
           >
             Next

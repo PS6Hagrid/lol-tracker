@@ -96,8 +96,10 @@ export default function ChampionTierList({
       </div>
 
       {/* Lane Tabs */}
-      <div className="-mx-4 flex gap-2 overflow-x-auto px-4 sm:mx-0 sm:flex-wrap sm:px-0">
+      <div className="-mx-4 flex gap-2 overflow-x-auto px-4 sm:mx-0 sm:flex-wrap sm:px-0" role="tablist" aria-label="Lane filter">
         <button
+          role="tab"
+          aria-selected={lane === "all"}
           onClick={() => setLane("all")}
           className={`shrink-0 rounded-lg px-3 py-1.5 text-xs font-medium transition sm:px-4 sm:py-2 sm:text-sm ${
             lane === "all"
@@ -110,6 +112,8 @@ export default function ChampionTierList({
         {ALL_LANES.map((l) => (
           <button
             key={l}
+            role="tab"
+            aria-selected={lane === l}
             onClick={() => setLane(l)}
             className={`shrink-0 whitespace-nowrap rounded-lg px-3 py-1.5 text-xs font-medium transition sm:px-4 sm:py-2 sm:text-sm ${
               lane === l
@@ -144,13 +148,15 @@ export default function ChampionTierList({
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Search champions..."
+          aria-label="Search champions"
           className="w-full rounded-lg border border-gray-700/50 bg-[#111827] px-3 py-2 text-sm text-gray-300 outline-none placeholder:text-gray-600 focus:border-blue-500 sm:w-auto"
         />
 
         {/* Sort Toggle */}
-        <div className="flex overflow-hidden rounded-lg border border-gray-700/50">
+        <div className="flex overflow-hidden rounded-lg border border-gray-700/50" role="group" aria-label="Sort order">
           <button
             onClick={() => setSort("tier")}
+            aria-pressed={sort === "tier"}
             className={`px-3 py-2 text-sm font-medium transition ${
               sort === "tier"
                 ? "bg-blue-500 text-white"
@@ -161,6 +167,7 @@ export default function ChampionTierList({
           </button>
           <button
             onClick={() => setSort("name")}
+            aria-pressed={sort === "name"}
             className={`px-3 py-2 text-sm font-medium transition ${
               sort === "name"
                 ? "bg-blue-500 text-white"
@@ -184,7 +191,7 @@ export default function ChampionTierList({
             const champs = grouped[tier];
             if (!champs || champs.length === 0) return null;
             return (
-              <section key={tier}>
+              <section key={tier} role="region" aria-label={`${tier} Tier - ${TIER_DESCRIPTIONS[tier]}`}>
                 <div
                   className={`mb-3 flex flex-wrap items-center gap-1.5 border-l-4 sm:gap-3 ${TIER_SECTION_BORDER[tier]} pl-3`}
                 >
@@ -234,6 +241,7 @@ function ChampionCard({ champion }: { champion: ChampionMeta }) {
         width={48}
         height={48}
         className="rounded-lg"
+        loading="lazy"
       />
       <div className="min-w-0 flex-1">
         <p className="text-sm font-medium text-gray-100">{champion.name}</p>

@@ -1,9 +1,21 @@
 @import "tailwindcss";
 
+/* Enable class-based dark mode for next-themes */
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme inline {
   /* ── Page & Card Backgrounds ── */
-  --color-bg-page: #0a0e17;
-  --color-bg-card: #111827;
+  --color-bg-page: var(--bg-page);
+  --color-bg-card: var(--bg-card);
+  --color-bg-card-hover: var(--bg-card-hover);
+
+  /* ── Theme Text Colors ── */
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted: var(--text-muted);
+
+  /* ── Theme Border ── */
+  --color-border-theme: var(--border-color);
 
   /* ── Primary Accent (Gold) ── */
   --color-gold: #C89B3C;
@@ -31,9 +43,31 @@
   --font-sans: var(--font-inter);
 }
 
+/* ── Light Mode (default for CSS vars) ── */
+:root {
+  --bg-page: #ffffff;
+  --bg-card: #f8fafc;
+  --bg-card-hover: #f1f5f9;
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #94a3b8;
+  --border-color: #e2e8f0;
+}
+
+/* ── Dark Mode ── */
+.dark {
+  --bg-page: #0a0e17;
+  --bg-card: #111827;
+  --bg-card-hover: #1e293b;
+  --text-primary: #f1f5f9;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+  --border-color: rgba(55, 65, 81, 0.5);
+}
+
 body {
-  background-color: var(--color-bg-page);
-  color: #e2e8f0;
+  background-color: var(--bg-page);
+  color: var(--text-primary);
   font-family: var(--font-sans), system-ui, sans-serif;
 }
 

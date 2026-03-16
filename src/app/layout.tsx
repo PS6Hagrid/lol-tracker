@@ -5,6 +5,8 @@ import NavSearch from "@/components/NavSearch";
 import ScrollToTop from "@/components/ScrollToTop";
 import Footer from "@/components/Footer";
 import PageTransition from "@/components/PageTransition";
+import ThemeProvider from "@/components/ThemeProvider";
+import ThemeToggle from "@/components/ThemeToggle";
 import "./globals.css";
 
 const inter = Inter({
@@ -63,8 +65,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark">
+    <html lang="en" className="dark" suppressHydrationWarning>
       <head>
+        <link rel="preconnect" href="https://ddragon.leagueoflegends.com" />
+        <link rel="dns-prefetch" href="https://ddragon.leagueoflegends.com" />
+        <link rel="preconnect" href="https://raw.communitydragon.org" />
+        <link rel="dns-prefetch" href="https://raw.communitydragon.org" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -86,7 +92,14 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className={`${inter.variable} overflow-x-hidden antialiased`}>
+      <body className={`${inter.variable} bg-bg-page text-text-primary overflow-x-hidden antialiased`}>
+        <ThemeProvider>
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-[100] focus:rounded-md focus:bg-blue-600 focus:px-4 focus:py-2 focus:text-white focus:outline-none"
+        >
+          Skip to content
+        </a>
         <nav className="sticky top-0 z-50 border-b border-gray-700/50 bg-bg-page/80 backdrop-blur-md" role="navigation" aria-label="Main navigation">
           <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4">
             <Link
@@ -120,11 +133,12 @@ export default function RootLayout({
               >
                 Multi-Search
               </Link>
+              <ThemeToggle />
               <NavSearch />
             </div>
           </div>
         </nav>
-        <main className="min-h-[calc(100vh-3.5rem-3rem)]">
+        <main id="main-content" className="min-h-[calc(100vh-3.5rem-3rem)]">
           <PageTransition>{children}</PageTransition>
         </main>
         <Footer />
@@ -158,6 +172,7 @@ export default function RootLayout({
           </div>
         </div>
         <ScrollToTop />
+        </ThemeProvider>
       </body>
     </html>
   );
