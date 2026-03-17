@@ -14,6 +14,16 @@ interface MatchHistoryListProps {
 
 type FilterMode = "all" | "wins" | "losses";
 type QueueFilter = "all" | "ranked" | "normal" | "aram";
+type RoleFilter = "" | "TOP" | "JUNGLE" | "MIDDLE" | "BOTTOM" | "UTILITY";
+
+const ROLE_OPTIONS: { label: string; value: RoleFilter }[] = [
+  { label: "All", value: "" },
+  { label: "Top", value: "TOP" },
+  { label: "JG", value: "JUNGLE" },
+  { label: "Mid", value: "MIDDLE" },
+  { label: "Bot", value: "BOTTOM" },
+  { label: "Sup", value: "UTILITY" },
+];
 
 function getQueueCategory(gameMode: string, gameType: string): string {
   if (gameType === "MATCHED_GAME" && gameMode === "CLASSIC") return "ranked";
@@ -28,6 +38,25 @@ function findPlayer(match: MatchDTO, puuid: string) {
   );
 }
 
+/** Map participant lane/role fields to a normalized role value */
+function getParticipantRole(participant: {
+  lane: string;
+  role: string;
+}): string {
+  const lane = participant.lane?.toUpperCase() ?? "";
+  const role = participant.role?.toUpperCase() ?? "";
+
+  if (lane === "TOP") return "TOP";
+  if (lane === "JUNGLE") return "JUNGLE";
+  if (lane === "MIDDLE" || lane === "MID") return "MIDDLE";
+  if (lane === "BOTTOM" || lane === "BOT") {
+    if (role === "SUPPORT" || role === "UTILITY") return "UTILITY";
+    return "BOTTOM";
+  }
+  if (role === "SUPPORT" || role === "UTILITY") return "UTILITY";
+  return lane || role || "";
+}
+
 export default function MatchHistoryList({
   matches: initialMatches,
   summonerPuuid,
@@ -38,12 +67,14 @@ export default function MatchHistoryList({
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
-  const [filter, setFilter] = useState<FilterMode>("all");
+  const [resultFilter, setResultFilter] = useState<FilterMode>("all");
   const [queueFilter, setQueueFilter] = useState<QueueFilter>("all");
-  const [championFilter, setChampionFilter] = useState<string>("all");
+  const [roleFilter, setRoleFilter] = useState<RoleFilter>("");
+  const [championFilter, setChampionFilter] = useState<string>("");
   const [championSearch, setChampionSearch] = useState("");
   const [championDropdownOpen, setChampionDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   // Combine server-loaded + client-loaded matches
   const matches = useMemo(
@@ -103,7 +134,7 @@ export default function MatchHistoryList({
     return Array.from(champions).sort();
   }, [matches, summonerPuuid]);
 
-  // Champions filtered by search
+  // Champions filtered by search input
   const filteredChampions = useMemo(() => {
     if (!championSearch) return playedChampions;
     const lower = championSearch.toLowerCase();
@@ -112,7 +143,24 @@ export default function MatchHistoryList({
     );
   }, [playedChampions, championSearch]);
 
-  // Matches after queue + champion filters (for W/L stats)
+  // Check if any filter is active
+  const hasActiveFilters =
+    resultFilter !== "all" ||
+    queueFilter !== "all" ||
+    roleFilter !== "" ||
+    championFilter !== "";
+
+  // Clear all filters
+  const clearAllFilters = () => {
+    setResultFilter("all");
+    setQueueFilter("all");
+    setRoleFilter("");
+    setChampionFilter("");
+    setChampionSearch("");
+    setChampionDropdownOpen(false);
+  };
+
+  // Matches after queue + champion + role filters (for W/L stats)
   const baseFilteredMatches = useMemo(() => {
     return matches.filter((match) => {
       const player = findPlayer(match, summonerPuuid);
@@ -125,24 +173,29 @@ export default function MatchHistoryList({
         if (category !== queueFilter) return false;
       }
 
-      if (championFilter !== "all" && player.championName !== championFilter) {
+      if (championFilter !== "" && player.championName !== championFilter) {
         return false;
+      }
+
+      if (roleFilter !== "") {
+        const participantRole = getParticipantRole(player);
+        if (participantRole !== roleFilter) return false;
       }
 
       return true;
     });
-  }, [matches, summonerPuuid, queueFilter, championFilter]);
+  }, [matches, summonerPuuid, queueFilter, championFilter, roleFilter]);
 
   // Final filtered matches (+ win/loss filter)
   const filteredMatches = useMemo(() => {
-    if (filter === "all") return baseFilteredMatches;
+    if (resultFilter === "all") return baseFilteredMatches;
     return baseFilteredMatches.filter((match) => {
       const player = findPlayer(match, summonerPuuid);
-      return filter === "wins" ? player.win : !player.win;
+      return resultFilter === "wins" ? player.win : !player.win;
     });
-  }, [baseFilteredMatches, filter, summonerPuuid]);
+  }, [baseFilteredMatches, resultFilter, summonerPuuid]);
 
-  // Stats from base filtered (queue + champion, not win/loss)
+  // Stats from base filtered (queue + champion + role, not win/loss)
   const totalWins = useMemo(() => {
     return baseFilteredMatches.filter(
       (match) => findPlayer(match, summonerPuuid).win,
@@ -151,124 +204,72 @@ export default function MatchHistoryList({
 
   const totalLosses = baseFilteredMatches.length - totalWins;
 
+  // Pill button styling helper
+  const pillClass = (active: boolean) =>
+    `rounded-md px-3 py-1.5 text-xs font-medium transition-all duration-200 ${
+      active
+        ? "bg-blue-500 text-white"
+        : "bg-bg-card border border-border-theme text-text-secondary hover:text-text-primary"
+    }`;
+
   return (
     <div>
-      {/* Filter controls + win/loss summary */}
-      <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
-        {/* Win/Loss filter */}
-        <div className="flex items-center gap-1 rounded-lg bg-bg-card-hover/60 p-1" role="tablist" aria-label="Filter by result">
-          {(["all", "wins", "losses"] as const).map((mode) => (
-            <button
-              key={mode}
-              role="tab"
-              aria-selected={filter === mode}
-              onClick={() => setFilter(mode)}
-              className={`rounded-md px-3 py-1.5 text-xs font-medium capitalize transition-all duration-200 ${
-                filter === mode
-                  ? "bg-gray-700 text-white shadow"
-                  : "text-text-secondary hover:text-text-primary"
-              }`}
-            >
-              {mode}
-            </button>
-          ))}
-        </div>
-
-        {/* Queue type filter */}
-        <div className="flex items-center gap-1 rounded-lg bg-bg-card-hover/60 p-1" role="tablist" aria-label="Filter by queue type">
-          {(["all", "ranked", "normal", "aram"] as const).map((mode) => (
-            <button
-              key={mode}
-              role="tab"
-              aria-selected={queueFilter === mode}
-              onClick={() => setQueueFilter(mode)}
-              className={`rounded-md px-3 py-1.5 text-xs font-medium transition-all duration-200 ${
-                queueFilter === mode
-                  ? "bg-gray-700 text-white shadow"
-                  : "text-text-secondary hover:text-text-primary"
-              } ${mode === "aram" ? "uppercase" : "capitalize"}`}
-            >
-              {mode === "aram" ? "ARAM" : mode}
-            </button>
-          ))}
-        </div>
-
-        {/* Champion filter dropdown */}
+      {/* Filter bar */}
+      <div className="mb-4 flex flex-wrap gap-2 items-start">
+        {/* Champion filter — searchable text input with autocomplete */}
         <div ref={dropdownRef} className="relative">
-          <button
-            onClick={() => {
-              setChampionDropdownOpen(!championDropdownOpen);
-              setChampionSearch("");
+          <input
+            ref={inputRef}
+            type="text"
+            value={championFilter || championSearch}
+            onChange={(e) => {
+              const val = e.target.value;
+              setChampionSearch(val);
+              setChampionFilter("");
+              setChampionDropdownOpen(val.length > 0);
             }}
-            className={`flex items-center gap-2 rounded-lg px-3 py-1.5 text-xs font-medium transition-all duration-200 ${
-              championFilter !== "all"
-                ? "bg-gray-700 text-white shadow"
-                : "bg-bg-card-hover/60 text-text-secondary hover:text-text-primary"
-            }`}
-          >
-            {championFilter !== "all" && (
-              <img
-                src={getChampionIconUrl(championFilter)}
-                alt={championFilter}
-                width={16}
-                height={16}
-                className="rounded"
-              />
-            )}
-            {championFilter === "all" ? "All Champions" : championFilter}
-            <svg
-              className={`h-3 w-3 transition-transform duration-200 ${
-                championDropdownOpen ? "rotate-180" : ""
-              }`}
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={2}
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M19 9l-7 7-7-7"
-              />
-            </svg>
-          </button>
+            onFocus={() => {
+              if (championFilter) {
+                setChampionSearch(championFilter);
+                setChampionFilter("");
+              }
+              setChampionDropdownOpen(true);
+            }}
+            placeholder="Champion..."
+            className="w-40 rounded-md border border-border-theme bg-bg-card px-3 py-1.5 text-xs text-text-primary placeholder-text-secondary outline-none focus:ring-1 focus:ring-blue-500/50"
+          />
 
-          {championDropdownOpen && (
+          {championDropdownOpen && filteredChampions.length > 0 && (
             <div className="absolute left-0 top-full z-50 mt-1 w-48 overflow-hidden rounded-xl border border-border-theme bg-bg-card/95 shadow-xl backdrop-blur-md">
-              <div className="border-b border-border-theme p-2">
-                <input
-                  type="text"
-                  value={championSearch}
-                  onChange={(e) => setChampionSearch(e.target.value)}
-                  placeholder="Search champion..."
-                  className="w-full rounded-md bg-bg-card-hover/60 px-2 py-1.5 text-xs text-white placeholder-gray-500 outline-none focus:ring-1 focus:ring-cyan/30"
-                  autoFocus
-                />
-              </div>
               <div className="max-h-48 overflow-y-auto">
-                <button
-                  onClick={() => {
-                    setChampionFilter("all");
-                    setChampionDropdownOpen(false);
-                  }}
-                  className={`flex w-full items-center gap-2 px-3 py-2 text-left text-xs transition-colors ${
-                    championFilter === "all"
-                      ? "bg-gray-700 text-white"
-                      : "text-text-secondary hover:bg-white/5 hover:text-text-primary"
-                  }`}
-                >
-                  All Champions
-                </button>
+                {!championSearch && (
+                  <button
+                    onClick={() => {
+                      setChampionFilter("");
+                      setChampionSearch("");
+                      setChampionDropdownOpen(false);
+                    }}
+                    className={`flex w-full items-center gap-2 px-3 py-2 text-left text-xs transition-colors ${
+                      championFilter === ""
+                        ? "bg-blue-500 text-white"
+                        : "text-text-secondary hover:bg-white/5 hover:text-text-primary"
+                    }`}
+                  >
+                    All Champions
+                  </button>
+                )}
                 {filteredChampions.map((name) => (
                   <button
                     key={name}
                     onClick={() => {
                       setChampionFilter(name);
+                      setChampionSearch("");
                       setChampionDropdownOpen(false);
+                      inputRef.current?.blur();
                     }}
                     className={`flex w-full items-center gap-2 px-3 py-2 text-left text-xs transition-colors ${
                       championFilter === name
-                        ? "bg-gray-700 text-white"
+                        ? "bg-blue-500 text-white"
                         : "text-text-secondary hover:bg-white/5 hover:text-text-primary"
                     }`}
                   >
@@ -287,8 +288,69 @@ export default function MatchHistoryList({
           )}
         </div>
 
-        {/* Win/Loss summary */}
-        <div className="text-sm text-text-secondary">
+        {/* Role filter — pill buttons */}
+        <div className="flex items-center gap-1" role="tablist" aria-label="Filter by role">
+          {ROLE_OPTIONS.map((opt) => (
+            <button
+              key={opt.value}
+              role="tab"
+              aria-selected={roleFilter === opt.value}
+              onClick={() => setRoleFilter(opt.value)}
+              className={pillClass(roleFilter === opt.value)}
+            >
+              {opt.label}
+            </button>
+          ))}
+        </div>
+
+        {/* Queue type filter — pill buttons */}
+        <div className="flex items-center gap-1" role="tablist" aria-label="Filter by queue type">
+          {(["all", "ranked", "normal", "aram"] as const).map((mode) => (
+            <button
+              key={mode}
+              role="tab"
+              aria-selected={queueFilter === mode}
+              onClick={() => setQueueFilter(mode)}
+              className={`${pillClass(queueFilter === mode)} ${mode === "aram" ? "uppercase" : "capitalize"}`}
+            >
+              {mode === "aram" ? "ARAM" : mode === "all" ? "All" : mode}
+            </button>
+          ))}
+        </div>
+
+        {/* Result filter — pill buttons */}
+        <div className="flex items-center gap-1" role="tablist" aria-label="Filter by result">
+          {(["all", "wins", "losses"] as const).map((mode) => (
+            <button
+              key={mode}
+              role="tab"
+              aria-selected={resultFilter === mode}
+              onClick={() => setResultFilter(mode)}
+              className={`${pillClass(resultFilter === mode)} capitalize`}
+            >
+              {mode === "all" ? "All" : mode === "wins" ? "Wins" : "Losses"}
+            </button>
+          ))}
+        </div>
+
+        {/* Clear all filters */}
+        {hasActiveFilters && (
+          <button
+            onClick={clearAllFilters}
+            className="rounded-md px-2 py-1.5 text-xs text-text-secondary hover:text-text-primary transition-colors"
+          >
+            Clear
+          </button>
+        )}
+      </div>
+
+      {/* Showing X of Y + Win/Loss summary */}
+      <div className="mb-3 flex flex-wrap items-center gap-3 text-sm text-text-secondary">
+        <span>
+          Showing {filteredMatches.length} of {matches.length} matches
+        </span>
+        <span className="text-text-muted">|</span>
+        <span>
           <span className="font-semibold text-green-400">{totalWins}W</span>
           {" / "}
           <span className="font-semibold text-red-400">{totalLosses}L</span>
@@ -299,12 +361,12 @@ export default function MatchHistoryList({
               : 0}
             % WR)
           </span>
-        </div>
+        </span>
       </div>
 
       {/* Match list */}
       <div
-        key={`${filter}-${queueFilter}-${championFilter}`}
+        key={`${resultFilter}-${queueFilter}-${championFilter}-${roleFilter}`}
         className="animate-stagger space-y-2"
       >
         {filteredMatches.length > 0 ? (
@@ -357,7 +419,7 @@ export default function MatchHistoryList({
                     d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
                   />
                 </svg>
-                Loading…
+                Loading...
               </>
             ) : (
               <>

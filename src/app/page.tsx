@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import SearchBar from "@/components/SearchBar";
 import HomeSidebar from "@/components/HomeSidebar";
+import StatsCounter from "@/components/StatsCounter";
 import FeatureCards from "@/components/FeatureCards";
 import TrendingPlayers from "@/components/TrendingPlayers";
 
@@ -61,6 +62,9 @@ export default function Home() {
           <HomeSidebar />
         </div>
       </section>
+
+      {/* Stats Counter */}
+      <StatsCounter />
 
       {/* Feature Cards */}
       <FeatureCards />

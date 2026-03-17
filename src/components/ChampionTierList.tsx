@@ -93,6 +93,12 @@ export default function ChampionTierList({
         <span className="rounded-full bg-blue-500/20 px-3 py-1 text-xs font-medium text-blue-400">
           Patch {patch}
         </span>
+        <Link
+          href="/champions/compare"
+          className="ml-auto rounded-lg border border-border-theme bg-bg-card px-3 py-1.5 text-xs font-medium text-text-secondary transition hover:border-blue-500 hover:text-blue-400 sm:text-sm"
+        >
+          Compare Champions
+        </Link>
       </div>
 
       {/* Lane Tabs */}

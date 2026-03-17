@@ -1,0 +1,91 @@
+{
+  "nav": {
+    "home": "Home",
+    "champions": "Champions",
+    "leaderboard": "Leaderboard",
+    "patchNotes": "Patch Notes",
+    "multiSearch": "Multi-Search"
+  },
+  "home": {
+    "title": "Trackerino",
+    "subtitle": "Search any summoner to view their stats",
+    "searchPlaceholder": "Search summoner... (e.g. Faker#KR1)",
+    "search": "Search",
+    "tryExamples": "Try:",
+    "favorites": "Favorites",
+    "recentSearches": "Recent Searches",
+    "noFavorites": "Star a summoner to add them here",
+    "noRecent": "Your recent searches will appear here"
+  },
+  "leaderboard": {
+    "title": "Leaderboard",
+    "rank": "#",
+    "summonerName": "Summoner",
+    "lp": "LP",
+    "winLoss": "W/L",
+    "winrate": "Winrate",
+    "challenger": "Challenger",
+    "grandmaster": "Grandmaster",
+    "master": "Master",
+    "showing": "Showing {count} players",
+    "page": "Page {current} of {total}"
+  },
+  "champions": {
+    "title": "Champion Tier List",
+    "patch": "Patch {version}",
+    "all": "All",
+    "searchPlaceholder": "Search champions...",
+    "allTiers": "All Tiers",
+    "byTier": "By Tier",
+    "byName": "By Name",
+    "showing": "Showing {count} of {total} champions",
+    "sTier": "S Tier — Meta Dominators",
+    "aTier": "A Tier — Strong Picks",
+    "bTier": "B Tier — Solid Choices",
+    "cTier": "C Tier — Situational",
+    "dTier": "D Tier — Weak / Niche"
+  },
+  "patchNotes": {
+    "title": "Patch Notes",
+    "subtitle": "Stay up to date with the latest changes",
+    "previous": "Previous Patches",
+    "readFull": "Read Full Notes",
+    "latest": "Latest"
+  },
+  "profile": {
+    "level": "Level {level}",
+    "ranked": "Ranked Solo/Duo",
+    "flex": "Ranked Flex",
+    "unranked": "Unranked",
+    "wins": "W",
+    "losses": "L",
+    "winrate": "Winrate",
+    "matches": "Matches",
+    "overview": "Overview",
+    "matchHistory": "Match History",
+    "liveGame": "Live Game",
+    "timeline": "Timeline"
+  },
+  "errors": {
+    "notFound": "Page Not Found",
+    "notFoundDesc": "The page you're looking for doesn't exist or has been moved.",
+    "searchInstead": "Search for a summoner instead:",
+    "backHome": "Back to Home",
+    "somethingWrong": "Something Went Wrong",
+    "tryAgain": "Try Again",
+    "teemo": "Even Teemo couldn't find this page..."
+  },
+  "footer": {
+    "disclaimer": "Trackerino isn't endorsed by Riot Games and doesn't reflect the views or opinions of Riot Games or anyone officially involved in producing or managing Riot Games properties. Riot Games, and all associated properties are trademarks or registered trademarks of Riot Games, Inc.",
+    "copyright": "© 2024-2026 Trackerino. Built with Next.js."
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "top": "Top",
+    "jungle": "Jungle",
+    "mid": "Mid",
+    "bot": "Bot",
+    "support": "Support"
+  }
+}

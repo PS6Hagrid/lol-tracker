@@ -1,0 +1,91 @@
+{
+  "nav": {
+    "home": "Startseite",
+    "champions": "Champions",
+    "leaderboard": "Rangliste",
+    "patchNotes": "Patch-Notes",
+    "multiSearch": "Multi-Suche"
+  },
+  "home": {
+    "title": "Trackerino",
+    "subtitle": "Suche einen Beschwörer, um seine Statistiken anzuzeigen",
+    "searchPlaceholder": "Beschwörer suchen... (z.B. Faker#KR1)",
+    "search": "Suche",
+    "tryExamples": "Probiere:",
+    "favorites": "Favoriten",
+    "recentSearches": "Letzte Suchen",
+    "noFavorites": "Markiere einen Beschwörer, um ihn hier hinzuzufügen",
+    "noRecent": "Deine letzten Suchen erscheinen hier"
+  },
+  "leaderboard": {
+    "title": "Rangliste",
+    "rank": "#",
+    "summonerName": "Beschwörer",
+    "lp": "LP",
+    "winLoss": "S/N",
+    "winrate": "Gewinnrate",
+    "challenger": "Herausforderer",
+    "grandmaster": "Großmeister",
+    "master": "Meister",
+    "showing": "{count} Spieler angezeigt",
+    "page": "Seite {current} von {total}"
+  },
+  "champions": {
+    "title": "Champion-Tierliste",
+    "patch": "Patch {version}",
+    "all": "Alle",
+    "searchPlaceholder": "Champions suchen...",
+    "allTiers": "Alle Stufen",
+    "byTier": "Nach Stufe",
+    "byName": "Nach Name",
+    "showing": "{count} von {total} Champions angezeigt",
+    "sTier": "S-Stufe — Meta-Dominatoren",
+    "aTier": "A-Stufe — Starke Picks",
+    "bTier": "B-Stufe — Solide Wahlen",
+    "cTier": "C-Stufe — Situationsabhängig",
+    "dTier": "D-Stufe — Schwach / Nische"
+  },
+  "patchNotes": {
+    "title": "Patch-Notes",
+    "subtitle": "Bleib auf dem Laufenden mit den neuesten Änderungen",
+    "previous": "Vorherige Patches",
+    "readFull": "Vollständige Notes lesen",
+    "latest": "Aktuell"
+  },
+  "profile": {
+    "level": "Stufe {level}",
+    "ranked": "Ranglistenspiel Solo/Duo",
+    "flex": "Ranglistenspiel Flex",
+    "unranked": "Ohne Rang",
+    "wins": "S",
+    "losses": "N",
+    "winrate": "Gewinnrate",
+    "matches": "Spiele",
+    "overview": "Übersicht",
+    "matchHistory": "Spielverlauf",
+    "liveGame": "Live-Spiel",
+    "timeline": "Zeitverlauf"
+  },
+  "errors": {
+    "notFound": "Seite nicht gefunden",
+    "notFoundDesc": "Die gesuchte Seite existiert nicht oder wurde verschoben.",
+    "searchInstead": "Suche stattdessen nach einem Beschwörer:",
+    "backHome": "Zurück zur Startseite",
+    "somethingWrong": "Etwas ist schiefgelaufen",
+    "tryAgain": "Erneut versuchen",
+    "teemo": "Nicht mal Teemo konnte diese Seite finden..."
+  },
+  "footer": {
+    "disclaimer": "Trackerino wird nicht von Riot Games unterstützt und spiegelt nicht die Ansichten oder Meinungen von Riot Games oder von Personen wider, die offiziell an der Herstellung oder Verwaltung von Riot Games-Produkten beteiligt sind. Riot Games und alle zugehörigen Marken sind Marken oder eingetragene Marken von Riot Games, Inc.",
+    "copyright": "© 2024-2026 Trackerino. Erstellt mit Next.js."
+  },
+  "common": {
+    "loading": "Laden...",
+    "error": "Fehler",
+    "top": "Oben",
+    "jungle": "Dschungel",
+    "mid": "Mitte",
+    "bot": "Unten",
+    "support": "Unterstützer"
+  }
+}
