@@ -79,10 +79,10 @@ function CustomTooltip({ active, payload }: { active?: boolean; payload?: { payl
   const tierLabel = labelFromTotalLP(snap.totalLP);
 
   return (
-    <div className="rounded-lg border border-gray-700/50 bg-gray-900/95 px-3 py-2 text-xs shadow-lg backdrop-blur-sm">
-      <p className="font-medium text-gray-300">{snap.timestamp}</p>
+    <div className="rounded-lg border border-border-theme bg-bg-card/95 px-3 py-2 text-xs shadow-lg backdrop-blur-sm">
+      <p className="font-medium text-text-secondary">{snap.timestamp}</p>
       <p className="mt-0.5 font-semibold text-cyan">{tierLabel}</p>
-      <p className="text-gray-400">{snap.lp} LP</p>
+      <p className="text-text-secondary">{snap.lp} LP</p>
     </div>
   );
 }
@@ -115,12 +115,12 @@ export default function LPGraph({ data, currentEntry }: LPGraphProps) {
   // Empty state
   if (chartData.length === 0) {
     return (
-      <div className="flex h-48 flex-col items-center justify-center rounded-xl border border-gray-700/50 bg-gray-900/80 p-6 backdrop-blur-sm">
-        <svg className="mb-2 h-8 w-8 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+      <div className="flex h-48 flex-col items-center justify-center rounded-xl border border-border-theme bg-bg-card/80 p-6 backdrop-blur-sm">
+        <svg className="mb-2 h-8 w-8 text-text-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
           <path strokeLinecap="round" strokeLinejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" />
         </svg>
-        <p className="text-sm font-medium text-gray-400">No LP Data Yet</p>
-        <p className="mt-1 text-xs text-gray-500">
+        <p className="text-sm font-medium text-text-secondary">No LP Data Yet</p>
+        <p className="mt-1 text-xs text-text-muted">
           LP history builds up each time you visit this profile.
         </p>
       </div>
@@ -138,10 +138,10 @@ export default function LPGraph({ data, currentEntry }: LPGraphProps) {
   const tierLines = getTierLines(yMin, yMax);
 
   return (
-    <div className="rounded-xl border border-gray-700/50 bg-gray-900/80 p-4 backdrop-blur-sm">
+    <div className="rounded-xl border border-border-theme bg-bg-card/80 p-4 backdrop-blur-sm">
       <div className="mb-3 flex items-center justify-between">
-        <h3 className="text-sm font-medium text-gray-400">LP History</h3>
-        <span className="text-xs text-gray-500">{chartData.length} snapshots</span>
+        <h3 className="text-sm font-medium text-text-secondary">LP History</h3>
+        <span className="text-xs text-text-muted">{chartData.length} snapshots</span>
       </div>
       <ResponsiveContainer width="100%" height={240}>
         <AreaChart data={chartData} margin={{ top: 10, right: 10, left: 0, bottom: 5 }}>

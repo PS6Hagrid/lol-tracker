@@ -89,7 +89,7 @@ export default function ChampionTierList({
     <div className="space-y-6">
       {/* Header */}
       <div className="flex flex-wrap items-center gap-2 sm:gap-3">
-        <h1 className="text-xl font-bold text-gray-100 sm:text-2xl">Champion Tier List</h1>
+        <h1 className="text-xl font-bold text-text-primary sm:text-2xl">Champion Tier List</h1>
         <span className="rounded-full bg-blue-500/20 px-3 py-1 text-xs font-medium text-blue-400">
           Patch {patch}
         </span>
@@ -104,7 +104,7 @@ export default function ChampionTierList({
           className={`shrink-0 rounded-lg px-3 py-1.5 text-xs font-medium transition sm:px-4 sm:py-2 sm:text-sm ${
             lane === "all"
               ? "bg-blue-500 text-white"
-              : "border border-gray-700/50 bg-[#111827] text-gray-400 hover:text-gray-200"
+              : "border border-border-theme bg-bg-card text-text-secondary hover:text-text-primary"
           }`}
         >
           All
@@ -118,7 +118,7 @@ export default function ChampionTierList({
             className={`shrink-0 whitespace-nowrap rounded-lg px-3 py-1.5 text-xs font-medium transition sm:px-4 sm:py-2 sm:text-sm ${
               lane === l
                 ? "bg-blue-500 text-white"
-                : "border border-gray-700/50 bg-[#111827] text-gray-400 hover:text-gray-200"
+                : "border border-border-theme bg-bg-card text-text-secondary hover:text-text-primary"
             }`}
           >
             {LANE_CONFIG[l].emoji} {LANE_CONFIG[l].label}
@@ -132,7 +132,7 @@ export default function ChampionTierList({
         <select
           value={tierFilter}
           onChange={(e) => setTierFilter(e.target.value as ChampionTier | "all")}
-          className="rounded-lg border border-gray-700/50 bg-[#111827] px-3 py-2 text-sm text-gray-300 outline-none focus:border-blue-500"
+          className="rounded-lg border border-border-theme bg-bg-card px-3 py-2 text-sm text-gray-300 outline-none focus:border-blue-500"
         >
           <option value="all">All Tiers</option>
           {TIER_ORDER.map((t) => (
@@ -149,18 +149,18 @@ export default function ChampionTierList({
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Search champions..."
           aria-label="Search champions"
-          className="w-full rounded-lg border border-gray-700/50 bg-[#111827] px-3 py-2 text-sm text-gray-300 outline-none placeholder:text-gray-600 focus:border-blue-500 sm:w-auto"
+          className="w-full rounded-lg border border-border-theme bg-bg-card px-3 py-2 text-sm text-gray-300 outline-none placeholder:text-gray-600 focus:border-blue-500 sm:w-auto"
         />
 
         {/* Sort Toggle */}
-        <div className="flex overflow-hidden rounded-lg border border-gray-700/50" role="group" aria-label="Sort order">
+        <div className="flex overflow-hidden rounded-lg border border-border-theme" role="group" aria-label="Sort order">
           <button
             onClick={() => setSort("tier")}
             aria-pressed={sort === "tier"}
             className={`px-3 py-2 text-sm font-medium transition ${
               sort === "tier"
                 ? "bg-blue-500 text-white"
-                : "bg-[#111827] text-gray-400 hover:text-gray-200"
+                : "bg-bg-card text-text-secondary hover:text-text-primary"
             }`}
           >
             By Tier
@@ -171,7 +171,7 @@ export default function ChampionTierList({
             className={`px-3 py-2 text-sm font-medium transition ${
               sort === "name"
                 ? "bg-blue-500 text-white"
-                : "bg-[#111827] text-gray-400 hover:text-gray-200"
+                : "bg-bg-card text-text-secondary hover:text-text-primary"
             }`}
           >
             By Name
@@ -180,7 +180,7 @@ export default function ChampionTierList({
       </div>
 
       {/* Results Count */}
-      <p className="text-sm text-gray-400">
+      <p className="text-sm text-text-secondary">
         Showing {filtered.length} of {champions.length} champions
       </p>
 
@@ -200,7 +200,7 @@ export default function ChampionTierList({
                   >
                     {tier} Tier
                   </span>
-                  <span className="hidden text-sm text-gray-500 sm:inline">
+                  <span className="hidden text-sm text-text-muted sm:inline">
                     &mdash; {TIER_DESCRIPTIONS[tier]}
                   </span>
                   <span className="text-xs text-gray-600">
@@ -233,7 +233,7 @@ function ChampionCard({ champion }: { champion: ChampionMeta }) {
   return (
     <Link
       href={`/champions/${champion.id}`}
-      className={`flex items-center gap-3 rounded-xl border border-gray-700/50 bg-[#111827] p-3 transition hover:scale-[1.02] ${TIER_HOVER_BORDER[champion.tier]}`}
+      className={`flex items-center gap-3 rounded-xl border border-border-theme bg-bg-card p-3 transition hover:scale-[1.02] ${TIER_HOVER_BORDER[champion.tier]}`}
     >
       <Image
         src={champion.iconUrl}
@@ -244,8 +244,8 @@ function ChampionCard({ champion }: { champion: ChampionMeta }) {
         loading="lazy"
       />
       <div className="min-w-0 flex-1">
-        <p className="text-sm font-medium text-gray-100">{champion.name}</p>
-        <p className="truncate text-xs text-gray-500">{champion.title}</p>
+        <p className="text-sm font-medium text-text-primary">{champion.name}</p>
+        <p className="truncate text-xs text-text-muted">{champion.title}</p>
         <div className="mt-1 flex flex-wrap items-center gap-1.5">
           {/* Tier Badge */}
           <span
@@ -265,7 +265,7 @@ function ChampionCard({ champion }: { champion: ChampionMeta }) {
           {champion.tags.map((tag) => (
             <span
               key={tag}
-              className="rounded border border-gray-700 px-1.5 py-0.5 text-[10px] text-gray-500"
+              className="rounded border border-border-theme px-1.5 py-0.5 text-[10px] text-text-muted"
             >
               {tag}
             </span>

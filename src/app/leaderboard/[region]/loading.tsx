@@ -2,7 +2,7 @@ import { Skeleton } from "@/components/Skeleton";
 
 export default function LeaderboardLoading() {
   return (
-    <div className="min-h-screen bg-[#0a0e17]">
+    <div className="min-h-screen bg-bg-page">
       <div className="mx-auto max-w-5xl px-4 py-8">
         {/* Title */}
         <Skeleton className="h-9 w-64 mb-6" />
@@ -27,7 +27,7 @@ export default function LeaderboardLoading() {
           {Array.from({ length: 15 }).map((_, i) => (
             <div
               key={i}
-              className="grid grid-cols-[3rem_1fr_5rem_5rem] gap-4 items-center rounded-lg bg-gray-800/40 px-4 py-3"
+              className="grid grid-cols-[3rem_1fr_5rem_5rem] gap-4 items-center rounded-lg bg-bg-card-hover/40 px-4 py-3"
             >
               <Skeleton className="h-5 w-8" />
               <Skeleton className="h-5 w-40" />

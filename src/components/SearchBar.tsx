@@ -154,7 +154,7 @@ export default function SearchBar() {
       <select
         value={region}
         onChange={(e) => setRegion(e.target.value)}
-        className="h-12 rounded-lg border border-gray-700/50 bg-gray-900/80 px-3 text-sm text-white outline-none transition-all duration-200 focus:border-cyan focus:ring-1 focus:ring-cyan/30 sm:w-44"
+        className="h-12 rounded-lg border border-border-theme bg-bg-card/80 px-3 text-sm text-text-primary outline-none transition-all duration-200 focus:border-cyan focus:ring-1 focus:ring-cyan/30 sm:w-44"
       >
         {REGIONS.map((r) => (
           <option key={r.value} value={r.value}>
@@ -184,7 +184,7 @@ export default function SearchBar() {
             aria-autocomplete="list"
             aria-controls="search-suggestions"
             aria-activedescendant={highlightedIndex >= 0 ? `suggestion-${highlightedIndex}` : undefined}
-            className="h-12 w-full rounded-l-lg border border-r-0 border-gray-700/50 bg-gray-900/80 px-4 text-white placeholder-gray-500 outline-none transition-all duration-200 focus:border-gold focus:ring-1 focus:ring-gold/30"
+            className="h-12 w-full rounded-l-lg border border-r-0 border-border-theme bg-bg-card/80 px-4 text-text-primary placeholder-gray-500 outline-none transition-all duration-200 focus:border-gold focus:ring-1 focus:ring-gold/30"
           />
           <button
             type="submit"
@@ -213,7 +213,7 @@ export default function SearchBar() {
           <div
             id="search-suggestions"
             role="listbox"
-            className="absolute left-0 right-0 top-full z-50 mt-1 overflow-hidden rounded-xl border border-gray-700/50 bg-gray-900/95 shadow-xl backdrop-blur-md animate-fade-in-scale"
+            className="absolute left-0 right-0 top-full z-50 mt-1 overflow-hidden rounded-xl border border-border-theme bg-bg-card/95 shadow-xl backdrop-blur-md animate-fade-in-scale"
           >
             {suggestions.map((s, index) => (
               <button
@@ -226,8 +226,8 @@ export default function SearchBar() {
                 onMouseEnter={() => setHighlightedIndex(index)}
                 className={`flex w-full items-center gap-3 px-4 py-2.5 text-left transition-colors duration-150 ${
                   index === highlightedIndex
-                    ? "bg-gold/10 text-white"
-                    : "text-gray-300 hover:bg-white/5"
+                    ? "bg-gold/10 text-text-primary"
+                    : "text-text-secondary hover:bg-white/5"
                 }`}
               >
                 <img
@@ -235,14 +235,14 @@ export default function SearchBar() {
                   alt=""
                   width={32}
                   height={32}
-                  className="rounded-lg border border-gray-700"
+                  className="rounded-lg border border-border-theme"
                 />
                 <div className="min-w-0 flex-1">
                   <p className="text-sm font-medium">
                     <span className="truncate">{s.gameName}</span>
-                    <span className="flex-shrink-0 text-gray-500">#{s.tagLine}</span>
+                    <span className="flex-shrink-0 text-text-muted">#{s.tagLine}</span>
                   </p>
-                  <p className="text-xs text-gray-500">Level {s.summonerLevel}</p>
+                  <p className="text-xs text-text-muted">Level {s.summonerLevel}</p>
                 </div>
                 <span className="rounded-md bg-cyan/10 px-2 py-0.5 text-[10px] font-medium text-cyan">
                   {REGIONS.find((r) => r.value === s.region)?.label ?? s.region}
@@ -254,9 +254,9 @@ export default function SearchBar() {
 
         {/* Search history dropdown */}
         {showHistory && !showDropdown && history.length > 0 && (
-          <div className="absolute left-0 right-0 top-full z-50 mt-1 overflow-hidden rounded-xl border border-gray-700/50 bg-[#111827] shadow-xl backdrop-blur-md animate-fade-in-scale">
-            <div className="flex items-center justify-between border-b border-gray-700/50 px-4 py-2">
-              <span className="flex items-center gap-2 text-xs font-medium text-gray-400">
+          <div className="absolute left-0 right-0 top-full z-50 mt-1 overflow-hidden rounded-xl border border-border-theme bg-bg-card shadow-xl backdrop-blur-md animate-fade-in-scale">
+            <div className="flex items-center justify-between border-b border-border-theme px-4 py-2">
+              <span className="flex items-center gap-2 text-xs font-medium text-text-secondary">
                 <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6l4 2m6-2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
@@ -269,7 +269,7 @@ export default function SearchBar() {
                   clearHistory();
                   setShowHistory(false);
                 }}
-                className="text-[10px] text-gray-500 transition-colors hover:text-gray-300"
+                className="text-[10px] text-text-muted transition-colors hover:text-text-secondary"
               >
                 Clear all
               </button>
@@ -277,7 +277,7 @@ export default function SearchBar() {
             {history.map((entry, index) => (
               <div
                 key={`${entry.gameName}-${entry.tagLine}-${entry.region}-${entry.timestamp}`}
-                className="group flex w-full items-center gap-3 px-4 py-2.5 text-left transition-colors duration-150 hover:bg-gray-700/50"
+                className="group flex w-full items-center gap-3 px-4 py-2.5 text-left transition-colors duration-150 hover:bg-bg-card-hover/50"
               >
                 <button
                   type="button"
@@ -292,14 +292,14 @@ export default function SearchBar() {
                   }}
                   className="flex min-w-0 flex-1 items-center gap-3"
                 >
-                  <svg className="h-4 w-4 flex-shrink-0 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <svg className="h-4 w-4 flex-shrink-0 text-text-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6l4 2m6-2a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
-                  <span className="truncate text-sm text-gray-100">
+                  <span className="truncate text-sm text-text-primary">
                     {entry.gameName}
-                    <span className="text-gray-500">#{entry.tagLine}</span>
+                    <span className="text-text-muted">#{entry.tagLine}</span>
                   </span>
-                  <span className="ml-auto rounded-full bg-gray-700/60 px-2 py-0.5 text-[10px] font-medium text-gray-400">
+                  <span className="ml-auto rounded-full bg-border-theme/60 px-2 py-0.5 text-[10px] font-medium text-text-secondary">
                     {regionShortLabel(entry.region)}
                   </span>
                 </button>
@@ -307,7 +307,7 @@ export default function SearchBar() {
                   type="button"
                   onMouseDown={(e) => e.preventDefault()}
                   onClick={() => removeEntry(index)}
-                  className="flex-shrink-0 rounded p-0.5 text-gray-600 opacity-0 transition-all hover:bg-gray-600/50 hover:text-gray-300 group-hover:opacity-100"
+                  className="flex-shrink-0 rounded p-0.5 text-text-muted opacity-0 transition-all hover:bg-bg-card-hover/50 hover:text-text-secondary group-hover:opacity-100"
                   aria-label={`Remove ${entry.gameName}#${entry.tagLine}`}
                 >
                   <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>

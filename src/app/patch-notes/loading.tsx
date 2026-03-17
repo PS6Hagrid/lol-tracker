@@ -7,7 +7,7 @@ export default function PatchNotesLoading() {
       <Skeleton className="mt-2 h-4 w-72" />
 
       {/* Featured patch skeleton */}
-      <div className="mt-6 rounded-xl border border-gray-700/50 bg-[#111827] p-6">
+      <div className="mt-6 rounded-xl border border-border-theme bg-bg-card p-6">
         <Skeleton className="h-6 w-16 rounded-md" />
         <Skeleton className="mt-3 h-6 w-56" />
         <Skeleton className="mt-2 h-4 w-40" />
@@ -27,7 +27,7 @@ export default function PatchNotesLoading() {
         {Array.from({ length: 4 }).map((_, i) => (
           <div
             key={i}
-            className="rounded-xl border border-gray-700/50 bg-[#111827] p-6"
+            className="rounded-xl border border-border-theme bg-bg-card p-6"
           >
             <Skeleton className="h-6 w-16 rounded-md" />
             <Skeleton className="mt-3 h-6 w-48" />

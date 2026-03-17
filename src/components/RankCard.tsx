@@ -37,12 +37,12 @@ export default function RankCard({ entry, queueType }: RankCardProps) {
 
   if (!entry) {
     return (
-      <div className="flex flex-col items-center gap-3 rounded-xl border border-gray-700/50 bg-gray-900/80 p-6 backdrop-blur-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-gray-600/50 hover:shadow-lg">
-        <p className="text-sm font-medium text-gray-400">{queueLabel}</p>
-        <div className="flex h-20 w-20 items-center justify-center rounded-full border-2 border-gray-700 bg-gray-800">
-          <span className="text-2xl text-gray-600">?</span>
+      <div className="flex flex-col items-center gap-3 rounded-xl border border-border-theme bg-bg-card/80 p-6 backdrop-blur-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-border-theme hover:shadow-lg">
+        <p className="text-sm font-medium text-text-secondary">{queueLabel}</p>
+        <div className="flex h-20 w-20 items-center justify-center rounded-full border-2 border-border-theme bg-bg-card-hover">
+          <span className="text-2xl text-text-muted">?</span>
         </div>
-        <p className="text-lg font-semibold text-gray-500">Unranked</p>
+        <p className="text-lg font-semibold text-text-muted">Unranked</p>
       </div>
     );
   }
@@ -53,9 +53,9 @@ export default function RankCard({ entry, queueType }: RankCardProps) {
   const isApex = ["MASTER", "GRANDMASTER", "CHALLENGER"].includes(entry.tier);
 
   return (
-    <div className="flex flex-col items-center gap-3 rounded-xl border border-gray-700/50 bg-gray-900/80 p-6 backdrop-blur-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-gray-600/50 hover:shadow-lg">
+    <div className="flex flex-col items-center gap-3 rounded-xl border border-border-theme bg-bg-card/80 p-6 backdrop-blur-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-border-theme hover:shadow-lg">
       {/* Queue label */}
-      <p className="text-sm font-medium text-gray-400">{queueLabel}</p>
+      <p className="text-sm font-medium text-text-secondary">{queueLabel}</p>
 
       {/* Rank emblem with glow */}
       <div className="relative flex items-center justify-center">
@@ -80,7 +80,7 @@ export default function RankCard({ entry, queueType }: RankCardProps) {
           />
         ) : (
           <div
-            className="relative z-10 flex h-20 w-20 items-center justify-center rounded-full border-2 bg-gray-800"
+            className="relative z-10 flex h-20 w-20 items-center justify-center rounded-full border-2 bg-bg-card-hover"
             style={{ borderColor: tierColor }}
           >
             <span className="text-2xl font-bold" style={{ color: tierColor }}>
@@ -102,14 +102,14 @@ export default function RankCard({ entry, queueType }: RankCardProps) {
       {/* Win / Loss */}
       <div className="flex items-center gap-2 text-sm">
         <span className="text-win">{entry.wins}W</span>
-        <span className="text-gray-600">/</span>
+        <span className="text-text-muted">/</span>
         <span className="text-loss">{entry.losses}L</span>
       </div>
 
       {/* Winrate bar */}
       <div className="w-full">
         <div className="mb-1 flex justify-between text-xs">
-          <span className="text-gray-500">Winrate</span>
+          <span className="text-text-muted">Winrate</span>
           <span
             className="font-medium"
             style={{

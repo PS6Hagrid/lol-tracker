@@ -24,9 +24,9 @@ export default async function MatchHistoryPage({ params }: PageProps) {
   if (lastHyphen === -1 || lastHyphen === 0 || lastHyphen === name.length - 1) {
     return (
       <div className="flex min-h-[calc(100vh-3.5rem)] items-center justify-center">
-        <div className="rounded-xl border border-gray-700/50 bg-gray-900/80 p-8 text-center backdrop-blur-sm">
+        <div className="rounded-xl border border-border-theme bg-bg-card/80 p-8 text-center backdrop-blur-sm">
           <h2 className="text-xl font-bold text-loss">Invalid Summoner Name</h2>
-          <p className="mt-2 text-gray-400">
+          <p className="mt-2 text-text-secondary">
             Expected format: GameName-TagLine (e.g. Faker-KR1)
           </p>
         </div>
@@ -62,9 +62,9 @@ export default async function MatchHistoryPage({ params }: PageProps) {
     console.error("Error fetching summoner data:", error);
     return (
       <div className="flex min-h-[calc(100vh-3.5rem)] items-center justify-center">
-        <div className="rounded-xl border border-gray-700/50 bg-gray-900/80 p-8 text-center backdrop-blur-sm">
+        <div className="rounded-xl border border-border-theme bg-bg-card/80 p-8 text-center backdrop-blur-sm">
           <h2 className="text-xl font-bold text-loss">Summoner Not Found</h2>
-          <p className="mt-2 text-gray-400">
+          <p className="mt-2 text-text-secondary">
             Could not find &quot;{gameName}#{tagLine}&quot; in{" "}
             {REGIONS.find((r) => r.value === region)?.label ?? region}
           </p>
@@ -123,7 +123,7 @@ export default async function MatchHistoryPage({ params }: PageProps) {
 
         {/* Match List */}
         <section>
-          <h2 className="mb-3 text-lg font-semibold text-white">
+          <h2 className="mb-3 text-lg font-semibold text-text-primary">
             Match History
           </h2>
           <MatchHistoryList

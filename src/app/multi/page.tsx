@@ -124,8 +124,8 @@ export default function MultiSearchPage() {
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-8">
-      <h1 className="mb-2 text-2xl font-bold text-white">Multi-Search</h1>
-      <p className="mb-6 text-sm text-gray-400">
+      <h1 className="mb-2 text-2xl font-bold text-text-primary">Multi-Search</h1>
+      <p className="mb-6 text-sm text-text-secondary">
         Paste a lobby chat or enter summoner names to look up multiple players at
         once.
       </p>
@@ -134,7 +134,7 @@ export default function MultiSearchPage() {
         <select
           value={region}
           onChange={(e) => setRegion(e.target.value)}
-          className="h-10 rounded-lg border border-gray-700/50 bg-gray-900/80 px-3 text-sm text-white outline-none focus:border-cyan"
+          className="h-10 rounded-lg border border-border-theme bg-bg-card/80 px-3 text-sm text-text-primary outline-none focus:border-cyan"
         >
           {REGIONS.map((r) => (
             <option key={r.value} value={r.value}>
@@ -147,7 +147,7 @@ export default function MultiSearchPage() {
           onChange={(e) => setInput(e.target.value)}
           placeholder={"Paste lobby chat here, e.g.:\nPlayer1 joined the lobby\nPlayer2 joined the lobby\n\nOr enter names:\nPlayer1#TAG1\nPlayer2#TAG2"}
           rows={4}
-          className="flex-1 rounded-lg border border-gray-700/50 bg-gray-900/80 px-4 py-3 text-sm text-white placeholder-gray-600 outline-none focus:border-gold/50 focus:ring-1 focus:ring-gold/20"
+          className="flex-1 rounded-lg border border-border-theme bg-bg-card/80 px-4 py-3 text-sm text-text-primary placeholder-text-muted outline-none focus:border-gold/50 focus:ring-1 focus:ring-gold/20"
         />
       </div>
       <button
@@ -181,10 +181,10 @@ export default function MultiSearchPage() {
               key={`${p.gameName}-${p.tagLine}-${i}`}
               className={`flex items-center gap-3 rounded-xl border p-4 transition-all ${
                 p.status === "loading"
-                  ? "animate-pulse border-gray-700/30 bg-gray-900/40"
+                  ? "animate-pulse border-border-theme/30 bg-bg-card/40"
                   : p.status === "error"
                     ? "border-red-800/30 bg-red-900/10"
-                    : "border-gray-700/50 bg-gray-900/80 hover:-translate-y-0.5 hover:shadow-lg"
+                    : "border-border-theme bg-bg-card/80 hover:-translate-y-0.5 hover:shadow-lg"
               }`}
             >
               {/* Icon */}
@@ -194,10 +194,10 @@ export default function MultiSearchPage() {
                   alt=""
                   width={40}
                   height={40}
-                  className="rounded-lg border border-gray-700/50"
+                  className="rounded-lg border border-border-theme"
                 />
               ) : (
-                <div className="flex h-10 w-10 items-center justify-center rounded-lg border border-gray-700/50 bg-gray-800 text-gray-500">
+                <div className="flex h-10 w-10 items-center justify-center rounded-lg border border-border-theme bg-bg-card-hover text-text-muted">
                   {p.status === "loading" ? "…" : "?"}
                 </div>
               )}
@@ -207,19 +207,19 @@ export default function MultiSearchPage() {
                 {p.status === "found" ? (
                   <a
                     href={`/summoner/${p.region}/${encodeURIComponent(p.gameName)}-${encodeURIComponent(p.tagLine)}`}
-                    className="text-sm font-medium text-white hover:text-cyan transition-colors"
+                    className="text-sm font-medium text-text-primary hover:text-cyan transition-colors"
                   >
                     {p.gameName}
-                    <span className="text-gray-500">#{p.tagLine}</span>
+                    <span className="text-text-muted">#{p.tagLine}</span>
                   </a>
                 ) : (
-                  <p className="text-sm font-medium text-gray-300">
+                  <p className="text-sm font-medium text-text-secondary">
                     {p.gameName}
-                    <span className="text-gray-500">#{p.tagLine}</span>
+                    <span className="text-text-muted">#{p.tagLine}</span>
                   </p>
                 )}
                 {p.status === "found" && p.summonerLevel && (
-                  <p className="text-xs text-gray-500">
+                  <p className="text-xs text-text-muted">
                     Level {p.summonerLevel}
                   </p>
                 )}
@@ -238,21 +238,21 @@ export default function MultiSearchPage() {
                     height={28}
                   />
                   <div className="text-right text-xs">
-                    <p className="font-semibold text-gray-200">
+                    <p className="font-semibold text-text-primary">
                       {p.rankedTier?.charAt(0)}
                       {p.rankedTier?.slice(1).toLowerCase()}{" "}
                       {!["MASTER", "GRANDMASTER", "CHALLENGER"].includes(
                         p.rankedTier ?? "",
                       ) && p.rankedRank}
                     </p>
-                    <p className="text-gray-400">
+                    <p className="text-text-secondary">
                       {p.rankedLP} LP &middot; {p.wins}W {p.losses}L
                     </p>
                   </div>
                 </div>
               )}
               {p.status === "found" && !p.rankedTier && (
-                <span className="text-xs text-gray-500">Unranked</span>
+                <span className="text-xs text-text-muted">Unranked</span>
               )}
             </div>
           ))}

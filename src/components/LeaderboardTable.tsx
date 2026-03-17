@@ -86,7 +86,7 @@ export default function LeaderboardTable({ region }: LeaderboardTableProps) {
     <div className="mx-auto w-full max-w-5xl px-4 py-8">
       {/* Header */}
       <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <h1 className="text-2xl font-bold text-gray-100">
+        <h1 className="text-2xl font-bold text-text-primary">
           👑 Leaderboard
         </h1>
 
@@ -94,7 +94,7 @@ export default function LeaderboardTable({ region }: LeaderboardTableProps) {
         <select
           value={region}
           onChange={(e) => handleRegionChange(e.target.value)}
-          className="rounded-lg border border-gray-700/50 bg-[#111827] px-3 py-2 text-sm text-gray-100 outline-none focus:border-blue-500"
+          className="rounded-lg border border-border-theme bg-bg-card px-3 py-2 text-sm text-text-primary outline-none focus:border-blue-500"
         >
           {REGIONS.map((r) => (
             <option key={r.value} value={r.value}>
@@ -118,7 +118,7 @@ export default function LeaderboardTable({ region }: LeaderboardTableProps) {
               className={`whitespace-nowrap rounded-lg px-3 py-1.5 text-xs font-medium transition-colors sm:px-4 sm:py-2 sm:text-sm ${
                 isActive
                   ? "bg-blue-500 text-white"
-                  : "border border-gray-700/50 bg-[#111827] text-gray-400 hover:text-gray-200"
+                  : "border border-border-theme bg-bg-card text-text-secondary hover:text-text-primary"
               }`}
             >
               {t.label}
@@ -127,7 +127,7 @@ export default function LeaderboardTable({ region }: LeaderboardTableProps) {
                   className={`ml-1.5 rounded-full px-1.5 py-0.5 text-[10px] sm:ml-2 sm:px-2 sm:text-xs ${
                     isActive
                       ? "bg-blue-400/20 text-blue-100"
-                      : "bg-gray-700/50 text-gray-400"
+                      : "bg-border-theme/50 text-text-secondary"
                   }`}
                 >
                   {count}
@@ -139,10 +139,10 @@ export default function LeaderboardTable({ region }: LeaderboardTableProps) {
       </div>
 
       {/* Table */}
-      <div className="overflow-x-auto rounded-xl border border-gray-700/50 bg-[#0d1117]" role="tabpanel">
+      <div className="overflow-x-auto rounded-xl border border-border-theme bg-bg-card" role="tabpanel">
         <table className="w-full text-left text-sm" aria-label="Leaderboard rankings">
           <thead>
-            <tr className="border-b border-gray-800 text-xs uppercase tracking-wider text-gray-400">
+            <tr className="border-b border-border-theme text-xs uppercase tracking-wider text-text-secondary">
               <th scope="col" className="px-2 py-2 font-medium sm:px-4 sm:py-3">#</th>
               <th scope="col" className="px-2 py-2 font-medium sm:px-4 sm:py-3">Summoner Name</th>
               <th scope="col" className="px-2 py-2 font-medium sm:px-4 sm:py-3">LP</th>
@@ -156,18 +156,18 @@ export default function LeaderboardTable({ region }: LeaderboardTableProps) {
               ? Array.from({ length: 10 }).map((_, i) => (
                   <tr
                     key={i}
-                    className="border-b border-gray-800/50"
+                    className="border-b border-border-theme/50"
                   >
                     {Array.from({ length: 4 }).map((_, j) => (
                       <td key={j} className="px-2 py-2 sm:px-4 sm:py-3">
-                        <div className="h-4 w-16 animate-pulse rounded bg-gray-700/50 sm:w-20" />
+                        <div className="h-4 w-16 animate-pulse rounded bg-border-theme/50 sm:w-20" />
                       </td>
                     ))}
                     <td className="hidden px-2 py-2 sm:table-cell sm:px-4 sm:py-3">
-                      <div className="h-4 w-20 animate-pulse rounded bg-gray-700/50" />
+                      <div className="h-4 w-20 animate-pulse rounded bg-border-theme/50" />
                     </td>
                     <td className="hidden px-2 py-2 sm:table-cell sm:px-4 sm:py-3">
-                      <div className="h-4 w-20 animate-pulse rounded bg-gray-700/50" />
+                      <div className="h-4 w-20 animate-pulse rounded bg-border-theme/50" />
                     </td>
                   </tr>
                 ))
@@ -181,7 +181,7 @@ export default function LeaderboardTable({ region }: LeaderboardTableProps) {
                     : 0;
                   const summonerTag = `${entry.summonerName}-EUW`;
 
-                  let rankCellClass = "text-gray-100";
+                  let rankCellClass = "text-text-primary";
                   let rankPrefix = "";
                   let rankBgClass = "";
                   if (globalRank === 1) {
@@ -198,14 +198,14 @@ export default function LeaderboardTable({ region }: LeaderboardTableProps) {
                     rankBgClass = "bg-amber-700/10";
                   }
 
-                  let winrateColor = "text-gray-100";
+                  let winrateColor = "text-text-primary";
                   if (winrate > 55) winrateColor = "text-green-400";
                   else if (winrate < 45) winrateColor = "text-red-400";
 
                   return (
                     <tr
                       key={entry.summonerId}
-                      className={`border-b border-gray-800/50 transition-colors hover:bg-gray-800/30 ${rankBgClass}`}
+                      className={`border-b border-border-theme/50 transition-colors hover:bg-bg-card-hover/30 ${rankBgClass}`}
                     >
                       <td className={`px-2 py-2 text-xs sm:px-4 sm:py-3 sm:text-sm ${rankCellClass}`}>
                         {rankPrefix}{globalRank}
@@ -218,7 +218,7 @@ export default function LeaderboardTable({ region }: LeaderboardTableProps) {
                           {entry.summonerName}
                         </Link>
                       </td>
-                      <td className="px-2 py-2 text-xs font-bold text-gray-100 sm:px-4 sm:py-3 sm:text-sm">
+                      <td className="px-2 py-2 text-xs font-bold text-text-primary sm:px-4 sm:py-3 sm:text-sm">
                         {entry.leaguePoints.toLocaleString()}
                       </td>
                       <td className="hidden px-2 py-2 text-gray-300 sm:table-cell sm:px-4 sm:py-3">
@@ -245,7 +245,7 @@ export default function LeaderboardTable({ region }: LeaderboardTableProps) {
               <tr>
                 <td
                   colSpan={6}
-                  className="px-4 py-8 text-center text-gray-400"
+                  className="px-4 py-8 text-center text-text-secondary"
                 >
                   No entries found.
                 </td>
@@ -262,14 +262,14 @@ export default function LeaderboardTable({ region }: LeaderboardTableProps) {
             onClick={() => setPage((p) => Math.max(1, p - 1))}
             disabled={page === 1}
             aria-label="Previous page"
-            className="rounded-lg border border-gray-700/50 bg-[#111827] px-3 py-1.5 text-sm text-gray-300 transition-colors hover:text-white disabled:cursor-not-allowed disabled:opacity-40"
+            className="rounded-lg border border-border-theme bg-bg-card px-3 py-1.5 text-sm text-gray-300 transition-colors hover:text-white disabled:cursor-not-allowed disabled:opacity-40"
           >
             Prev
           </button>
 
           {getPageNumbers().map((p, i) =>
             p === "..." ? (
-              <span key={`dots-${i}`} className="px-1 text-gray-500">
+              <span key={`dots-${i}`} className="px-1 text-text-muted">
                 ...
               </span>
             ) : (
@@ -279,7 +279,7 @@ export default function LeaderboardTable({ region }: LeaderboardTableProps) {
                 className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
                   page === p
                     ? "bg-blue-500 text-white"
-                    : "border border-gray-700/50 bg-[#111827] text-gray-400 hover:text-white"
+                    : "border border-border-theme bg-bg-card text-text-secondary hover:text-white"
                 }`}
               >
                 {p}
@@ -291,12 +291,12 @@ export default function LeaderboardTable({ region }: LeaderboardTableProps) {
             onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
             disabled={page === totalPages}
             aria-label="Next page"
-            className="rounded-lg border border-gray-700/50 bg-[#111827] px-3 py-1.5 text-sm text-gray-300 transition-colors hover:text-white disabled:cursor-not-allowed disabled:opacity-40"
+            className="rounded-lg border border-border-theme bg-bg-card px-3 py-1.5 text-sm text-gray-300 transition-colors hover:text-white disabled:cursor-not-allowed disabled:opacity-40"
           >
             Next
           </button>
 
-          <span className="ml-2 text-xs text-gray-500">
+          <span className="ml-2 text-xs text-text-muted">
             Page {page} of {totalPages}
           </span>
         </div>

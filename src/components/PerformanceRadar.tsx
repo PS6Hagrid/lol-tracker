@@ -49,10 +49,10 @@ function CustomRadarTooltip({
   if (!active || !payload?.length) return null;
   const { stat, value, raw } = payload[0].payload;
   return (
-    <div className="rounded-lg border border-gray-700/50 bg-gray-900/95 px-3 py-2 text-xs shadow-lg backdrop-blur-sm">
-      <p className="font-medium text-gray-300">{stat}</p>
+    <div className="rounded-lg border border-border-theme bg-bg-card/95 px-3 py-2 text-xs shadow-lg backdrop-blur-sm">
+      <p className="font-medium text-text-secondary">{stat}</p>
       <p className="mt-0.5 font-semibold text-cyan">{raw}</p>
-      <p className="text-gray-500">Score: {value}/100</p>
+      <p className="text-text-muted">Score: {value}/100</p>
     </div>
   );
 }
@@ -100,8 +100,8 @@ export default function PerformanceRadar({
 
   if (gamesPlayed === 0) {
     return (
-      <div className="flex h-full min-h-[200px] items-center justify-center rounded-xl border border-gray-700/50 bg-gray-900/80 p-4 backdrop-blur-sm">
-        <p className="text-sm text-gray-500">Not enough data for radar</p>
+      <div className="flex h-full min-h-[200px] items-center justify-center rounded-xl border border-border-theme bg-bg-card/80 p-4 backdrop-blur-sm">
+        <p className="text-sm text-text-muted">Not enough data for radar</p>
       </div>
     );
   }
@@ -152,8 +152,8 @@ export default function PerformanceRadar({
   ];
 
   return (
-    <div className="rounded-xl border border-gray-700/50 bg-gray-900/80 p-5 backdrop-blur-sm">
-      <h3 className="mb-2 text-sm font-semibold text-gray-400">
+    <div className="rounded-xl border border-border-theme bg-bg-card/80 p-5 backdrop-blur-sm">
+      <h3 className="mb-2 text-sm font-semibold text-text-secondary">
         Performance Overview
       </h3>
       <ResponsiveContainer width="100%" height={260}>

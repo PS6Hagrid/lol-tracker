@@ -89,8 +89,8 @@ export default function RoleDistribution({
   const maxCount = sorted[0]?.[1]?.total ?? 1;
 
   return (
-    <div className="rounded-xl border border-gray-700/50 bg-gray-900/80 p-5 backdrop-blur-sm">
-      <h3 className="mb-4 text-sm font-semibold text-gray-400">
+    <div className="rounded-xl border border-border-theme bg-bg-card/80 p-5 backdrop-blur-sm">
+      <h3 className="mb-4 text-sm font-semibold text-text-secondary">
         Position Distribution
       </h3>
       <div className="space-y-2.5">
@@ -106,14 +106,14 @@ export default function RoleDistribution({
                 <span className="text-sm">
                   {ROLE_ICONS[position] ?? "❓"}
                 </span>
-                <span className="text-xs font-medium text-gray-300">
+                <span className="text-xs font-medium text-text-secondary">
                   {ROLE_LABELS[position] ?? position}
                 </span>
               </div>
 
               {/* Bar */}
               <div className="flex min-w-0 flex-1 items-center gap-2">
-                <div className="h-5 flex-1 overflow-hidden rounded-md bg-gray-800/60">
+                <div className="h-5 flex-1 overflow-hidden rounded-md bg-bg-card-hover/60">
                   <div
                     className="flex h-full items-center rounded-md px-2 transition-all duration-500"
                     style={{
@@ -131,7 +131,7 @@ export default function RoleDistribution({
 
               {/* Play rate + WR */}
               <div className="flex flex-shrink-0 items-center gap-2 text-xs">
-                <span className="text-gray-400">{pct.toFixed(0)}%</span>
+                <span className="text-text-secondary">{pct.toFixed(0)}%</span>
                 <span
                   className="font-medium"
                   style={{

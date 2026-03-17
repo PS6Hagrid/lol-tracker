@@ -24,8 +24,8 @@ interface KDAChartProps {
 export default function KDAChart({ data }: KDAChartProps) {
   if (data.length === 0) {
     return (
-      <div className="flex h-48 items-center justify-center rounded-xl border border-gray-700/50 bg-gray-900/80 p-4 backdrop-blur-sm">
-        <p className="text-sm text-gray-500">No match data for KDA chart</p>
+      <div className="flex h-48 items-center justify-center rounded-xl border border-border-theme bg-bg-card/80 p-4 backdrop-blur-sm">
+        <p className="text-sm text-text-muted">No match data for KDA chart</p>
       </div>
     );
   }
@@ -36,8 +36,8 @@ export default function KDAChart({ data }: KDAChartProps) {
   const yMax = Math.ceil(maxValue / 5) * 5 + 5;
 
   return (
-    <div className="rounded-xl border border-gray-700/50 bg-gray-900/80 p-4 backdrop-blur-sm">
-      <h3 className="mb-3 text-sm font-medium text-gray-400">
+    <div className="rounded-xl border border-border-theme bg-bg-card/80 p-4 backdrop-blur-sm">
+      <h3 className="mb-3 text-sm font-medium text-text-secondary">
         KDA per Match (Recent)
       </h3>
       <ResponsiveContainer width="100%" height={240}>
@@ -115,15 +115,15 @@ export default function KDAChart({ data }: KDAChartProps) {
       <div className="mt-2 flex items-center justify-center gap-4 text-xs">
         <span className="flex items-center gap-1">
           <span className="inline-block h-2 w-2 rounded-full bg-cyan-400" />
-          <span className="text-gray-400">Kills</span>
+          <span className="text-text-secondary">Kills</span>
         </span>
         <span className="flex items-center gap-1">
           <span className="inline-block h-2 w-2 rounded-full bg-red-400" />
-          <span className="text-gray-400">Deaths</span>
+          <span className="text-text-secondary">Deaths</span>
         </span>
         <span className="flex items-center gap-1">
           <span className="inline-block h-2 w-2 rounded-full bg-amber-400" />
-          <span className="text-gray-400">Assists</span>
+          <span className="text-text-secondary">Assists</span>
         </span>
       </div>
     </div>

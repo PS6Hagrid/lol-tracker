@@ -24,7 +24,7 @@ export default function Home() {
                 Trackerino
               </span>
             </h1>
-            <p className="mt-4 text-lg text-gray-400 sm:text-xl">
+            <p className="mt-4 text-lg text-text-secondary sm:text-xl">
               Search any summoner to view their stats
             </p>
           </div>
@@ -33,7 +33,7 @@ export default function Home() {
           <SearchBar />
 
           {/* Quick links to demo summoners */}
-          <div className="flex flex-wrap justify-center gap-3 text-sm text-gray-500">
+          <div className="flex flex-wrap justify-center gap-3 text-sm text-text-muted">
             <span>Try:</span>
             <a
               href="/summoner/kr/Faker-KR1"

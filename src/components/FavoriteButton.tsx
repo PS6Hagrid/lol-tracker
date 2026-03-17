@@ -44,7 +44,7 @@ export default function FavoriteButton({
       className={`flex h-8 w-8 items-center justify-center rounded-lg transition-all duration-200 ${
         favorited
           ? "bg-amber-500/10 text-amber-400 hover:bg-amber-500/20"
-          : "bg-gray-800/40 text-gray-500 hover:bg-gray-700/40 hover:text-gray-300"
+          : "bg-bg-card-hover/40 text-text-muted hover:bg-bg-card-hover/40 hover:text-text-secondary"
       } ${animate ? "scale-125" : ""}`}
     >
       <svg

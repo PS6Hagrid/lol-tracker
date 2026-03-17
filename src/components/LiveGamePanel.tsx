@@ -68,11 +68,11 @@ interface LiveGamePanelProps {
 
 function NotInGameState({ summonerName }: { summonerName: string }) {
   return (
-    <div className="flex flex-col items-center justify-center rounded-xl border border-gray-700/50 bg-gray-900/80 px-6 py-16 text-center backdrop-blur-sm">
+    <div className="flex flex-col items-center justify-center rounded-xl border border-border-theme bg-bg-card/80 px-6 py-16 text-center backdrop-blur-sm">
       <span className="mb-4 text-5xl">🎮</span>
-      <h3 className="text-xl font-bold text-white">Not Currently In Game</h3>
-      <p className="mt-2 max-w-md text-gray-400">{summonerName} is not currently in a game.</p>
-      <p className="mt-1 text-sm text-gray-500">Live game data will appear here when a match is in progress.</p>
+      <h3 className="text-xl font-bold text-text-primary">Not Currently In Game</h3>
+      <p className="mt-2 max-w-md text-text-secondary">{summonerName} is not currently in a game.</p>
+      <p className="mt-1 text-sm text-text-muted">Live game data will appear here when a match is in progress.</p>
     </div>
   );
 }
@@ -81,10 +81,10 @@ function NotInGameState({ summonerName }: { summonerName: string }) {
 
 function GameEndedState() {
   return (
-    <div className="flex flex-col items-center justify-center rounded-xl border border-gray-700/50 bg-gray-900/80 px-6 py-16 text-center backdrop-blur-sm">
+    <div className="flex flex-col items-center justify-center rounded-xl border border-border-theme bg-bg-card/80 px-6 py-16 text-center backdrop-blur-sm">
       <span className="mb-4 text-5xl">🏁</span>
-      <h3 className="text-xl font-bold text-white">Game Has Ended</h3>
-      <p className="mt-2 text-gray-400">The live game has concluded. Check the match history for results.</p>
+      <h3 className="text-xl font-bold text-text-primary">Game Has Ended</h3>
+      <p className="mt-2 text-text-secondary">The live game has concluded. Check the match history for results.</p>
     </div>
   );
 }
@@ -142,7 +142,7 @@ function ParticipantRow({
 
       {/* Name + Rank */}
       <div className="min-w-0 flex-1">
-        <p className={`truncate text-sm font-medium ${isCurrentSummoner ? "text-cyan" : "text-white"}`}>
+        <p className={`truncate text-sm font-medium ${isCurrentSummoner ? "text-cyan" : "text-text-primary"}`}>
           {participant.summonerName}
         </p>
         <div className="mt-0.5 flex items-center gap-1">
@@ -155,7 +155,7 @@ function ParticipantRow({
               <span className="text-[10px] text-gold">{soloEntry.leaguePoints} LP</span>
             </>
           ) : (
-            <span className="text-[10px] text-gray-500">Unranked</span>
+            <span className="text-[10px] text-text-muted">Unranked</span>
           )}
         </div>
       </div>
@@ -176,16 +176,16 @@ function ParticipantRow({
             <span className={`text-xs font-semibold ${participant.winrate >= 50 ? "text-win" : "text-loss"}`}>
               {participant.winrate.toFixed(0)}%
             </span>
-            <span className="text-[10px] text-gray-500">{participant.totalGames}G</span>
+            <span className="text-[10px] text-text-muted">{participant.totalGames}G</span>
           </>
         ) : (
-          <span className="text-[10px] text-gray-500">—</span>
+          <span className="text-[10px] text-text-muted">—</span>
         )}
       </div>
 
       {/* Keystone */}
       <div className="hidden flex-shrink-0 lg:block" style={{ minWidth: "80px" }}>
-        <span className="text-[10px] font-medium text-gray-400">{keystoneName}</span>
+        <span className="text-[10px] font-medium text-text-secondary">{keystoneName}</span>
       </div>
     </div>
   );
@@ -219,7 +219,7 @@ function TeamSection({
       <div className="mb-3 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <div className={`h-3 w-3 rounded-full ${teamColor}`} />
-          <h3 className="text-sm font-semibold text-white">{teamName}</h3>
+          <h3 className="text-sm font-semibold text-text-primary">{teamName}</h3>
         </div>
         {avgWinrate !== null && (
           <span className={`text-xs font-medium ${avgWinrate >= 50 ? "text-win" : "text-loss"}`}>
@@ -249,8 +249,8 @@ function BannedChampionsSection({ bans }: { bans: BannedChampion[] }) {
   const redBans = bans.filter((b) => b.teamId === 200);
 
   return (
-    <div className="rounded-xl border border-gray-700/50 bg-gray-900/80 p-4 backdrop-blur-sm">
-      <h3 className="mb-3 text-sm font-semibold text-white">Banned Champions</h3>
+    <div className="rounded-xl border border-border-theme bg-bg-card/80 p-4 backdrop-blur-sm">
+      <h3 className="mb-3 text-sm font-semibold text-text-primary">Banned Champions</h3>
       <div className="flex flex-col gap-3 sm:flex-row sm:gap-6">
         <div className="flex-1">
           <p className="mb-2 text-xs text-blue-400">Blue Side Bans</p>
@@ -358,7 +358,7 @@ export default function LiveGamePanel({
     return (
       <div>
         <NotInGameState summonerName={summonerName} />
-        <p className="mt-3 text-center text-xs text-gray-500">
+        <p className="mt-3 text-center text-xs text-text-muted">
           Auto-checking every 30 seconds &middot; Last checked {secondsAgo}s ago
         </p>
       </div>
@@ -372,14 +372,14 @@ export default function LiveGamePanel({
   return (
     <div className="space-y-4">
       {/* Game Info Header */}
-      <div className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-gray-700/50 bg-gray-900/80 px-4 py-3 backdrop-blur-sm">
+      <div className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-border-theme bg-bg-card/80 px-4 py-3 backdrop-blur-sm">
         <div className="flex items-center gap-3">
           <span className="relative flex h-2.5 w-2.5">
             <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-75" />
             <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-green-500" />
           </span>
-          <span className="text-sm font-medium text-white">LIVE</span>
-          <span className="text-sm text-gray-400">{gameModeName}</span>
+          <span className="text-sm font-medium text-text-primary">LIVE</span>
+          <span className="text-sm text-text-secondary">{gameModeName}</span>
         </div>
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-1.5">
@@ -389,7 +389,7 @@ export default function LiveGamePanel({
             </svg>
             <span className="text-sm font-semibold text-gold">{gameDuration}</span>
           </div>
-          <span className="text-xs text-gray-500">Updated {secondsAgo}s ago</span>
+          <span className="text-xs text-text-muted">Updated {secondsAgo}s ago</span>
         </div>
       </div>
 

@@ -14,8 +14,8 @@ export default function RootError({ error, reset }: ErrorBoundaryProps) {
   }, [error]);
 
   return (
-    <div className="flex min-h-[calc(100vh-3.5rem)] items-center justify-center bg-[#0a0e17] px-4">
-      <div className="w-full max-w-md rounded-xl border border-gray-700/50 bg-[#111827] p-8 text-center">
+    <div className="flex min-h-[calc(100vh-3.5rem)] items-center justify-center bg-bg-page px-4">
+      <div className="w-full max-w-md rounded-xl border border-border-theme bg-bg-card p-8 text-center">
         {/* Icon */}
         <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full border-2 border-red-700/50 bg-red-900/20">
           <svg
@@ -34,17 +34,17 @@ export default function RootError({ error, reset }: ErrorBoundaryProps) {
         </div>
 
         {/* Title */}
-        <h2 className="text-xl font-bold text-gray-100">
+        <h2 className="text-xl font-bold text-text-primary">
           Something Went Wrong
         </h2>
-        <p className="mt-2 text-sm text-gray-400">
+        <p className="mt-2 text-sm text-text-secondary">
           An unexpected error occurred. Please try again or return to the home
           page.
         </p>
 
         {/* Error detail in code block */}
         {error.message && (
-          <pre className="mt-4 overflow-x-auto rounded-lg bg-[#0a0e17] px-4 py-3 text-left text-xs text-gray-400">
+          <pre className="mt-4 overflow-x-auto rounded-lg bg-bg-page px-4 py-3 text-left text-xs text-text-secondary">
             <code>{error.message}</code>
           </pre>
         )}
@@ -59,7 +59,7 @@ export default function RootError({ error, reset }: ErrorBoundaryProps) {
           </button>
           <a
             href="/"
-            className="rounded-lg border border-gray-700 bg-gray-800/60 px-6 py-2.5 text-sm font-medium text-gray-300 transition-all duration-200 hover:bg-gray-700/60"
+            className="rounded-lg border border-border-theme bg-bg-card-hover/60 px-6 py-2.5 text-sm font-medium text-gray-300 transition-all duration-200 hover:bg-bg-card-hover/60"
           >
             Back to Home
           </a>

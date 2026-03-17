@@ -20,7 +20,7 @@ export default function ChampionsLoading() {
       </div>
 
       {/* Tab skeleton */}
-      <div className="flex gap-1 border-b border-gray-700/50 pb-1">
+      <div className="flex gap-1 border-b border-border-theme pb-1">
         {Array.from({ length: 4 }).map((_, i) => (
           <Skeleton key={i} className="h-9 w-20 rounded-md sm:w-24" />
         ))}
@@ -50,7 +50,7 @@ export default function ChampionsLoading() {
 
         {/* Champion table header */}
         <SkeletonCard className="p-0 overflow-hidden">
-          <div className="flex items-center gap-4 border-b border-gray-700/30 px-4 py-3">
+          <div className="flex items-center gap-4 border-b border-border-theme/30 px-4 py-3">
             <Skeleton className="h-4 w-28" />
             <Skeleton className="ml-auto h-4 w-16" />
             <Skeleton className="h-4 w-16" />
@@ -63,7 +63,7 @@ export default function ChampionsLoading() {
             {Array.from({ length: 8 }).map((_, i) => (
               <div
                 key={i}
-                className="flex items-center gap-3 border-b border-gray-800/30 px-4 py-2.5 last:border-b-0"
+                className="flex items-center gap-3 border-b border-border-theme/30 px-4 py-2.5 last:border-b-0"
               >
                 <Skeleton className="h-8 w-8 rounded-lg" />
                 <Skeleton className="h-4 w-24" />

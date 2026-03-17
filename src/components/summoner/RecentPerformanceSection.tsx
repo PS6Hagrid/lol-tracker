@@ -16,9 +16,9 @@ export default async function RecentPerformanceSection({ region, puuid }: Recent
   
   if (matchIds.length === 0) {
     return (
-        <div className="rounded-xl border border-gray-700/50 bg-gray-900/80 p-8 text-center backdrop-blur-sm">
-            <h3 className="text-lg font-semibold text-white">No Recent Matches</h3>
-            <p className="mt-1 text-sm text-gray-400">This summoner hasn't played any matches recently.</p>
+        <div className="rounded-xl border border-border-theme bg-bg-card/80 p-8 text-center backdrop-blur-sm">
+            <h3 className="text-lg font-semibold text-text-primary">No Recent Matches</h3>
+            <p className="mt-1 text-sm text-text-secondary">This summoner hasn't played any matches recently.</p>
         </div>
     );
   }
@@ -33,7 +33,7 @@ export default async function RecentPerformanceSection({ region, puuid }: Recent
 
   return (
     <section>
-      <h2 className="mb-3 text-lg font-semibold text-white">
+      <h2 className="mb-3 text-lg font-semibold text-text-primary">
         Recent Performance
       </h2>
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">

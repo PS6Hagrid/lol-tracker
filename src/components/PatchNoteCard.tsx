@@ -17,7 +17,7 @@ function formatDate(dateString: string): string {
 export default function PatchNoteCard({ patch, isLatest }: PatchNoteCardProps) {
   return (
     <div
-      className={`rounded-xl border border-gray-700/50 bg-[#111827] p-6 transition-colors hover:border-gray-600/50 ${
+      className={`rounded-xl border border-border-theme bg-bg-card p-6 transition-colors hover:border-gray-600/50 ${
         isLatest ? "border-l-4 border-l-yellow-500" : ""
       }`}
     >
@@ -39,10 +39,10 @@ export default function PatchNoteCard({ patch, isLatest }: PatchNoteCardProps) {
               </span>
             )}
           </div>
-          <h3 className="mt-3 text-lg font-semibold text-gray-100">
+          <h3 className="mt-3 text-lg font-semibold text-text-primary">
             {patch.title}
           </h3>
-          <p className="mt-1 text-sm text-gray-400">{formatDate(patch.date)}</p>
+          <p className="mt-1 text-sm text-text-secondary">{formatDate(patch.date)}</p>
         </div>
       </div>
 

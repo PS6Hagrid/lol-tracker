@@ -150,7 +150,7 @@ export default function TimelineTab({
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <div className="flex items-center gap-3 text-sm text-gray-400">
+        <div className="flex items-center gap-3 text-sm text-text-secondary">
           <svg className="h-5 w-5 animate-spin" viewBox="0 0 24 24" fill="none">
             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
@@ -237,11 +237,11 @@ export default function TimelineTab({
         <div className="mt-2 flex items-center justify-center gap-4 text-xs">
           <span className="flex items-center gap-1">
             <span className="inline-block h-2 w-2 rounded-full bg-blue-500" />
-            <span className="text-gray-400">Blue Team Ahead</span>
+            <span className="text-text-secondary">Blue Team Ahead</span>
           </span>
           <span className="flex items-center gap-1">
             <span className="inline-block h-2 w-2 rounded-full bg-red-500" />
-            <span className="text-gray-400">Red Team Ahead</span>
+            <span className="text-text-secondary">Red Team Ahead</span>
           </span>
         </div>
       </div>
@@ -253,7 +253,7 @@ export default function TimelineTab({
         </h5>
         <div className="max-h-64 space-y-1 overflow-y-auto">
           {keyEvents.length === 0 ? (
-            <p className="py-4 text-center text-xs text-gray-500">No key events recorded</p>
+            <p className="py-4 text-center text-xs text-text-muted">No key events recorded</p>
           ) : (
             keyEvents.map((event, idx) => (
               <div
@@ -262,7 +262,7 @@ export default function TimelineTab({
                   event.teamSide === "blue" ? "bg-blue-500/10" : "bg-red-500/10"
                 }`}
               >
-                <span className="w-10 flex-shrink-0 text-right text-gray-500">
+                <span className="w-10 flex-shrink-0 text-right text-text-muted">
                   {event.minute}m
                 </span>
                 <span className="flex-shrink-0">{event.icon}</span>

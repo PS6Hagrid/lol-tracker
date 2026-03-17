@@ -156,7 +156,7 @@ export default function MatchHistoryList({
       {/* Filter controls + win/loss summary */}
       <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
         {/* Win/Loss filter */}
-        <div className="flex items-center gap-1 rounded-lg bg-gray-800/60 p-1" role="tablist" aria-label="Filter by result">
+        <div className="flex items-center gap-1 rounded-lg bg-bg-card-hover/60 p-1" role="tablist" aria-label="Filter by result">
           {(["all", "wins", "losses"] as const).map((mode) => (
             <button
               key={mode}
@@ -166,7 +166,7 @@ export default function MatchHistoryList({
               className={`rounded-md px-3 py-1.5 text-xs font-medium capitalize transition-all duration-200 ${
                 filter === mode
                   ? "bg-gray-700 text-white shadow"
-                  : "text-gray-400 hover:text-gray-200"
+                  : "text-text-secondary hover:text-text-primary"
               }`}
             >
               {mode}
@@ -175,7 +175,7 @@ export default function MatchHistoryList({
         </div>
 
         {/* Queue type filter */}
-        <div className="flex items-center gap-1 rounded-lg bg-gray-800/60 p-1" role="tablist" aria-label="Filter by queue type">
+        <div className="flex items-center gap-1 rounded-lg bg-bg-card-hover/60 p-1" role="tablist" aria-label="Filter by queue type">
           {(["all", "ranked", "normal", "aram"] as const).map((mode) => (
             <button
               key={mode}
@@ -185,7 +185,7 @@ export default function MatchHistoryList({
               className={`rounded-md px-3 py-1.5 text-xs font-medium transition-all duration-200 ${
                 queueFilter === mode
                   ? "bg-gray-700 text-white shadow"
-                  : "text-gray-400 hover:text-gray-200"
+                  : "text-text-secondary hover:text-text-primary"
               } ${mode === "aram" ? "uppercase" : "capitalize"}`}
             >
               {mode === "aram" ? "ARAM" : mode}
@@ -203,7 +203,7 @@ export default function MatchHistoryList({
             className={`flex items-center gap-2 rounded-lg px-3 py-1.5 text-xs font-medium transition-all duration-200 ${
               championFilter !== "all"
                 ? "bg-gray-700 text-white shadow"
-                : "bg-gray-800/60 text-gray-400 hover:text-gray-200"
+                : "bg-bg-card-hover/60 text-text-secondary hover:text-text-primary"
             }`}
           >
             {championFilter !== "all" && (
@@ -234,14 +234,14 @@ export default function MatchHistoryList({
           </button>
 
           {championDropdownOpen && (
-            <div className="absolute left-0 top-full z-50 mt-1 w-48 overflow-hidden rounded-xl border border-gray-700/50 bg-gray-900/95 shadow-xl backdrop-blur-md">
-              <div className="border-b border-gray-700/50 p-2">
+            <div className="absolute left-0 top-full z-50 mt-1 w-48 overflow-hidden rounded-xl border border-border-theme bg-bg-card/95 shadow-xl backdrop-blur-md">
+              <div className="border-b border-border-theme p-2">
                 <input
                   type="text"
                   value={championSearch}
                   onChange={(e) => setChampionSearch(e.target.value)}
                   placeholder="Search champion..."
-                  className="w-full rounded-md bg-gray-800/60 px-2 py-1.5 text-xs text-white placeholder-gray-500 outline-none focus:ring-1 focus:ring-cyan/30"
+                  className="w-full rounded-md bg-bg-card-hover/60 px-2 py-1.5 text-xs text-white placeholder-gray-500 outline-none focus:ring-1 focus:ring-cyan/30"
                   autoFocus
                 />
               </div>
@@ -254,7 +254,7 @@ export default function MatchHistoryList({
                   className={`flex w-full items-center gap-2 px-3 py-2 text-left text-xs transition-colors ${
                     championFilter === "all"
                       ? "bg-gray-700 text-white"
-                      : "text-gray-400 hover:bg-white/5 hover:text-gray-200"
+                      : "text-text-secondary hover:bg-white/5 hover:text-text-primary"
                   }`}
                 >
                   All Champions
@@ -269,7 +269,7 @@ export default function MatchHistoryList({
                     className={`flex w-full items-center gap-2 px-3 py-2 text-left text-xs transition-colors ${
                       championFilter === name
                         ? "bg-gray-700 text-white"
-                        : "text-gray-400 hover:bg-white/5 hover:text-gray-200"
+                        : "text-text-secondary hover:bg-white/5 hover:text-text-primary"
                     }`}
                   >
                     <img
@@ -288,11 +288,11 @@ export default function MatchHistoryList({
         </div>
 
         {/* Win/Loss summary */}
-        <div className="text-sm text-gray-400">
+        <div className="text-sm text-text-secondary">
           <span className="font-semibold text-green-400">{totalWins}W</span>
           {" / "}
           <span className="font-semibold text-red-400">{totalLosses}L</span>
-          <span className="ml-1 text-gray-500">
+          <span className="ml-1 text-text-muted">
             (
             {baseFilteredMatches.length > 0
               ? ((totalWins / baseFilteredMatches.length) * 100).toFixed(0)
@@ -317,8 +317,8 @@ export default function MatchHistoryList({
             />
           ))
         ) : (
-          <div className="rounded-xl border border-gray-700/50 bg-gray-900/80 p-8 text-center backdrop-blur-sm">
-            <p className="text-gray-400">
+          <div className="rounded-xl border border-border-theme bg-bg-card/80 p-8 text-center backdrop-blur-sm">
+            <p className="text-text-secondary">
               No matches found for the selected filters.
             </p>
           </div>
@@ -334,7 +334,7 @@ export default function MatchHistoryList({
           <button
             onClick={loadMore}
             disabled={isLoadingMore}
-            className="group flex items-center gap-2 rounded-xl border border-gray-700/50 bg-gray-900/80 px-6 py-3 text-sm font-medium text-gray-300 backdrop-blur-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-cyan/30 hover:text-white hover:shadow-lg disabled:pointer-events-none disabled:opacity-50"
+            className="group flex items-center gap-2 rounded-xl border border-border-theme bg-bg-card/80 px-6 py-3 text-sm font-medium text-gray-300 backdrop-blur-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-cyan/30 hover:text-white hover:shadow-lg disabled:pointer-events-none disabled:opacity-50"
           >
             {isLoadingMore ? (
               <>

@@ -2,9 +2,9 @@ import { Skeleton } from "@/components/Skeleton";
 
 export default function ChampionDetailLoading() {
   return (
-    <div className="min-h-screen bg-[#0a0e17]">
+    <div className="min-h-screen bg-bg-page">
       {/* Hero Section Skeleton */}
-      <div className="relative h-[400px] w-full overflow-hidden bg-[#0d1117]">
+      <div className="relative h-[400px] w-full overflow-hidden bg-bg-card">
         <div className="absolute bottom-0 left-0 right-0 p-8">
           <div className="mx-auto flex max-w-7xl items-end gap-6">
             <Skeleton className="h-16 w-16 shrink-0 rounded-lg" />
@@ -40,7 +40,7 @@ export default function ChampionDetailLoading() {
               <Skeleton key={i} className="h-12 w-12 rounded-lg" />
             ))}
           </div>
-          <div className="space-y-2 rounded-xl bg-[#111827] p-4">
+          <div className="space-y-2 rounded-xl bg-bg-card p-4">
             <Skeleton className="h-5 w-40" />
             <Skeleton className="h-4 w-full" />
             <Skeleton className="h-4 w-3/4" />

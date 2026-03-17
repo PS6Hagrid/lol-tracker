@@ -9,7 +9,7 @@ interface ErrorBoundaryProps {
 export default function SummonerError({ error, reset }: ErrorBoundaryProps) {
   return (
     <div className="flex min-h-[calc(100vh-3.5rem)] items-center justify-center px-4">
-      <div className="w-full max-w-md rounded-xl border border-red-700/40 bg-gray-900/90 p-8 text-center backdrop-blur-sm">
+      <div className="w-full max-w-md rounded-xl border border-red-700/40 bg-bg-card/90 p-8 text-center backdrop-blur-sm">
         {/* Icon */}
         <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full border-2 border-red-700/50 bg-red-900/20">
           <svg
@@ -28,8 +28,8 @@ export default function SummonerError({ error, reset }: ErrorBoundaryProps) {
         </div>
 
         {/* Title */}
-        <h2 className="text-xl font-bold text-white">Something Went Wrong</h2>
-        <p className="mt-2 text-gray-400">
+        <h2 className="text-xl font-bold text-text-primary">Something Went Wrong</h2>
+        <p className="mt-2 text-text-secondary">
           We encountered an error while loading this summoner profile. This
           might be a temporary issue.
         </p>

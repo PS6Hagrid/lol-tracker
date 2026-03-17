@@ -25,17 +25,17 @@ function SummonerLink({ s }: { s: StoredSummoner }) {
           alt=""
           width={28}
           height={28}
-          className="rounded-md border border-gray-700/50"
+          className="rounded-md border border-border-theme"
         />
       ) : (
-        <div className="flex h-7 w-7 items-center justify-center rounded-md border border-gray-700/50 bg-gray-800 text-xs text-gray-500">
+        <div className="flex h-7 w-7 items-center justify-center rounded-md border border-border-theme bg-bg-card-hover text-xs text-text-muted">
           ?
         </div>
       )}
       <div className="min-w-0 flex-1">
-        <p className="text-sm font-medium text-gray-200">
+        <p className="text-sm font-medium text-text-primary">
           <span className="truncate">{s.gameName}</span>
-          <span className="flex-shrink-0 text-gray-500">#{s.tagLine}</span>
+          <span className="flex-shrink-0 text-text-muted">#{s.tagLine}</span>
         </p>
       </div>
       <span className="rounded bg-cyan/10 px-1.5 py-0.5 text-[9px] font-medium text-cyan">
@@ -61,7 +61,7 @@ export default function HomeSidebar() {
     <div className="mt-8 flex w-full max-w-2xl flex-col gap-4 sm:flex-row">
       {/* Favorites */}
       {favorites.length > 0 && (
-        <div className="flex-1 rounded-xl border border-gray-700/50 bg-gray-900/60 p-4 backdrop-blur-sm">
+        <div className="flex-1 rounded-xl border border-border-theme bg-bg-card/60 p-4 backdrop-blur-sm">
           <div className="mb-2 flex items-center gap-2">
             <svg
               className="h-4 w-4 text-amber-400"
@@ -85,11 +85,11 @@ export default function HomeSidebar() {
 
       {/* Recent Searches */}
       {history.length > 0 && (
-        <div className="flex-1 rounded-xl border border-gray-700/50 bg-gray-900/60 p-4 backdrop-blur-sm">
+        <div className="flex-1 rounded-xl border border-border-theme bg-bg-card/60 p-4 backdrop-blur-sm">
           <div className="mb-2 flex items-center justify-between">
             <div className="flex items-center gap-2">
               <svg
-                className="h-4 w-4 text-gray-400"
+                className="h-4 w-4 text-text-secondary"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -108,7 +108,7 @@ export default function HomeSidebar() {
                 clearSearchHistory();
                 setHistory([]);
               }}
-              className="text-[10px] text-gray-600 transition-colors hover:text-gray-400"
+              className="text-[10px] text-gray-600 transition-colors hover:text-text-secondary"
             >
               Clear
             </button>

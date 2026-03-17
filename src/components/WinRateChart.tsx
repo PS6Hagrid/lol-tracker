@@ -32,8 +32,8 @@ export default function WinRateChart({ matches, puuid }: WinRateChartProps) {
 
   if (validMatches.length < 3) {
     return (
-      <div className="flex h-48 items-center justify-center rounded-xl border border-gray-700/50 bg-gray-900/80 p-4 backdrop-blur-sm">
-        <p className="text-sm text-gray-500">
+      <div className="flex h-48 items-center justify-center rounded-xl border border-border-theme bg-bg-card/80 p-4 backdrop-blur-sm">
+        <p className="text-sm text-text-muted">
           Not enough matches for win rate chart
         </p>
       </div>
@@ -55,8 +55,8 @@ export default function WinRateChart({ matches, puuid }: WinRateChartProps) {
   });
 
   return (
-    <div className="rounded-xl border border-gray-700/50 bg-gray-900/80 p-4 backdrop-blur-sm">
-      <h3 className="mb-3 text-sm font-medium text-gray-400">
+    <div className="rounded-xl border border-border-theme bg-bg-card/80 p-4 backdrop-blur-sm">
+      <h3 className="mb-3 text-sm font-medium text-text-secondary">
         Win Rate Trend
       </h3>
       <ResponsiveContainer width="100%" height={200}>
@@ -139,15 +139,15 @@ export default function WinRateChart({ matches, puuid }: WinRateChartProps) {
       <div className="mt-2 flex items-center justify-center gap-4 text-xs">
         <span className="flex items-center gap-1">
           <span className="inline-block h-2 w-2 rounded-full bg-green-500" />
-          <span className="text-gray-400">Win</span>
+          <span className="text-text-secondary">Win</span>
         </span>
         <span className="flex items-center gap-1">
           <span className="inline-block h-2 w-2 rounded-full bg-red-500" />
-          <span className="text-gray-400">Loss</span>
+          <span className="text-text-secondary">Loss</span>
         </span>
         <span className="flex items-center gap-1">
           <span className="inline-block h-0.5 w-4 bg-gray-500" style={{ opacity: 0.5 }} />
-          <span className="text-gray-400">50% line</span>
+          <span className="text-text-secondary">50% line</span>
         </span>
       </div>
     </div>

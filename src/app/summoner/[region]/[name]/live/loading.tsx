@@ -20,7 +20,7 @@ export default function LiveGameLoading() {
       </div>
 
       {/* Tab skeleton */}
-      <div className="flex gap-1 border-b border-gray-700/50 pb-1">
+      <div className="flex gap-1 border-b border-border-theme pb-1">
         {Array.from({ length: 4 }).map((_, i) => (
           <Skeleton key={i} className="h-9 w-20 rounded-md sm:w-24" />
         ))}
@@ -41,7 +41,7 @@ export default function LiveGameLoading() {
               <SkeletonText className="mb-3 h-4 w-20" />
               <div className="space-y-2">
                 {Array.from({ length: 5 }).map((_, i) => (
-                  <div key={i} className="flex items-center gap-2 rounded-lg bg-gray-800/40 px-3 py-2">
+                  <div key={i} className="flex items-center gap-2 rounded-lg bg-bg-card-hover/40 px-3 py-2">
                     <Skeleton className="h-8 w-8 rounded-lg" />
                     <div className="flex-1 space-y-1">
                       <Skeleton className="h-3.5 w-24" />
@@ -59,7 +59,7 @@ export default function LiveGameLoading() {
               <SkeletonText className="mb-3 h-4 w-20" />
               <div className="space-y-2">
                 {Array.from({ length: 5 }).map((_, i) => (
-                  <div key={i} className="flex items-center gap-2 rounded-lg bg-gray-800/40 px-3 py-2">
+                  <div key={i} className="flex items-center gap-2 rounded-lg bg-bg-card-hover/40 px-3 py-2">
                     <Skeleton className="h-8 w-8 rounded-lg" />
                     <div className="flex-1 space-y-1">
                       <Skeleton className="h-3.5 w-24" />

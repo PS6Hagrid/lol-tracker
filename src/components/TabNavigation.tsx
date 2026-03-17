@@ -57,7 +57,7 @@ export default function TabNavigation({ basePath }: TabNavigationProps) {
 
   return (
     <nav
-      className="-mx-4 flex gap-0.5 overflow-x-auto border-b border-gray-700/50 px-4 sm:mx-0 sm:gap-1 sm:px-0"
+      className="-mx-4 flex gap-0.5 overflow-x-auto border-b border-border-theme px-4 sm:mx-0 sm:gap-1 sm:px-0"
       aria-label="Summoner tabs"
       style={{ scrollbarWidth: "none" }}
     >
@@ -73,7 +73,7 @@ export default function TabNavigation({ basePath }: TabNavigationProps) {
             className={`flex items-center gap-1.5 whitespace-nowrap border-b-2 px-3 py-2.5 text-sm font-medium transition-all duration-200 sm:px-4 ${
               isActive
                 ? "border-cyan text-cyan"
-                : "border-transparent text-gray-400 hover:border-gray-600 hover:text-gray-200"
+                : "border-transparent text-text-secondary hover:border-border-theme hover:text-text-primary"
             }`}
             aria-current={isActive ? "page" : undefined}
           >

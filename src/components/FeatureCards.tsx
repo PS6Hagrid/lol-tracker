@@ -40,20 +40,20 @@ const features = [
 export default function FeatureCards() {
   return (
     <section className="mx-auto w-full max-w-5xl px-4 py-16">
-      <h2 className="mb-8 text-center text-sm font-semibold uppercase tracking-widest text-gray-500">
+      <h2 className="mb-8 text-center text-sm font-semibold uppercase tracking-widest text-text-muted">
         Everything you need
       </h2>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 animate-stagger">
         {features.map((f) => (
           <div
             key={f.title}
-            className="group rounded-xl border border-gray-700/50 bg-bg-card p-5 transition-all duration-300 hover:border-gold/30 hover:shadow-[0_0_24px_rgba(200,155,60,0.06)]"
+            className="group rounded-xl border border-border-theme bg-bg-card p-5 transition-all duration-300 hover:border-gold/30 hover:shadow-[0_0_24px_rgba(200,155,60,0.06)]"
           >
             <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-lg bg-gold/10 text-gold transition-colors duration-300 group-hover:bg-gold/20">
               {f.icon}
             </div>
-            <h3 className="mb-1 text-sm font-semibold text-white">{f.title}</h3>
-            <p className="text-xs leading-relaxed text-gray-500">{f.description}</p>
+            <h3 className="mb-1 text-sm font-semibold text-text-primary">{f.title}</h3>
+            <p className="text-xs leading-relaxed text-text-muted">{f.description}</p>
           </div>
         ))}
       </div>

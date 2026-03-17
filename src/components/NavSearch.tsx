@@ -142,7 +142,7 @@ export default function NavSearch() {
             setOpen(true);
             setTimeout(() => inputRef.current?.focus(), 50);
           }}
-          className="flex h-8 w-8 items-center justify-center rounded-lg text-gray-400 transition-colors hover:bg-white/5 hover:text-white sm:hidden"
+          className="flex h-8 w-8 items-center justify-center rounded-lg text-text-secondary transition-colors hover:bg-white/5 hover:text-text-primary sm:hidden"
           aria-label="Search"
         >
           <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -161,7 +161,7 @@ export default function NavSearch() {
         <select
           value={region}
           onChange={(e) => setRegion(e.target.value)}
-          className="hidden h-8 rounded-md border border-gray-700/50 bg-gray-800/60 px-1.5 text-[11px] text-gray-300 outline-none focus:border-cyan/50 lg:block"
+          className="hidden h-8 rounded-md border border-border-theme bg-bg-card-hover/60 px-1.5 text-[11px] text-text-secondary outline-none focus:border-cyan/50 lg:block"
         >
           {REGIONS.map((r) => (
             <option key={r.value} value={r.value}>
@@ -184,10 +184,10 @@ export default function NavSearch() {
               blurTimeoutRef.current = setTimeout(() => setShowHistory(false), 200);
             }}
             placeholder="Search..."
-            className="h-8 w-36 rounded-md border border-gray-700/50 bg-gray-800/60 px-3 pr-8 text-xs text-white placeholder-gray-500 outline-none transition-all focus:w-48 focus:border-gold/50 focus:ring-1 focus:ring-gold/20 lg:w-44 lg:focus:w-56"
+            className="h-8 w-36 rounded-md border border-border-theme bg-bg-card-hover/60 px-3 pr-8 text-xs text-text-primary placeholder-gray-500 outline-none transition-all focus:w-48 focus:border-gold/50 focus:ring-1 focus:ring-gold/20 lg:w-44 lg:focus:w-56"
           />
           <svg
-            className="absolute right-2 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-gray-500"
+            className="absolute right-2 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-text-muted"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -198,7 +198,7 @@ export default function NavSearch() {
 
           {/* Suggestions dropdown */}
           {suggestions.length > 0 && open && (
-            <div className="absolute left-0 right-0 top-full z-50 mt-1 overflow-hidden rounded-xl border border-gray-700/50 bg-gray-900/95 shadow-xl backdrop-blur-md">
+            <div className="absolute left-0 right-0 top-full z-50 mt-1 overflow-hidden rounded-xl border border-border-theme bg-bg-card/95 shadow-xl backdrop-blur-md">
               {suggestions.map((s, i) => (
                 <button
                   key={`${s.gameName}-${s.tagLine}-${s.region}`}
@@ -206,7 +206,7 @@ export default function NavSearch() {
                   onClick={() => navigate(s.gameName, s.tagLine, s.region)}
                   onMouseEnter={() => setHighlighted(i)}
                   className={`flex w-full items-center gap-2 px-3 py-2 text-left text-xs transition-colors ${
-                    i === highlighted ? "bg-gold/10 text-white" : "text-gray-300 hover:bg-white/5"
+                    i === highlighted ? "bg-gold/10 text-text-primary" : "text-text-secondary hover:bg-white/5"
                   }`}
                 >
                   <img
@@ -218,7 +218,7 @@ export default function NavSearch() {
                   />
                   <span className="font-medium">
                     <span className="truncate">{s.gameName}</span>
-                    <span className="flex-shrink-0 text-gray-500">#{s.tagLine}</span>
+                    <span className="flex-shrink-0 text-text-muted">#{s.tagLine}</span>
                   </span>
                   <span className="ml-auto rounded bg-cyan/10 px-1.5 py-0.5 text-[9px] text-cyan">
                     {REGIONS.find((r) => r.value === s.region)?.label ?? s.region}
@@ -230,9 +230,9 @@ export default function NavSearch() {
 
           {/* Search history dropdown */}
           {showHistory && suggestions.length === 0 && history.length > 0 && (
-            <div className="absolute left-0 right-0 top-full z-50 mt-1 min-w-[280px] overflow-hidden rounded-xl border border-gray-700/50 bg-[#111827] shadow-xl backdrop-blur-md">
-              <div className="flex items-center justify-between border-b border-gray-700/50 px-3 py-1.5">
-                <span className="flex items-center gap-1.5 text-[10px] font-medium text-gray-400">
+            <div className="absolute left-0 right-0 top-full z-50 mt-1 min-w-[280px] overflow-hidden rounded-xl border border-border-theme bg-bg-card shadow-xl backdrop-blur-md">
+              <div className="flex items-center justify-between border-b border-border-theme px-3 py-1.5">
+                <span className="flex items-center gap-1.5 text-[10px] font-medium text-text-secondary">
                   <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6l4 2m6-2a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
@@ -245,7 +245,7 @@ export default function NavSearch() {
                     clearHistory();
                     setShowHistory(false);
                   }}
-                  className="text-[9px] text-gray-500 transition-colors hover:text-gray-300"
+                  className="text-[9px] text-text-muted transition-colors hover:text-text-secondary"
                 >
                   Clear all
                 </button>
@@ -253,7 +253,7 @@ export default function NavSearch() {
               {history.map((entry, index) => (
                 <div
                   key={`${entry.gameName}-${entry.tagLine}-${entry.region}-${entry.timestamp}`}
-                  className="group flex w-full items-center gap-2 px-3 py-2 text-left transition-colors duration-150 hover:bg-gray-700/50"
+                  className="group flex w-full items-center gap-2 px-3 py-2 text-left transition-colors duration-150 hover:bg-bg-card-hover/50"
                 >
                   <button
                     type="button"
@@ -264,14 +264,14 @@ export default function NavSearch() {
                     }}
                     className="flex min-w-0 flex-1 items-center gap-2"
                   >
-                    <svg className="h-3.5 w-3.5 flex-shrink-0 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <svg className="h-3.5 w-3.5 flex-shrink-0 text-text-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6l4 2m6-2a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
-                    <span className="truncate text-xs text-gray-100">
+                    <span className="truncate text-xs text-text-primary">
                       {entry.gameName}
-                      <span className="text-gray-500">#{entry.tagLine}</span>
+                      <span className="text-text-muted">#{entry.tagLine}</span>
                     </span>
-                    <span className="ml-auto rounded-full bg-gray-700/60 px-1.5 py-0.5 text-[9px] font-medium text-gray-400">
+                    <span className="ml-auto rounded-full bg-border-theme/60 px-1.5 py-0.5 text-[9px] font-medium text-text-secondary">
                       {regionShortLabel(entry.region)}
                     </span>
                   </button>
@@ -279,7 +279,7 @@ export default function NavSearch() {
                     type="button"
                     onMouseDown={(e) => e.preventDefault()}
                     onClick={() => removeEntry(index)}
-                    className="flex-shrink-0 rounded p-0.5 text-gray-600 opacity-0 transition-all hover:bg-gray-600/50 hover:text-gray-300 group-hover:opacity-100"
+                    className="flex-shrink-0 rounded p-0.5 text-text-muted opacity-0 transition-all hover:bg-bg-card-hover/50 hover:text-text-secondary group-hover:opacity-100"
                     aria-label={`Remove ${entry.gameName}#${entry.tagLine}`}
                   >
                     <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>

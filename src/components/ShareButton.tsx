@@ -30,7 +30,7 @@ export default function ShareButton() {
       className={`flex h-8 w-8 items-center justify-center rounded-lg transition-all duration-200 ${
         copied
           ? "bg-green-500/10 text-green-400"
-          : "bg-gray-800/40 text-gray-500 hover:bg-gray-700/40 hover:text-gray-300"
+          : "bg-bg-card-hover/40 text-text-muted hover:bg-bg-card-hover/40 hover:text-text-secondary"
       }`}
     >
       {copied ? (

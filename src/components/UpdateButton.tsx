@@ -90,7 +90,7 @@ export default function UpdateButton({ region, name }: UpdateButtonProps) {
           success
             ? "border border-green-500/50 bg-green-500/10 text-green-400"
             : isDisabled
-              ? "border border-gray-700/50 bg-gray-800/40 text-gray-500 cursor-not-allowed"
+              ? "border border-border-theme bg-bg-card-hover/40 text-text-muted cursor-not-allowed"
               : "border border-cyan/30 bg-cyan/10 text-cyan hover:bg-cyan/20 hover:shadow-md"
         }`}
       >

@@ -86,7 +86,7 @@ export default function ChampionGrid({ champions }: ChampionGridProps) {
 
   function SortIcon({ columnKey }: { columnKey: SortKey }) {
     if (sortKey !== columnKey)
-      return <span className="ml-1 text-gray-600">&#8597;</span>;
+      return <span className="ml-1 text-text-muted">&#8597;</span>;
     return (
       <span className="ml-1 text-cyan-400">
         {sortDir === "asc" ? "\u25B2" : "\u25BC"}
@@ -96,22 +96,22 @@ export default function ChampionGrid({ champions }: ChampionGridProps) {
 
   if (champions.length === 0) {
     return (
-      <div className="rounded-xl border border-gray-700/50 bg-gray-900/80 p-8 text-center backdrop-blur-sm">
-        <p className="text-gray-400">No champion data available.</p>
+      <div className="rounded-xl border border-border-theme bg-bg-card/80 p-8 text-center backdrop-blur-sm">
+        <p className="text-text-secondary">No champion data available.</p>
       </div>
     );
   }
 
   return (
-    <div className="overflow-x-auto rounded-xl border border-gray-700/50 bg-gray-900/80 backdrop-blur-sm">
+    <div className="overflow-x-auto rounded-xl border border-border-theme bg-bg-card/80 backdrop-blur-sm">
       <table className="w-full text-sm">
         <thead>
-          <tr className="border-b border-gray-700/50">
+          <tr className="border-b border-border-theme">
             {COLUMN_HEADERS.map((col) => (
               <th
                 key={col.key}
                 onClick={() => handleSort(col.key)}
-                className={`cursor-pointer select-none px-3 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-400 transition-colors hover:text-gray-200 ${col.hideClass ?? ""}`}
+                className={`cursor-pointer select-none px-3 py-3 text-left text-xs font-semibold uppercase tracking-wider text-text-secondary transition-colors hover:text-text-primary ${col.hideClass ?? ""}`}
               >
                 <span className="hidden sm:inline">{col.label}</span>
                 <span className="sm:hidden">{col.shortLabel ?? col.label}</span>
@@ -119,10 +119,10 @@ export default function ChampionGrid({ champions }: ChampionGridProps) {
               </th>
             ))}
             {/* Non-sortable display columns */}
-            <th className="hidden px-3 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-400 xl:table-cell">
+            <th className="hidden px-3 py-3 text-left text-xs font-semibold uppercase tracking-wider text-text-secondary xl:table-cell">
               Role
             </th>
-            <th className="hidden px-3 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-400 xl:table-cell">
+            <th className="hidden px-3 py-3 text-left text-xs font-semibold uppercase tracking-wider text-text-secondary xl:table-cell">
               Best
             </th>
           </tr>
@@ -131,7 +131,7 @@ export default function ChampionGrid({ champions }: ChampionGridProps) {
           {sorted.map((champ) => (
             <tr
               key={champ.championName}
-              className="border-b border-gray-800/50 transition-all duration-200 hover:bg-white/5"
+              className="border-b border-border-theme/50 transition-all duration-200 hover:bg-white/5"
             >
               {/* Champion */}
               <td className="px-3 py-2.5">
@@ -150,22 +150,22 @@ export default function ChampionGrid({ champions }: ChampionGridProps) {
                           champ.masteryLevel >= 7
                             ? "bg-amber-500 text-black"
                             : champ.masteryLevel >= 5
-                              ? "bg-purple-500 text-white"
-                              : "bg-gray-600 text-white"
+                              ? "bg-purple-500 text-text-primary"
+                              : "bg-gray-600 text-text-primary"
                         }`}
                       >
                         {champ.masteryLevel}
                       </span>
                     )}
                   </div>
-                  <span className="truncate font-medium text-white">
+                  <span className="truncate font-medium text-text-primary">
                     {champ.championName}
                   </span>
                 </div>
               </td>
 
               {/* Games */}
-              <td className="px-3 py-2.5 text-gray-300">{champ.gamesPlayed}</td>
+              <td className="px-3 py-2.5 text-text-secondary">{champ.gamesPlayed}</td>
 
               {/* Winrate */}
               <td className="px-3 py-2.5">
@@ -189,7 +189,7 @@ export default function ChampionGrid({ champions }: ChampionGridProps) {
                   >
                     {champ.winrate.toFixed(0)}%
                   </span>
-                  <span className="hidden text-xs text-gray-500 sm:inline">
+                  <span className="hidden text-xs text-text-muted sm:inline">
                     ({champ.wins}W {champ.losses}L)
                   </span>
                 </div>
@@ -197,7 +197,7 @@ export default function ChampionGrid({ champions }: ChampionGridProps) {
 
               {/* KDA */}
               <td className="px-3 py-2.5">
-                <div className="text-xs text-gray-400">
+                <div className="text-xs text-text-secondary">
                   {champ.avgKills.toFixed(1)} / {champ.avgDeaths.toFixed(1)} /{" "}
                   {champ.avgAssists.toFixed(1)}
                 </div>
@@ -209,7 +209,7 @@ export default function ChampionGrid({ champions }: ChampionGridProps) {
                         ? "text-cyan-400"
                         : champ.avgKDA >= 2
                           ? "text-green-400"
-                          : "text-gray-400"
+                          : "text-text-secondary"
                   }`}
                 >
                   {champ.avgKDA === Infinity
@@ -219,7 +219,7 @@ export default function ChampionGrid({ champions }: ChampionGridProps) {
               </td>
 
               {/* CS/min */}
-              <td className="hidden px-3 py-2.5 text-gray-300 lg:table-cell">
+              <td className="hidden px-3 py-2.5 text-text-secondary lg:table-cell">
                 {champ.avgCSPerMin.toFixed(1)}
               </td>
 
@@ -239,7 +239,7 @@ export default function ChampionGrid({ champions }: ChampionGridProps) {
               </td>
 
               {/* Role (xl only) */}
-              <td className="hidden px-3 py-2.5 text-xs text-gray-400 xl:table-cell">
+              <td className="hidden px-3 py-2.5 text-xs text-text-secondary xl:table-cell">
                 {champ.mostPlayedRole || "\u2014"}
               </td>
 
@@ -254,13 +254,13 @@ export default function ChampionGrid({ champions }: ChampionGridProps) {
                           ? "bg-purple-500/20 text-purple-400"
                           : champ.bestMultikill === "Triple"
                             ? "bg-cyan-500/20 text-cyan-400"
-                            : "bg-gray-700/40 text-gray-400"
+                            : "bg-border-theme/40 text-text-secondary"
                     }`}
                   >
                     {champ.bestMultikill}
                   </span>
                 ) : (
-                  <span className="text-xs text-gray-600">{"\u2014"}</span>
+                  <span className="text-xs text-text-muted">{"\u2014"}</span>
                 )}
               </td>
             </tr>

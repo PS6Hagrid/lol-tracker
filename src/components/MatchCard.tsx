@@ -11,7 +11,7 @@ import {
 import dynamic from "next/dynamic";
 
 const TimelineTab = dynamic(() => import("@/components/TimelineTab"), {
-  loading: () => <div className="animate-pulse bg-gray-700/50 h-64 rounded-lg" />,
+  loading: () => <div className="animate-pulse bg-border-theme/50 h-64 rounded-lg" />,
 });
 
 interface MatchCardProps {
@@ -147,7 +147,7 @@ export default function MatchCard({ match, summonerPuuid, region }: MatchCardPro
     <div
       className={`overflow-hidden rounded-xl border transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg ${
         isRemake
-          ? "border-gray-700/30 bg-gray-900/20"
+          ? "border-border-theme/30 bg-bg-card/20"
           : win
             ? "border-green-700/30 bg-green-900/20"
             : "border-red-700/30 bg-red-900/20"
@@ -221,10 +221,10 @@ export default function MatchCard({ match, summonerPuuid, region }: MatchCardPro
         <div className="min-w-0 flex-shrink-0">
           <div className="flex items-center gap-1 text-sm font-bold">
             <span className="text-white">{player.kills}</span>
-            <span className="text-gray-500">/</span>
+            <span className="text-text-muted">/</span>
             <span className="text-red-400">{player.deaths}</span>
-            <span className="text-gray-500">/</span>
-            <span className="text-gray-400">{player.assists}</span>
+            <span className="text-text-muted">/</span>
+            <span className="text-text-secondary">{player.assists}</span>
           </div>
           <span
             className={`mt-0.5 inline-block rounded-md px-1.5 py-0.5 text-xs font-semibold ${
@@ -234,7 +234,7 @@ export default function MatchCard({ match, summonerPuuid, region }: MatchCardPro
                   ? "bg-cyan-500/20 text-cyan-400"
                   : parseFloat(kdaRatio) >= 2
                     ? "bg-green-500/20 text-green-400"
-                    : "bg-gray-500/20 text-gray-400"
+                    : "bg-gray-500/20 text-text-secondary"
             }`}
           >
             {kdaRatio} KDA
@@ -242,7 +242,7 @@ export default function MatchCard({ match, summonerPuuid, region }: MatchCardPro
         </div>
 
         {/* CS & Gold — compact on mobile, full on sm+ */}
-        <div className="min-w-0 flex-shrink-0 text-xs text-gray-400">
+        <div className="min-w-0 flex-shrink-0 text-xs text-text-secondary">
           <div>
             <span className="text-white">{totalCS}</span> CS
             <span className="hidden sm:inline"> ({csPerMin}/min)</span>
@@ -257,10 +257,10 @@ export default function MatchCard({ match, summonerPuuid, region }: MatchCardPro
 
         {/* KP & Damage Share — hidden on mobile */}
         <div className="hidden min-w-0 flex-shrink-0 text-xs sm:block">
-          <div className="text-gray-400">
+          <div className="text-text-secondary">
             <span className="font-medium text-purple-400">{killParticipation}%</span> KP
           </div>
-          <div className="text-gray-400">
+          <div className="text-text-secondary">
             <span className="font-medium text-orange-400">{damageShare}%</span> DMG
           </div>
         </div>
@@ -278,18 +278,18 @@ export default function MatchCard({ match, summonerPuuid, region }: MatchCardPro
                   className="h-full w-full object-cover"
                 />
               ) : (
-                <div className="h-full w-full bg-gray-800/60" />
+                <div className="h-full w-full bg-bg-card-hover/60" />
               )}
             </div>
           ))}
         </div>
 
         {/* Game info */}
-        <div className="flex flex-shrink-0 flex-col items-end text-xs text-gray-400">
+        <div className="flex flex-shrink-0 flex-col items-end text-xs text-text-secondary">
           <span
             className={`font-semibold ${
               isRemake
-                ? "text-gray-400"
+                ? "text-text-secondary"
                 : win
                   ? "text-green-400"
                   : "text-red-400"
@@ -299,14 +299,14 @@ export default function MatchCard({ match, summonerPuuid, region }: MatchCardPro
           </span>
           <span>{formatDuration(match.info.gameDuration)}</span>
           <span>{timeAgo(match.info.gameCreation)}</span>
-          <span className="text-gray-500">
+          <span className="text-text-muted">
             {getGameMode(match.info.gameMode, match.info.gameType)}
           </span>
         </div>
 
         {/* Expand chevron */}
         <svg
-          className={`h-4 w-4 flex-shrink-0 text-gray-500 transition-transform duration-200 ${
+          className={`h-4 w-4 flex-shrink-0 text-text-muted transition-transform duration-200 ${
             expanded ? "rotate-180" : ""
           }`}
           fill="none"
@@ -321,7 +321,7 @@ export default function MatchCard({ match, summonerPuuid, region }: MatchCardPro
       {/* ── Expanded View ── */}
       <div className={`expand-grid ${expanded ? "expanded" : ""}`}>
         <div>
-        <div className="border-t border-gray-700/50 px-3 pb-4 pt-3 sm:px-4">
+        <div className="border-t border-border-theme px-3 pb-4 pt-3 sm:px-4">
           {/* Team objectives summary */}
           <div className="mb-4 grid grid-cols-2 gap-4 overflow-x-auto">
             <div>
@@ -335,7 +335,7 @@ export default function MatchCard({ match, summonerPuuid, region }: MatchCardPro
                 </span>
               </div>
               {blueTeamData && (
-                <div className="flex gap-3 text-xs text-gray-400">
+                <div className="flex gap-3 text-xs text-text-secondary">
                   <span>Baron: <span className="text-amber-400">{blueTeamData.objectives.baron.kills}</span></span>
                   <span>Dragon: <span className="text-purple-400">{blueTeamData.objectives.dragon.kills}</span></span>
                   <span>Tower: <span className="text-cyan-400">{blueTeamData.objectives.tower.kills}</span></span>
@@ -353,7 +353,7 @@ export default function MatchCard({ match, summonerPuuid, region }: MatchCardPro
                 </span>
               </div>
               {redTeamData && (
-                <div className="flex gap-3 text-xs text-gray-400">
+                <div className="flex gap-3 text-xs text-text-secondary">
                   <span>Baron: <span className="text-amber-400">{redTeamData.objectives.baron.kills}</span></span>
                   <span>Dragon: <span className="text-purple-400">{redTeamData.objectives.dragon.kills}</span></span>
                   <span>Tower: <span className="text-cyan-400">{redTeamData.objectives.tower.kills}</span></span>
@@ -363,7 +363,7 @@ export default function MatchCard({ match, summonerPuuid, region }: MatchCardPro
           </div>
 
           {/* Tab navigation */}
-          <div className="mb-4 flex gap-1 border-b border-gray-700/50" role="tablist" aria-label="Match details">
+          <div className="mb-4 flex gap-1 border-b border-border-theme" role="tablist" aria-label="Match details">
             {(
               [
                 { key: "overview", label: "Overview" },
@@ -380,7 +380,7 @@ export default function MatchCard({ match, summonerPuuid, region }: MatchCardPro
                 className={`px-3 py-2 text-xs font-semibold transition-colors ${
                   activeTab === tab.key
                     ? "border-b-2 border-cyan text-cyan"
-                    : "text-gray-400 hover:text-gray-200"
+                    : "text-text-secondary hover:text-text-primary"
                 }`}
               >
                 {tab.label}
@@ -431,7 +431,7 @@ export default function MatchCard({ match, summonerPuuid, region }: MatchCardPro
 
 export function MatchCardSkeleton() {
   return (
-    <div className="animate-pulse overflow-hidden rounded-xl border border-gray-700/30 bg-gray-900/40">
+    <div className="animate-pulse overflow-hidden rounded-xl border border-border-theme/30 bg-bg-card/40">
       <div className="flex items-center gap-3 p-3 sm:gap-4 sm:p-4">
         <div className="hidden h-16 w-1 rounded-full bg-gray-700 sm:block" />
         <div className="h-12 w-12 rounded-lg bg-gray-700" />
@@ -533,7 +533,7 @@ function OverviewTeamTable({
         >
           {teamLabel}
         </h4>
-        <span className="ml-auto flex items-center gap-3 text-[11px] text-gray-500">
+        <span className="ml-auto flex items-center gap-3 text-[11px] text-text-muted">
           <span>
             <span className="text-gray-300">{teamKills}</span> kills
           </span>
@@ -563,7 +563,7 @@ function OverviewTeamTable({
               className={`rounded-lg px-2 py-1.5 text-xs ${
                 isSummoner
                   ? "bg-cyan-500/10 ring-1 ring-cyan-500/30"
-                  : "bg-gray-800/40"
+                  : "bg-bg-card-hover/40"
               }`}
             >
               {/* Row 1: Champion + Spells + Rune | Name | KDA | KP | CS | Gold */}
@@ -614,7 +614,7 @@ function OverviewTeamTable({
                 </span>
 
                 {/* KDA */}
-                <span className="w-14 flex-shrink-0 text-center text-gray-400 sm:w-16">
+                <span className="w-14 flex-shrink-0 text-center text-text-secondary sm:w-16">
                   {p.kills}/{p.deaths}/{p.assists}
                 </span>
 
@@ -637,7 +637,7 @@ function OverviewTeamTable({
 
                 {/* CS + CS/min — hidden on mobile */}
                 <span
-                  className="hidden w-16 flex-shrink-0 text-center text-gray-400 md:inline"
+                  className="hidden w-16 flex-shrink-0 text-center text-text-secondary md:inline"
                   title="CS (CS/min)"
                 >
                   {cs}{" "}
@@ -673,7 +673,7 @@ function OverviewTeamTable({
                           className="h-full w-full object-cover"
                         />
                       ) : (
-                        <div className="h-full w-full bg-gray-800/60" />
+                        <div className="h-full w-full bg-bg-card-hover/60" />
                       )}
                     </div>
                   ))}
@@ -681,7 +681,7 @@ function OverviewTeamTable({
 
                 {/* Damage bar */}
                 <div className="flex min-w-0 flex-1 items-center gap-1">
-                  <div className="h-2 flex-1 overflow-hidden rounded-full bg-gray-700/50">
+                  <div className="h-2 flex-1 overflow-hidden rounded-full bg-border-theme/50">
                     <div
                       className={`h-full rounded-full ${
                         teamColor === "blue" ? "bg-blue-500/70" : "bg-red-500/70"
@@ -689,7 +689,7 @@ function OverviewTeamTable({
                       style={{ width: `${damagePercent}%` }}
                     />
                   </div>
-                  <span className="w-10 flex-shrink-0 text-right text-gray-500">
+                  <span className="w-10 flex-shrink-0 text-right text-text-muted">
                     {formatNumber(p.totalDamageDealtToChampions)}
                   </span>
                 </div>
@@ -720,7 +720,7 @@ function DamageTab({
   return (
     <div>
       {/* Legend */}
-      <div className="mb-3 flex flex-wrap items-center gap-3 text-xs text-gray-400">
+      <div className="mb-3 flex flex-wrap items-center gap-3 text-xs text-text-secondary">
         <span className="font-semibold text-gray-300">Damage Dealt</span>
         <span className="flex items-center gap-1">
           <span className="inline-block h-2.5 w-2.5 rounded-sm bg-red-500/70" /> Physical
@@ -753,7 +753,7 @@ function DamageTab({
               className={`rounded-lg px-2 py-2 text-xs ${
                 isSummoner
                   ? "bg-cyan-500/10 ring-1 ring-cyan-500/30"
-                  : "bg-gray-800/40"
+                  : "bg-bg-card-hover/40"
               }`}
             >
               <div className="flex items-center gap-2">
@@ -808,7 +808,7 @@ function DamageTab({
 
                 {/* Stacked damage bar */}
                 <div className="flex min-w-0 flex-1 items-center gap-1">
-                  <div className="h-3 flex-1 overflow-hidden rounded-full bg-gray-700/50">
+                  <div className="h-3 flex-1 overflow-hidden rounded-full bg-border-theme/50">
                     <div className="flex h-full">
                       <div
                         className="h-full bg-red-500/70"
@@ -840,8 +840,8 @@ function DamageTab({
 
                 {/* Damage taken bar */}
                 <div className="ml-auto flex min-w-0 flex-1 items-center gap-1" style={{ maxWidth: "40%" }}>
-                  <span className="flex-shrink-0 text-gray-500">Taken:</span>
-                  <div className="h-2 flex-1 overflow-hidden rounded-full bg-gray-700/50">
+                  <span className="flex-shrink-0 text-text-muted">Taken:</span>
+                  <div className="h-2 flex-1 overflow-hidden rounded-full bg-border-theme/50">
                     <div
                       className="h-full rounded-full bg-orange-500/50"
                       style={{ width: `${takenPct}%` }}
@@ -896,7 +896,7 @@ function VisionTab({
                 className={`flex items-center gap-2 rounded-lg px-2 py-1.5 text-xs ${
                   isSummoner
                     ? "bg-cyan-500/10 ring-1 ring-cyan-500/30"
-                    : "bg-gray-800/40"
+                    : "bg-bg-card-hover/40"
                 }`}
               >
                 {/* Champion + Spells + Rune */}
@@ -950,7 +950,7 @@ function VisionTab({
 
                 {/* Vision bar */}
                 <div className="flex min-w-0 flex-1 items-center gap-1">
-                  <div className="h-2.5 flex-1 overflow-hidden rounded-full bg-gray-700/50">
+                  <div className="h-2.5 flex-1 overflow-hidden rounded-full bg-border-theme/50">
                     <div
                       className="h-full rounded-full bg-purple-500/60"
                       style={{ width: `${visionPct}%` }}
@@ -962,7 +962,7 @@ function VisionTab({
                 </div>
 
                 {/* Wards */}
-                <div className="hidden flex-shrink-0 items-center gap-2 text-gray-500 md:flex">
+                <div className="hidden flex-shrink-0 items-center gap-2 text-text-muted md:flex">
                   <span title="Wards Placed">
                     <span className="text-green-400">{p.wardsPlaced}</span>
                     <span className="ml-0.5">placed</span>
@@ -1003,7 +1003,7 @@ function VisionTab({
                   className={`flex items-center gap-2 rounded-lg px-2 py-1.5 text-xs ${
                     isSummoner
                       ? "bg-cyan-500/10 ring-1 ring-cyan-500/30"
-                      : "bg-gray-800/40"
+                      : "bg-bg-card-hover/40"
                   }`}
                 >
                   {/* Champion + Spells + Rune */}
@@ -1057,7 +1057,7 @@ function VisionTab({
 
                   {/* Stacked bar: Turret (cyan) + Other Obj (amber) */}
                   <div className="flex min-w-0 flex-1 items-center gap-1">
-                    <div className="h-2.5 flex-1 overflow-hidden rounded-full bg-gray-700/50">
+                    <div className="h-2.5 flex-1 overflow-hidden rounded-full bg-border-theme/50">
                       <div className="flex h-full">
                         <div
                           className="h-full bg-cyan-500/60"
@@ -1069,13 +1069,13 @@ function VisionTab({
                         />
                       </div>
                     </div>
-                    <span className="w-12 flex-shrink-0 text-right text-gray-400">
+                    <span className="w-12 flex-shrink-0 text-right text-text-secondary">
                       {formatNumber(objTotal)}
                     </span>
                   </div>
 
                   {/* Breakdown */}
-                  <div className="hidden flex-shrink-0 items-center gap-2 text-gray-500 md:flex">
+                  <div className="hidden flex-shrink-0 items-center gap-2 text-text-muted md:flex">
                     <span>
                       <span className="text-cyan-400">{formatNumber(p.damageDealtToTurrets)}</span>
                       <span className="ml-0.5">turret</span>

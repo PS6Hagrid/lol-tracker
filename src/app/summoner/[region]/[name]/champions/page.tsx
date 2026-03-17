@@ -195,7 +195,7 @@ function HighlightCards({ champions }: { champions: ChampionStatRow[] }) {
       champ: mostPlayed,
       stat: (
         <>
-          <span className="text-gray-400">{mostPlayed.gamesPlayed} games</span>
+          <span className="text-text-secondary">{mostPlayed.gamesPlayed} games</span>
           <span className="font-medium" style={{ color: mostPlayed.winrate >= 50 ? "var(--color-win)" : "var(--color-loss)" }}>
             {mostPlayed.winrate.toFixed(0)}% WR
           </span>
@@ -211,7 +211,7 @@ function HighlightCards({ champions }: { champions: ChampionStatRow[] }) {
       stat: (
         <>
           <span className="font-medium" style={{ color: "var(--color-win)" }}>{bestWR.winrate.toFixed(0)}% WR</span>
-          <span className="text-gray-400">{bestWR.gamesPlayed} games</span>
+          <span className="text-text-secondary">{bestWR.gamesPlayed} games</span>
         </>
       ),
       hoverClass: "hover:border-green-500/30 hover:shadow-green-500/5",
@@ -226,7 +226,7 @@ function HighlightCards({ champions }: { champions: ChampionStatRow[] }) {
           <span className="font-bold text-amber-400">
             {bestKDA.avgKDA === Infinity ? "Perfect" : `${bestKDA.avgKDA.toFixed(2)} KDA`}
           </span>
-          <span className="text-gray-500">
+          <span className="text-text-muted">
             {bestKDA.avgKills.toFixed(1)}/{bestKDA.avgDeaths.toFixed(1)}/{bestKDA.avgAssists.toFixed(1)}
           </span>
         </>
@@ -237,12 +237,12 @@ function HighlightCards({ champions }: { champions: ChampionStatRow[] }) {
 
   return (
     <section>
-      <h2 className="mb-3 text-lg font-semibold text-white">Highlights</h2>
+      <h2 className="mb-3 text-lg font-semibold text-text-primary">Highlights</h2>
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
         {cards.map((card) => (
           <div
             key={card.label}
-            className={`flex items-center gap-3 rounded-xl border border-gray-700/50 bg-gray-900/80 p-4 backdrop-blur-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg ${card.hoverClass}`}
+            className={`flex items-center gap-3 rounded-xl border border-border-theme bg-bg-card/80 p-4 backdrop-blur-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg ${card.hoverClass}`}
           >
             <img
               src={getChampionIconUrl(card.champ.championName)}
@@ -252,10 +252,10 @@ function HighlightCards({ champions }: { champions: ChampionStatRow[] }) {
               className="rounded-lg"
             />
             <div className="min-w-0 flex-1">
-              <p className="text-[10px] font-semibold uppercase tracking-wider text-gray-500">
+              <p className="text-[10px] font-semibold uppercase tracking-wider text-text-muted">
                 {card.label}
               </p>
-              <p className="truncate text-sm font-medium text-white">
+              <p className="truncate text-sm font-medium text-text-primary">
                 {card.champ.championName}
               </p>
               <div className="flex items-center gap-2 text-xs">
@@ -277,9 +277,9 @@ export default async function ChampionsPage({ params }: PageProps) {
   if (lastHyphen === -1 || lastHyphen === 0 || lastHyphen === name.length - 1) {
     return (
       <div className="flex min-h-[calc(100vh-3.5rem)] items-center justify-center">
-        <div className="rounded-xl border border-gray-700/50 bg-gray-900/80 p-8 text-center backdrop-blur-sm">
+        <div className="rounded-xl border border-border-theme bg-bg-card/80 p-8 text-center backdrop-blur-sm">
           <h2 className="text-xl font-bold text-loss">Invalid Summoner Name</h2>
-          <p className="mt-2 text-gray-400">
+          <p className="mt-2 text-text-secondary">
             Expected format: GameName-TagLine (e.g. Faker-KR1)
           </p>
         </div>
@@ -318,9 +318,9 @@ export default async function ChampionsPage({ params }: PageProps) {
     console.error("Error fetching summoner data:", error);
     return (
       <div className="flex min-h-[calc(100vh-3.5rem)] items-center justify-center">
-        <div className="rounded-xl border border-gray-700/50 bg-gray-900/80 p-8 text-center backdrop-blur-sm">
+        <div className="rounded-xl border border-border-theme bg-bg-card/80 p-8 text-center backdrop-blur-sm">
           <h2 className="text-xl font-bold text-loss">Summoner Not Found</h2>
-          <p className="mt-2 text-gray-400">
+          <p className="mt-2 text-text-secondary">
             Could not find &quot;{gameName}#{tagLine}&quot; in{" "}
             {REGIONS.find((r) => r.value === region)?.label ?? region}
           </p>
@@ -357,10 +357,10 @@ export default async function ChampionsPage({ params }: PageProps) {
         <HighlightCards champions={championRows} />
 
         <section>
-          <h2 className="mb-3 text-lg font-semibold text-white">
+          <h2 className="mb-3 text-lg font-semibold text-text-primary">
             Champion Performance
           </h2>
-          <p className="mb-4 text-sm text-gray-400">
+          <p className="mb-4 text-sm text-text-secondary">
             Stats aggregated from recent {championRows.length > 0 ? "matches" : "data"}.
             Click column headers to sort.
           </p>

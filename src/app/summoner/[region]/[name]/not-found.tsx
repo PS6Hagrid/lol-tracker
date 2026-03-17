@@ -3,12 +3,12 @@ import Link from "next/link";
 /** 404 page shown when a specific summoner cannot be found. */
 export default function SummonerNotFound() {
   return (
-    <div className="flex min-h-[calc(100vh-3.5rem)] items-center justify-center bg-[#0a0e17] px-4">
-      <div className="w-full max-w-md rounded-xl border border-gray-700/50 bg-[#111827] p-8 text-center">
+    <div className="flex min-h-[calc(100vh-3.5rem)] items-center justify-center bg-bg-page px-4">
+      <div className="w-full max-w-md rounded-xl border border-border-theme bg-bg-card p-8 text-center">
         {/* Icon */}
-        <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full border-2 border-gray-700/50 bg-gray-800/40">
+        <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full border-2 border-border-theme bg-bg-card-hover/40">
           <svg
-            className="h-8 w-8 text-gray-400"
+            className="h-8 w-8 text-text-secondary"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -23,10 +23,10 @@ export default function SummonerNotFound() {
         </div>
 
         {/* Title */}
-        <h2 className="text-xl font-bold text-gray-100">
+        <h2 className="text-xl font-bold text-text-primary">
           Summoner Not Found
         </h2>
-        <p className="mt-2 text-sm text-gray-400">
+        <p className="mt-2 text-sm text-text-secondary">
           We couldn&apos;t find a summoner with that name in this region. Please
           check the spelling and region, then try again.
         </p>

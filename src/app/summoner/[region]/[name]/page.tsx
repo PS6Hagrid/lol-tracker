@@ -58,9 +58,9 @@ export default async function SummonerProfilePage({ params }: PageProps) {
   if (lastHyphen === -1 || lastHyphen === 0 || lastHyphen === name.length - 1) {
     return (
       <div className="flex min-h-[calc(100vh-3.5rem)] items-center justify-center">
-        <div className="rounded-xl border border-gray-700/50 bg-gray-900/80 p-8 text-center backdrop-blur-sm">
+        <div className="rounded-xl border border-border-theme bg-bg-card/80 p-8 text-center backdrop-blur-sm">
           <h2 className="text-xl font-bold text-loss">Invalid Summoner Name</h2>
-          <p className="mt-2 text-gray-400">
+          <p className="mt-2 text-text-secondary">
             Expected format: GameName-TagLine (e.g. Faker-KR1)
           </p>
         </div>
@@ -119,10 +119,10 @@ export default async function SummonerProfilePage({ params }: PageProps) {
 
     return (
       <div className="flex min-h-[calc(100vh-3.5rem)] items-center justify-center px-4">
-        <div className="w-full max-w-md rounded-xl border border-gray-700/50 bg-gray-900/80 p-8 text-center backdrop-blur-sm">
+        <div className="w-full max-w-md rounded-xl border border-border-theme bg-bg-card/80 p-8 text-center backdrop-blur-sm">
           <div className="mx-auto mb-4 text-4xl">{icon}</div>
           <h2 className="text-xl font-bold text-loss">{title}</h2>
-          <p className="mt-2 text-sm text-gray-400">{message}</p>
+          <p className="mt-2 text-sm text-text-secondary">{message}</p>
           <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-center">
             <a
               href={`/summoner/${region}/${name}`}
@@ -132,7 +132,7 @@ export default async function SummonerProfilePage({ params }: PageProps) {
             </a>
             <a
               href="/"
-              className="rounded-lg border border-gray-700 bg-gray-800/60 px-6 py-2.5 text-sm font-medium text-gray-300 transition-all duration-200 hover:bg-gray-700/60"
+              className="rounded-lg border border-border-theme bg-bg-card-hover/60 px-6 py-2.5 text-sm font-medium text-text-secondary transition-all duration-200 hover:bg-bg-card-hover/60"
             >
               Go Home
             </a>

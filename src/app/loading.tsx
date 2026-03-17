@@ -2,7 +2,7 @@ import { Skeleton } from "@/components/Skeleton";
 
 export default function RootLoading() {
   return (
-    <div className="min-h-screen bg-[#0a0e17]">
+    <div className="min-h-screen bg-bg-page">
       {/* Hero Section */}
       <div className="mx-auto max-w-5xl px-4 pt-24 pb-16 flex flex-col items-center">
         <Skeleton className="h-12 w-80 mb-4" />
@@ -16,7 +16,7 @@ export default function RootLoading() {
           {Array.from({ length: 3 }).map((_, i) => (
             <div
               key={i}
-              className="rounded-lg bg-gray-800/40 p-6 flex flex-col gap-4"
+              className="rounded-lg bg-bg-card-hover/40 p-6 flex flex-col gap-4"
             >
               <Skeleton className="h-10 w-10 rounded" />
               <Skeleton className="h-6 w-36" />

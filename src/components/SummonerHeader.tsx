@@ -27,9 +27,9 @@ function RankBadge({ entry, queueType }: { entry: LeagueEntryDTO | null; queueTy
 
   if (!entry) {
     return (
-      <div className="flex items-center gap-1.5 rounded-lg bg-gray-800/60 px-2.5 py-1.5 text-xs">
-        <span className="text-gray-500">{label}:</span>
-        <span className="text-gray-500">Unranked</span>
+      <div className="flex items-center gap-1.5 rounded-lg bg-bg-card-hover/60 px-2.5 py-1.5 text-xs">
+        <span className="text-text-muted">{label}:</span>
+        <span className="text-text-muted">Unranked</span>
       </div>
     );
   }
@@ -38,8 +38,8 @@ function RankBadge({ entry, queueType }: { entry: LeagueEntryDTO | null; queueTy
   const tierColor = getTierColor(entry.tier);
 
   return (
-    <div className="flex items-center gap-1.5 rounded-lg bg-gray-800/60 px-2.5 py-1.5 text-xs">
-      <span className="text-gray-500">{label}:</span>
+    <div className="flex items-center gap-1.5 rounded-lg bg-bg-card-hover/60 px-2.5 py-1.5 text-xs">
+      <span className="text-text-muted">{label}:</span>
       <img
         src={getRankEmblemUrl(entry.tier)}
         alt={entry.tier}
@@ -81,9 +81,9 @@ export default function SummonerHeader({ summoner, regionLabel, rankedStats, act
           alt="Profile Icon"
           width={80}
           height={80}
-          className="rounded-xl border-2 border-gray-700"
+          className="rounded-xl border-2 border-border-theme"
         />
-        <span className="absolute -bottom-2 left-1/2 -translate-x-1/2 rounded-full bg-gray-800 px-2 py-0.5 text-xs font-bold text-gold">
+        <span className="absolute -bottom-2 left-1/2 -translate-x-1/2 rounded-full bg-bg-card-hover px-2 py-0.5 text-xs font-bold text-gold">
           {summoner.summonerLevel}
         </span>
       </div>
@@ -91,9 +91,9 @@ export default function SummonerHeader({ summoner, regionLabel, rankedStats, act
       {/* Name + Region + Rank badges */}
       <div className="min-w-0 flex-1 text-center sm:text-left">
         <div className="flex flex-col items-center gap-2 sm:flex-row sm:items-baseline sm:gap-3">
-          <h1 className="text-2xl font-bold text-white sm:text-3xl">
+          <h1 className="text-2xl font-bold text-text-primary sm:text-3xl">
             {summoner.gameName}
-            <span className="text-gray-500">#{summoner.tagLine}</span>
+            <span className="text-text-muted">#{summoner.tagLine}</span>
           </h1>
           {actions && <div className="flex-shrink-0">{actions}</div>}
         </div>

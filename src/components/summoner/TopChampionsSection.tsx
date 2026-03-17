@@ -24,14 +24,14 @@ export default async function TopChampionsSection({ region, puuid }: TopChampion
 
   return (
     <section>
-      <h2 className="mb-3 text-lg font-semibold text-white">
+      <h2 className="mb-3 text-lg font-semibold text-text-primary">
         Top Champions (Mastery)
       </h2>
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
         {topChampionCards.map((champ) => (
           <div
             key={champ.championName}
-            className="flex items-center gap-3 rounded-xl border border-gray-700/50 bg-gray-900/80 p-4 backdrop-blur-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-gray-600/50 hover:shadow-lg"
+            className="flex items-center gap-3 rounded-xl border border-border-theme bg-bg-card/80 p-4 backdrop-blur-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-border-theme hover:shadow-lg"
           >
             <img
               src={getChampionIconUrl(champ.championName)}
@@ -41,11 +41,11 @@ export default async function TopChampionsSection({ region, puuid }: TopChampion
               className="rounded-lg"
             />
             <div className="min-w-0 flex-1">
-              <p className="truncate text-sm font-medium text-white">
+              <p className="truncate text-sm font-medium text-text-primary">
                 {champ.championName}
               </p>
               <div className="flex items-center gap-2 text-xs">
-                <span className="text-gray-400">Lvl {champ.level}</span>
+                <span className="text-text-secondary">Lvl {champ.level}</span>
                 <span className="font-medium text-cyan">
                   {(champ.points / 1000).toFixed(0)}k pts
                 </span>

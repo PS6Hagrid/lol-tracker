@@ -2,7 +2,7 @@ import { Skeleton } from "@/components/Skeleton";
 
 export default function ChampionsLoading() {
   return (
-    <div className="min-h-screen bg-[#0a0e17]">
+    <div className="min-h-screen bg-bg-page">
       <div className="mx-auto max-w-5xl px-4 py-8">
         {/* Title + Patch Badge */}
         <div className="flex items-center gap-3 mb-6">
@@ -23,7 +23,7 @@ export default function ChampionsLoading() {
           {Array.from({ length: 12 }).map((_, i) => (
             <div
               key={i}
-              className="rounded-lg bg-gray-800/40 p-4 flex flex-col gap-3"
+              className="rounded-lg bg-bg-card-hover/40 p-4 flex flex-col gap-3"
             >
               <div className="flex items-center gap-3">
                 <Skeleton className="h-12 w-12 rounded shrink-0" />

@@ -57,7 +57,7 @@ export default function ChampionDetailView({
     champion.allytips.length > 0 || champion.enemytips.length > 0;
 
   return (
-    <div className="min-h-screen bg-[#0a0e17]">
+    <div className="min-h-screen bg-bg-page">
       {/* Hero Section */}
       <div className="relative h-[420px] w-full overflow-hidden">
         <Image
@@ -78,7 +78,7 @@ export default function ChampionDetailView({
             {/* Back link */}
             <Link
               href="/champions"
-              className="absolute left-4 top-4 flex items-center gap-1.5 rounded-lg bg-[#0a0e17]/70 px-3 py-1.5 text-sm text-gray-300 backdrop-blur transition hover:text-white"
+              className="absolute left-4 top-4 flex items-center gap-1.5 rounded-lg bg-bg-page/70 px-3 py-1.5 text-sm text-gray-300 backdrop-blur transition hover:text-white"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -103,15 +103,15 @@ export default function ChampionDetailView({
               alt={champion.name}
               width={64}
               height={64}
-              className="rounded-lg border-2 border-gray-700/50"
+              className="rounded-lg border-2 border-border-theme"
               unoptimized
             />
 
             <div className="flex flex-col gap-1.5">
-              <h1 className="text-3xl font-bold text-gray-100">
+              <h1 className="text-3xl font-bold text-text-primary">
                 {champion.name}
               </h1>
-              <p className="text-lg text-gray-400">{champion.title}</p>
+              <p className="text-lg text-text-secondary">{champion.title}</p>
               <div className="flex flex-wrap items-center gap-2">
                 {/* Tier badge */}
                 <span
@@ -137,7 +137,7 @@ export default function ChampionDetailView({
                 {champion.tags.map((tag) => (
                   <span
                     key={tag}
-                    className="rounded-full border border-gray-700/50 bg-gray-700/20 px-2.5 py-0.5 text-xs text-gray-400"
+                    className="rounded-full border border-border-theme bg-border-theme/20 px-2.5 py-0.5 text-xs text-text-secondary"
                   >
                     {tag}
                   </span>
@@ -158,9 +158,9 @@ export default function ChampionDetailView({
                 <span className="text-sm font-medium text-gray-300">
                   {stat.label}
                 </span>
-                <span className="text-sm text-gray-500">{stat.value}/10</span>
+                <span className="text-sm text-text-muted">{stat.value}/10</span>
               </div>
-              <div className="h-2 w-full overflow-hidden rounded-full bg-gray-700/50">
+              <div className="h-2 w-full overflow-hidden rounded-full bg-border-theme/50">
                 <div
                   className="h-full rounded-full bg-blue-500 transition-all"
                   style={{ width: `${(stat.value / 10) * 100}%` }}
@@ -172,7 +172,7 @@ export default function ChampionDetailView({
 
         {/* Abilities Section */}
         <section className="space-y-4">
-          <h2 className="text-xl font-bold text-gray-100">Abilities</h2>
+          <h2 className="text-xl font-bold text-text-primary">Abilities</h2>
 
           {/* Ability tabs */}
           <div className="flex gap-2">
@@ -183,7 +183,7 @@ export default function ChampionDetailView({
                 className={`relative flex h-14 w-14 items-center justify-center rounded-lg border transition ${
                   selectedAbility === i
                     ? "border-blue-500 bg-blue-500/20"
-                    : "border-gray-700/50 bg-[#111827] hover:border-gray-600"
+                    : "border-border-theme bg-bg-card hover:border-gray-600"
                 }`}
                 title={`${ABILITY_KEYS[i]} - ${ability.name}`}
               >
@@ -211,7 +211,7 @@ export default function ChampionDetailView({
 
           {/* Active ability details */}
           {active && (
-            <div className="rounded-xl border border-gray-700/50 bg-[#111827] p-5">
+            <div className="rounded-xl border border-border-theme bg-bg-card p-5">
               <div className="mb-3 flex items-center gap-3">
                 <Image
                   src={active.iconUrl}
@@ -223,10 +223,10 @@ export default function ChampionDetailView({
                   loading="lazy"
                 />
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-100">
+                  <h3 className="text-lg font-semibold text-text-primary">
                     {active.name}
                   </h3>
-                  <span className="text-sm text-gray-500">
+                  <span className="text-sm text-text-muted">
                     {ABILITY_KEYS[selectedAbility]}
                     {selectedAbility === 0 ? " - Passive" : " - Active"}
                   </span>
@@ -240,22 +240,22 @@ export default function ChampionDetailView({
               />
 
               {active.cooldown && (
-                <div className="mt-4 flex flex-wrap gap-4 border-t border-gray-700/50 pt-3 text-sm">
+                <div className="mt-4 flex flex-wrap gap-4 border-t border-border-theme pt-3 text-sm">
                   {active.cooldown && active.cooldown !== "0" && (
                     <div>
-                      <span className="text-gray-500">Cooldown: </span>
+                      <span className="text-text-muted">Cooldown: </span>
                       <span className="text-gray-300">{active.cooldown}s</span>
                     </div>
                   )}
                   {active.cost && active.cost !== "0" && (
                     <div>
-                      <span className="text-gray-500">Cost: </span>
+                      <span className="text-text-muted">Cost: </span>
                       <span className="text-gray-300">{active.cost}</span>
                     </div>
                   )}
                   {active.range && active.range !== "0" && (
                     <div>
-                      <span className="text-gray-500">Range: </span>
+                      <span className="text-text-muted">Range: </span>
                       <span className="text-gray-300">{active.range}</span>
                     </div>
                   )}
@@ -267,17 +267,17 @@ export default function ChampionDetailView({
 
         {/* Lore Section */}
         <section className="space-y-3">
-          <h2 className="text-xl font-bold text-gray-100">Lore</h2>
+          <h2 className="text-xl font-bold text-text-primary">Lore</h2>
           <p className="leading-relaxed text-gray-300">{champion.lore}</p>
         </section>
 
         {/* Tips Section */}
         {hasTips && (
           <section className="space-y-4">
-            <h2 className="text-xl font-bold text-gray-100">Tips</h2>
+            <h2 className="text-xl font-bold text-text-primary">Tips</h2>
             <div className="grid gap-4 md:grid-cols-2">
               {champion.allytips.length > 0 && (
-                <div className="rounded-xl border border-gray-700/50 bg-[#111827] p-5">
+                <div className="rounded-xl border border-border-theme bg-bg-card p-5">
                   <h3 className="mb-3 text-sm font-semibold text-green-400">
                     Playing As {champion.name}
                   </h3>
@@ -292,7 +292,7 @@ export default function ChampionDetailView({
                 </div>
               )}
               {champion.enemytips.length > 0 && (
-                <div className="rounded-xl border border-gray-700/50 bg-[#111827] p-5">
+                <div className="rounded-xl border border-border-theme bg-bg-card p-5">
                   <h3 className="mb-3 text-sm font-semibold text-red-400">
                     Playing Against {champion.name}
                   </h3>
@@ -312,9 +312,9 @@ export default function ChampionDetailView({
 
         {/* Skins Gallery */}
         <section className="space-y-4">
-          <h2 className="text-xl font-bold text-gray-100">
+          <h2 className="text-xl font-bold text-text-primary">
             Skins{" "}
-            <span className="text-base font-normal text-gray-500">
+            <span className="text-base font-normal text-text-muted">
               ({champion.skins.length})
             </span>
           </h2>
@@ -332,7 +332,7 @@ export default function ChampionDetailView({
                     loading="lazy"
                   />
                 </div>
-                <p className="mt-2 text-sm text-gray-400">
+                <p className="mt-2 text-sm text-text-secondary">
                   {skin.name === "default" ? "Classic" : skin.name}
                 </p>
               </div>

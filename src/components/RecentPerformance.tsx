@@ -64,10 +64,10 @@ function WinRateDonut({
       </svg>
       {/* Center text */}
       <div className="absolute flex flex-col items-center">
-        <span className="text-lg font-bold text-white">
+        <span className="text-lg font-bold text-text-primary">
           {pct.toFixed(0)}%
         </span>
-        <span className="text-[10px] text-gray-400">
+        <span className="text-[10px] text-text-secondary">
           {wins}W {total - wins}L
         </span>
       </div>
@@ -136,11 +136,11 @@ export default function RecentPerformance({
         ? "text-cyan-400"
         : avgKDA >= 2
           ? "text-green-400"
-          : "text-gray-400";
+          : "text-text-secondary";
 
   return (
-    <div className="rounded-xl border border-gray-700/50 bg-gray-900/80 p-5 backdrop-blur-sm">
-      <h3 className="mb-4 text-sm font-semibold text-gray-400">
+    <div className="rounded-xl border border-border-theme bg-bg-card/80 p-5 backdrop-blur-sm">
+      <h3 className="mb-4 text-sm font-semibold text-text-secondary">
         Recent {gamesPlayed} Games
       </h3>
 
@@ -154,14 +154,14 @@ export default function RecentPerformance({
         <div className="grid flex-1 grid-cols-2 gap-x-6 gap-y-3 sm:grid-cols-4">
           {/* KDA */}
           <div>
-            <p className="text-[11px] uppercase tracking-wider text-gray-500">
+            <p className="text-[11px] uppercase tracking-wider text-text-muted">
               Avg KDA
             </p>
-            <p className="text-sm text-gray-300">
+            <p className="text-sm text-text-secondary">
               {avgKills.toFixed(1)}
-              <span className="text-gray-500"> / </span>
+              <span className="text-text-muted"> / </span>
               <span className="text-red-400">{avgDeaths.toFixed(1)}</span>
-              <span className="text-gray-500"> / </span>
+              <span className="text-text-muted"> / </span>
               {avgAssists.toFixed(1)}
             </p>
             <p className={`text-sm font-bold ${kdaColor}`}>
@@ -173,7 +173,7 @@ export default function RecentPerformance({
 
           {/* Kill Participation */}
           <div>
-            <p className="text-[11px] uppercase tracking-wider text-gray-500">
+            <p className="text-[11px] uppercase tracking-wider text-text-muted">
               Kill Participation
             </p>
             <p className="text-lg font-bold text-purple-400">
@@ -183,17 +183,17 @@ export default function RecentPerformance({
 
           {/* CS/min */}
           <div>
-            <p className="text-[11px] uppercase tracking-wider text-gray-500">
+            <p className="text-[11px] uppercase tracking-wider text-text-muted">
               CS / min
             </p>
-            <p className="text-lg font-bold text-white">
+            <p className="text-lg font-bold text-text-primary">
               {avgCSPerMin.toFixed(1)}
             </p>
           </div>
 
           {/* Avg Damage */}
           <div>
-            <p className="text-[11px] uppercase tracking-wider text-gray-500">
+            <p className="text-[11px] uppercase tracking-wider text-text-muted">
               Avg Damage
             </p>
             <p className="text-lg font-bold text-orange-400">
