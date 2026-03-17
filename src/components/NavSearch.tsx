@@ -184,7 +184,7 @@ export default function NavSearch() {
               blurTimeoutRef.current = setTimeout(() => setShowHistory(false), 200);
             }}
             placeholder="Search..."
-            className="h-8 w-36 rounded-md border border-border-theme bg-bg-card-hover/60 px-3 pr-8 text-xs text-text-primary placeholder-gray-500 outline-none transition-all focus:w-48 focus:border-gold/50 focus:ring-1 focus:ring-gold/20 lg:w-44 lg:focus:w-56"
+            className="h-8 w-36 rounded-md border border-border-theme bg-bg-card-hover/60 px-3 pr-8 text-xs text-text-primary placeholder-gray-500 outline-none transition-all duration-300 ease-out focus:w-48 focus:border-gold/50 focus:ring-2 focus:ring-gold/15 focus:shadow-[0_0_0_3px_rgba(200,155,60,0.08)] lg:w-44 lg:focus:w-56"
           />
           <svg
             className="absolute right-2 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-text-muted"

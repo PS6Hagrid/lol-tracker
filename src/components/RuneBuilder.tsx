@@ -1,12 +1,10 @@
 "use client";
 
 import { useState, useMemo, useCallback } from "react";
-import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   getRuneData,
-  getRuneIconUrl,
-  getTreeIconUrl,
+  getTreeSymbol,
   type RuneTree,
   type RuneInfo,
 } from "@/lib/rune-data";
@@ -136,15 +134,15 @@ export default function RuneBuilder() {
   const reset = useCallback(() => setSel(INITIAL_SELECTION), []);
 
   const shareBuild = useCallback(() => {
-    const lines: string[] = ["🎮 Rune Build — Trackerino\n"];
+    const lines: string[] = ["Rune Build -- Trackerino\n"];
 
     if (primaryTree) {
       lines.push(`Primary: ${primaryTree.name}`);
       const ks = primaryTree.slots[0]?.runes.find((r) => r.id === sel.keystone);
-      if (ks) lines.push(`  ⭐ ${ks.name}`);
+      if (ks) lines.push(`  Keystone: ${ks.name}`);
       sel.primaryRunes.forEach((id, i) => {
         const rune = primaryTree.slots[i + 1]?.runes.find((r) => r.id === id);
-        if (rune) lines.push(`  • ${rune.name}`);
+        if (rune) lines.push(`  - ${rune.name}`);
       });
     }
 
@@ -152,7 +150,7 @@ export default function RuneBuilder() {
       lines.push(`\nSecondary: ${secondaryTree.name}`);
       sel.secondaryRunes.forEach((id, i) => {
         const rune = secondaryTree.slots[i + 1]?.runes.find((r) => r.id === id);
-        if (rune) lines.push(`  • ${rune.name}`);
+        if (rune) lines.push(`  - ${rune.name}`);
       });
     }
 
@@ -191,30 +189,12 @@ export default function RuneBuilder() {
           {/* Tree selector */}
           <div className="mb-6 flex items-center justify-center gap-3">
             {data.trees.map((tree) => (
-              <button
+              <TreeButton
                 key={tree.id}
+                tree={tree}
+                selected={sel.primaryTreeId === tree.id}
                 onClick={() => selectPrimaryTree(tree.id)}
-                className={`relative rounded-full p-1.5 transition-all duration-200 ${
-                  sel.primaryTreeId === tree.id
-                    ? "ring-2 scale-110"
-                    : "opacity-40 hover:opacity-70 grayscale"
-                }`}
-                style={{
-                  ...(sel.primaryTreeId === tree.id
-                    ? { boxShadow: `0 0 12px ${tree.color}44`, outline: `2px solid ${tree.color}` }
-                    : {}),
-                }}
-                aria-label={`Select ${tree.name}`}
-              >
-                <Image
-                  src={getTreeIconUrl(tree)}
-                  alt={tree.name}
-                  width={40}
-                  height={40}
-                  className="rounded-full"
-                  unoptimized
-                />
-              </button>
+              />
             ))}
           </div>
 
@@ -277,30 +257,12 @@ export default function RuneBuilder() {
             {data.trees
               .filter((t) => t.id !== sel.primaryTreeId)
               .map((tree) => (
-                <button
+                <TreeButton
                   key={tree.id}
+                  tree={tree}
+                  selected={sel.secondaryTreeId === tree.id}
                   onClick={() => selectSecondaryTree(tree.id)}
-                  className={`relative rounded-full p-1.5 transition-all duration-200 ${
-                    sel.secondaryTreeId === tree.id
-                      ? "ring-2 scale-110"
-                      : "opacity-40 hover:opacity-70 grayscale"
-                  }`}
-                  style={{
-                    ...(sel.secondaryTreeId === tree.id
-                      ? { boxShadow: `0 0 12px ${tree.color}44`, outline: `2px solid ${tree.color}` }
-                      : {}),
-                  }}
-                  aria-label={`Select ${tree.name}`}
-                >
-                  <Image
-                    src={getTreeIconUrl(tree)}
-                    alt={tree.name}
-                    width={40}
-                    height={40}
-                    className="rounded-full"
-                    unoptimized
-                  />
-                </button>
+                />
               ))}
           </div>
 
@@ -366,8 +328,11 @@ export default function RuneBuilder() {
                 {data.statShards[row].map((shard) => {
                   const isSelected = sel.shards[row] === shard.id;
                   return (
-                    <button
+                    <motion.button
                       key={`${row}-${shard.id}`}
+                      whileTap={{ scale: 0.95 }}
+                      animate={isSelected ? { scale: [1, 1.05, 1] } : {}}
+                      transition={{ duration: 0.2 }}
                       onClick={() => selectShard(row, shard.id)}
                       className={`flex-1 rounded-lg border px-3 py-2 text-xs font-medium transition-all duration-200 ${
                         isSelected
@@ -377,7 +342,7 @@ export default function RuneBuilder() {
                       aria-label={`${shard.name}: ${shard.description}`}
                     >
                       {shard.description}
-                    </button>
+                    </motion.button>
                   );
                 })}
               </div>
@@ -386,7 +351,7 @@ export default function RuneBuilder() {
         </div>
       </div>
 
-      {/* ── Summary & Actions ─────────────────────────────────────── */}
+      {/* ── Actions ─────────────────────────────────────────────── */}
       <div className="mt-6 flex flex-wrap items-center gap-3">
         <button
           onClick={reset}
@@ -415,6 +380,7 @@ export default function RuneBuilder() {
               <SummaryBadge
                 tree={primaryTree}
                 rune={primaryTree.slots[0].runes.find((r) => r.id === sel.keystone)!}
+                isKeystone
               />
             )}
             {primaryTree &&
@@ -429,6 +395,21 @@ export default function RuneBuilder() {
                 const rune = secondaryTree.slots[i + 1]?.runes.find((r) => r.id === id);
                 return rune ? <SummaryBadge key={id} tree={secondaryTree} rune={rune} /> : null;
               })}
+            {/* Shard summary */}
+            {(["offense", "flex", "defense"] as const).map((row) => {
+              const id = sel.shards[row];
+              if (!id) return null;
+              const shard = data.statShards[row].find((s) => s.id === id);
+              if (!shard) return null;
+              return (
+                <div
+                  key={`shard-${row}`}
+                  className="flex items-center gap-2 rounded-lg border border-border-theme bg-bg-page px-3 py-1.5"
+                >
+                  <span className="text-xs text-text-muted">{shard.description}</span>
+                </div>
+              );
+            })}
           </div>
         </motion.div>
       )}
@@ -437,6 +418,43 @@ export default function RuneBuilder() {
 }
 
 // ── Sub-components ───────────────────────────────────────────────────────
+
+function TreeButton({
+  tree,
+  selected,
+  onClick,
+}: {
+  tree: RuneTree;
+  selected: boolean;
+  onClick: () => void;
+}) {
+  const symbol = getTreeSymbol(tree);
+
+  return (
+    <motion.button
+      whileTap={{ scale: 0.9 }}
+      animate={selected ? { scale: [1, 1.15, 1.1] } : { scale: 1 }}
+      transition={{ type: "spring", stiffness: 400, damping: 15 }}
+      onClick={onClick}
+      className={`relative flex h-11 w-11 items-center justify-center rounded-full transition-all duration-200 ${
+        selected
+          ? ""
+          : "opacity-40 grayscale hover:opacity-70 hover:grayscale-0"
+      }`}
+      style={{
+        backgroundColor: selected ? `${tree.color}22` : "transparent",
+        border: `2px solid ${selected ? tree.color : "transparent"}`,
+        boxShadow: selected ? `0 0 14px ${tree.color}44` : "none",
+      }}
+      aria-label={`Select ${tree.name}`}
+      title={tree.name}
+    >
+      <span className="text-lg" role="img" aria-hidden="true">
+        {symbol}
+      </span>
+    </motion.button>
+  );
+}
 
 function RuneIcon({
   rune,
@@ -451,29 +469,75 @@ function RuneIcon({
   size: number;
   onClick: () => void;
 }) {
+  // Extract initials (first letter of first two words, or first two letters)
+  const initials = rune.name
+    .split(/\s+/)
+    .slice(0, 2)
+    .map((w) => w[0])
+    .join("")
+    .toUpperCase();
+
   return (
     <div className="group relative">
       <motion.button
         whileTap={{ scale: 0.9 }}
-        onClick={onClick}
-        className={`relative rounded-full transition-all duration-200 ${
+        animate={
           selected
-            ? "ring-2 scale-110"
+            ? { scale: [1, 1.2, 1.1] }
+            : { scale: 1 }
+        }
+        transition={{ type: "spring", stiffness: 400, damping: 15 }}
+        onClick={onClick}
+        className={`relative flex items-center justify-center rounded-full transition-all duration-200 ${
+          selected
+            ? ""
             : "opacity-40 grayscale hover:opacity-70 hover:grayscale-0"
         }`}
         style={{
-          ...(selected ? { boxShadow: `0 0 16px ${color}55`, outline: `2px solid ${color}` } : {}),
+          width: size,
+          height: size,
+          backgroundColor: selected ? `${color}25` : "rgba(255,255,255,0.06)",
+          border: `2px solid ${selected ? color : "rgba(255,255,255,0.1)"}`,
+          boxShadow: selected ? `0 0 16px ${color}55` : "none",
         }}
         aria-label={rune.name}
       >
-        <Image
-          src={getRuneIconUrl(rune.icon)}
-          alt={rune.name}
+        {/* SVG circle with inner glow when selected */}
+        <svg
           width={size}
           height={size}
-          className="rounded-full"
-          unoptimized
-        />
+          viewBox={`0 0 ${size} ${size}`}
+          className="absolute inset-0"
+          aria-hidden="true"
+        >
+          <circle
+            cx={size / 2}
+            cy={size / 2}
+            r={size / 2 - 3}
+            fill="none"
+            stroke={selected ? color : "rgba(255,255,255,0.15)"}
+            strokeWidth={1.5}
+            opacity={selected ? 0.6 : 0.3}
+          />
+          {selected && (
+            <circle
+              cx={size / 2}
+              cy={size / 2}
+              r={size / 2 - 6}
+              fill={`${color}15`}
+              stroke="none"
+            />
+          )}
+        </svg>
+        <span
+          className="relative z-10 font-bold"
+          style={{
+            fontSize: size < 50 ? 11 : 14,
+            color: selected ? color : "rgba(255,255,255,0.5)",
+          }}
+        >
+          {initials}
+        </span>
       </motion.button>
       {/* Tooltip */}
       <div className="pointer-events-none absolute bottom-full left-1/2 z-50 mb-2 w-56 -translate-x-1/2 rounded-lg border border-border-theme bg-bg-card p-3 opacity-0 shadow-xl transition-opacity duration-200 group-hover:opacity-100">
@@ -486,21 +550,46 @@ function RuneIcon({
   );
 }
 
-function SummaryBadge({ tree, rune }: { tree: RuneTree; rune: RuneInfo }) {
+function SummaryBadge({
+  tree,
+  rune,
+  isKeystone = false,
+}: {
+  tree: RuneTree;
+  rune: RuneInfo;
+  isKeystone?: boolean;
+}) {
+  const initials = rune.name
+    .split(/\s+/)
+    .slice(0, 2)
+    .map((w) => w[0])
+    .join("")
+    .toUpperCase();
+
   return (
-    <div
+    <motion.div
+      initial={{ opacity: 0, scale: 0.8 }}
+      animate={{ opacity: 1, scale: 1 }}
       className="flex items-center gap-2 rounded-lg border px-3 py-1.5"
       style={{ borderColor: `${tree.color}44`, backgroundColor: `${tree.color}11` }}
     >
-      <Image
-        src={getRuneIconUrl(rune.icon)}
-        alt={rune.name}
-        width={20}
-        height={20}
-        className="rounded-full"
-        unoptimized
-      />
+      <div
+        className="flex items-center justify-center rounded-full"
+        style={{
+          width: isKeystone ? 24 : 20,
+          height: isKeystone ? 24 : 20,
+          backgroundColor: `${tree.color}30`,
+          border: `1.5px solid ${tree.color}`,
+        }}
+      >
+        <span
+          className="font-bold"
+          style={{ fontSize: isKeystone ? 10 : 8, color: tree.color }}
+        >
+          {initials}
+        </span>
+      </div>
       <span className="text-xs font-medium text-text-primary">{rune.name}</span>
-    </div>
+    </motion.div>
   );
 }

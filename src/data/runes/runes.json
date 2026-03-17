@@ -112,7 +112,7 @@
       "key": "Domination",
       "name": "Domination",
       "icon": "perk-images/Styles/7200_Domination.png",
-      "color": "#E05D56",
+      "color": "#D44242",
       "slots": [
         {
           "row": 0,
@@ -219,7 +219,7 @@
       "key": "Sorcery",
       "name": "Sorcery",
       "icon": "perk-images/Styles/7202_Sorcery.png",
-      "color": "#6B8AF7",
+      "color": "#6B6EE8",
       "slots": [
         {
           "row": 0,
@@ -320,7 +320,7 @@
       "key": "Resolve",
       "name": "Resolve",
       "icon": "perk-images/Styles/7204_Resolve.png",
-      "color": "#49AA19",
+      "color": "#4CAF50",
       "slots": [
         {
           "row": 0,
@@ -421,7 +421,7 @@
       "key": "Inspiration",
       "name": "Inspiration",
       "icon": "perk-images/Styles/7203_Whimsy.png",
-      "color": "#49AAB8",
+      "color": "#49AAD1",
       "slots": [
         {
           "row": 0,

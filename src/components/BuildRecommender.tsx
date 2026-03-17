@@ -40,6 +40,7 @@ function ItemIcon({ itemId }: { itemId: number }) {
           alt={name}
           width={40}
           height={40}
+          sizes="40px"
           className="h-full w-full object-cover"
         />
       </div>
@@ -114,6 +115,7 @@ function BuildCard({ build }: { build: ChampionBuild }) {
             alt={build.championName}
             width={56}
             height={56}
+            sizes="56px"
             className="h-full w-full object-cover"
           />
         </div>

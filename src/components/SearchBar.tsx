@@ -184,7 +184,7 @@ export default function SearchBar() {
             aria-autocomplete="list"
             aria-controls="search-suggestions"
             aria-activedescendant={highlightedIndex >= 0 ? `suggestion-${highlightedIndex}` : undefined}
-            className="h-12 w-full rounded-l-lg border border-r-0 border-border-theme bg-bg-card/80 px-4 text-text-primary placeholder-gray-500 outline-none transition-all duration-200 focus:border-gold focus:ring-1 focus:ring-gold/30"
+            className="h-12 w-full rounded-l-lg border border-r-0 border-border-theme bg-bg-card/80 px-4 text-text-primary placeholder-gray-500 outline-none transition-all duration-300 focus:border-gold focus:ring-2 focus:ring-gold/20 focus:shadow-[0_0_0_3px_rgba(200,155,60,0.1)]"
           />
           <button
             type="submit"

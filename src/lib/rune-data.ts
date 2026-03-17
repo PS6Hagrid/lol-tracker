@@ -1,7 +1,5 @@
 import runeData from "@/data/runes/runes.json";
 
-const DDRAGON_CDN = "https://ddragon.leagueoflegends.com/cdn/img";
-
 export interface RuneInfo {
   id: number;
   name: string;
@@ -39,6 +37,15 @@ export interface RuneDataSet {
   };
 }
 
+/** Tree icon emoji/symbol lookup */
+const TREE_SYMBOLS: Record<string, string> = {
+  Precision: "\u2694",   // crossed swords
+  Domination: "\uD83D\uDD25", // fire
+  Sorcery: "\u2728",    // sparkles
+  Resolve: "\uD83D\uDEE1", // shield
+  Inspiration: "\uD83D\uDCA1", // light bulb
+};
+
 /** Get the full rune data set */
 export function getRuneData(): RuneDataSet {
   return runeData as RuneDataSet;
@@ -54,14 +61,9 @@ export function getRuneTreeById(id: number): RuneTree | undefined {
   return (runeData.trees as RuneTree[]).find((t) => t.id === id);
 }
 
-/** Get the DDragon CDN URL for a rune icon */
-export function getRuneIconUrl(iconPath: string): string {
-  return `${DDRAGON_CDN}/${iconPath}`;
-}
-
-/** Get the DDragon CDN URL for a rune tree icon */
-export function getTreeIconUrl(tree: RuneTree): string {
-  return `${DDRAGON_CDN}/${tree.icon}`;
+/** Get the emoji/symbol for a rune tree */
+export function getTreeSymbol(tree: RuneTree): string {
+  return TREE_SYMBOLS[tree.key] ?? "\u26AA";
 }
 
 /** Get stat shards */

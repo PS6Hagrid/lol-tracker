@@ -6,6 +6,7 @@ import {
   useState,
   useCallback,
   useRef,
+  useEffect,
 } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -32,14 +33,14 @@ const VARIANT_STYLES = {
 } as const;
 
 const RIPPLE_COLORS = {
-  primary: "rgba(0, 212, 255, 0.3)",
-  secondary: "rgba(255, 255, 255, 0.15)",
+  primary: "rgba(0, 212, 255, 0.25)",
+  secondary: "rgba(255, 255, 255, 0.12)",
 } as const;
 
 /**
  * Button with material-design ripple effect on click.
  * Ripple color adapts to button variant.
- * Respects prefers-reduced-motion — ripple skipped when motion is reduced.
+ * Respects prefers-reduced-motion -- ripple skipped when motion is reduced.
  */
 export default function RippleButton({
   children,
@@ -50,10 +51,15 @@ export default function RippleButton({
 }: RippleButtonProps) {
   const [ripples, setRipples] = useState<Ripple[]>([]);
   const nextId = useRef(0);
-  const prefersReducedMotion =
-    typeof window !== "undefined"
-      ? window.matchMedia("(prefers-reduced-motion: reduce)").matches
-      : false;
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+
+  useEffect(() => {
+    const mql = window.matchMedia("(prefers-reduced-motion: reduce)");
+    setPrefersReducedMotion(mql.matches);
+    const handler = (e: MediaQueryListEvent) => setPrefersReducedMotion(e.matches);
+    mql.addEventListener("change", handler);
+    return () => mql.removeEventListener("change", handler);
+  }, []);
 
   const handleClick = useCallback(
     (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -82,7 +88,7 @@ export default function RippleButton({
       onClick={handleClick}
       {...rest}
     >
-      {children}
+      <span className="relative z-10">{children}</span>
       <AnimatePresence>
         {ripples.map((ripple) => (
           <motion.span
@@ -98,7 +104,7 @@ export default function RippleButton({
             initial={{ scale: 0, opacity: 1 }}
             animate={{ scale: 1, opacity: 0 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.5, ease: "easeOut" }}
+            transition={{ duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
           />
         ))}
       </AnimatePresence>
