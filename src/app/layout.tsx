@@ -5,11 +5,13 @@ import NavSearch from "@/components/NavSearch";
 import ScrollToTop from "@/components/ScrollToTop";
 import Footer from "@/components/Footer";
 import PageTransition from "@/components/PageTransition";
+import TopLoadingBar from "@/components/TopLoadingBar";
 import ThemeProvider from "@/components/ThemeProvider";
 import ThemeToggle from "@/components/ThemeToggle";
 import { I18nProvider } from "@/i18n/context";
 import { ToastProvider } from "@/components/Toast";
 import LanguageToggle from "@/components/LanguageToggle";
+import CookieConsent from "@/components/CookieConsent";
 import "./globals.css";
 
 const inter = Inter({
@@ -99,6 +101,7 @@ export default function RootLayout({
         <ThemeProvider>
         <I18nProvider>
         <ToastProvider>
+        <TopLoadingBar />
         <a
           href="#main-content"
           className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-[100] focus:rounded-md focus:bg-blue-600 focus:px-4 focus:py-2 focus:text-white focus:outline-none"
@@ -133,6 +136,12 @@ export default function RootLayout({
                 Patch Notes
               </Link>
               <Link
+                href="/builds"
+                className="hidden text-xs font-medium text-text-secondary transition-colors hover:text-text-primary sm:block"
+              >
+                Builds
+              </Link>
+              <Link
                 href="/leaderboard"
                 className="hidden text-xs font-medium text-text-secondary transition-colors hover:text-text-primary sm:block"
               >
@@ -143,6 +152,12 @@ export default function RootLayout({
                 className="hidden text-xs font-medium text-text-secondary transition-colors hover:text-text-primary sm:block"
               >
                 Multi-Search
+              </Link>
+              <Link
+                href="/compare"
+                className="hidden text-xs font-medium text-text-secondary transition-colors hover:text-text-primary sm:block"
+              >
+                Compare
               </Link>
               <LanguageToggle />
               <ThemeToggle />
@@ -169,11 +184,11 @@ export default function RootLayout({
               </svg>
               <span className="text-[10px] font-medium">Champions</span>
             </Link>
-            <Link href="/patch-notes" className="flex flex-col items-center gap-0.5 px-3 py-1 text-text-secondary transition-colors hover:text-text-primary">
+            <Link href="/builds" className="flex flex-col items-center gap-0.5 px-3 py-1 text-text-secondary transition-colors hover:text-text-primary">
               <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+                <path strokeLinecap="round" strokeLinejoin="round" d="M11.42 15.17L17.25 21A2.652 2.652 0 0021 17.25l-5.877-5.877M11.42 15.17l2.496-3.03c.317-.384.74-.626 1.208-.766M11.42 15.17l-4.655 5.653a2.548 2.548 0 11-3.586-3.586l6.837-5.63m5.108-.233c.55-.164 1.163-.188 1.743-.14a4.5 4.5 0 004.486-6.336l-3.276 3.277a3.004 3.004 0 01-2.25-2.25l3.276-3.276a4.5 4.5 0 00-6.336 4.486c.049.58.025 1.194-.14 1.743" />
               </svg>
-              <span className="text-[10px] font-medium">Patches</span>
+              <span className="text-[10px] font-medium">Builds</span>
             </Link>
             <Link href="/leaderboard" className="flex flex-col items-center gap-0.5 px-3 py-1 text-text-secondary transition-colors hover:text-text-primary">
               <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -187,9 +202,16 @@ export default function RootLayout({
               </svg>
               <span className="text-[10px] font-medium">Multi</span>
             </Link>
+            <Link href="/compare" className="flex flex-col items-center gap-0.5 px-3 py-1 text-text-secondary transition-colors hover:text-text-primary">
+              <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M7.5 21L3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5" />
+              </svg>
+              <span className="text-[10px] font-medium">Compare</span>
+            </Link>
           </div>
         </div>
         <ScrollToTop />
+        <CookieConsent />
         </ToastProvider>
         </I18nProvider>
         </ThemeProvider>

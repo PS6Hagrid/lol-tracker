@@ -79,6 +79,20 @@
     "disclaimer": "Trackerino wird nicht von Riot Games unterstützt und spiegelt nicht die Ansichten oder Meinungen von Riot Games oder von Personen wider, die offiziell an der Herstellung oder Verwaltung von Riot Games-Produkten beteiligt sind. Riot Games und alle zugehörigen Marken sind Marken oder eingetragene Marken von Riot Games, Inc.",
     "copyright": "© 2024-2026 Trackerino. Erstellt mit Next.js."
   },
+  "cookies": {
+    "title": "Cookie-Einstellungen",
+    "description": "Wir verwenden Cookies, um dein Erlebnis zu verbessern. Einige Cookies sind für die Funktion der Website unerlässlich, während andere uns helfen, die Nutzung zu verstehen und unsere Dienste zu verbessern.",
+    "acceptAll": "Alle akzeptieren",
+    "necessaryOnly": "Nur Notwendige",
+    "settings": "Einstellungen",
+    "saveSettings": "Einstellungen speichern",
+    "necessary": "Notwendige Cookies",
+    "necessaryDesc": "Erforderlich für die Funktion der Website. Kann nicht deaktiviert werden.",
+    "analytics": "Analyse-Cookies",
+    "analyticsDesc": "Helfen uns zu verstehen, wie Besucher die Website nutzen, damit wir sie verbessern können.",
+    "preferences": "Präferenz-Cookies",
+    "preferencesDesc": "Speichern deine Einstellungen wie Sprache und Design."
+  },
   "common": {
     "loading": "Laden...",
     "error": "Fehler",
