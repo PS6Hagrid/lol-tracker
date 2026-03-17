@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { isFavorite, toggleFavorite } from "@/lib/local-storage";
+import { useToast } from "@/components/Toast";
 
 interface FavoriteButtonProps {
   gameName: string;
@@ -18,6 +19,7 @@ export default function FavoriteButton({
 }: FavoriteButtonProps) {
   const [favorited, setFavorited] = useState(false);
   const [animate, setAnimate] = useState(false);
+  const toast = useToast();
 
   useEffect(() => {
     setFavorited(isFavorite(gameName, tagLine, region));
@@ -34,6 +36,9 @@ export default function FavoriteButton({
     if (newState) {
       setAnimate(true);
       setTimeout(() => setAnimate(false), 600);
+      toast.success(`${gameName}#${tagLine} added to favorites`);
+    } else {
+      toast.info(`${gameName}#${tagLine} removed from favorites`);
     }
   }
 

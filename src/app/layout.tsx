@@ -8,6 +8,7 @@ import PageTransition from "@/components/PageTransition";
 import ThemeProvider from "@/components/ThemeProvider";
 import ThemeToggle from "@/components/ThemeToggle";
 import { I18nProvider } from "@/i18n/context";
+import { ToastProvider } from "@/components/Toast";
 import LanguageToggle from "@/components/LanguageToggle";
 import "./globals.css";
 
@@ -97,6 +98,7 @@ export default function RootLayout({
       <body className={`${inter.variable} bg-bg-page text-text-primary overflow-x-hidden antialiased`}>
         <ThemeProvider>
         <I18nProvider>
+        <ToastProvider>
         <a
           href="#main-content"
           className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-[100] focus:rounded-md focus:bg-blue-600 focus:px-4 focus:py-2 focus:text-white focus:outline-none"
@@ -188,6 +190,7 @@ export default function RootLayout({
           </div>
         </div>
         <ScrollToTop />
+        </ToastProvider>
         </I18nProvider>
         </ThemeProvider>
       </body>
