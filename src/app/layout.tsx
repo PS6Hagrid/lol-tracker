@@ -142,6 +142,12 @@ export default function RootLayout({
                 Builds
               </Link>
               <Link
+                href="/runes"
+                className="hidden text-xs font-medium text-text-secondary transition-colors hover:text-text-primary sm:block"
+              >
+                Runes
+              </Link>
+              <Link
                 href="/leaderboard"
                 className="hidden text-xs font-medium text-text-secondary transition-colors hover:text-text-primary sm:block"
               >
@@ -189,6 +195,12 @@ export default function RootLayout({
                 <path strokeLinecap="round" strokeLinejoin="round" d="M11.42 15.17L17.25 21A2.652 2.652 0 0021 17.25l-5.877-5.877M11.42 15.17l2.496-3.03c.317-.384.74-.626 1.208-.766M11.42 15.17l-4.655 5.653a2.548 2.548 0 11-3.586-3.586l6.837-5.63m5.108-.233c.55-.164 1.163-.188 1.743-.14a4.5 4.5 0 004.486-6.336l-3.276 3.277a3.004 3.004 0 01-2.25-2.25l3.276-3.276a4.5 4.5 0 00-6.336 4.486c.049.58.025 1.194-.14 1.743" />
               </svg>
               <span className="text-[10px] font-medium">Builds</span>
+            </Link>
+            <Link href="/runes" className="flex flex-col items-center gap-0.5 px-3 py-1 text-text-secondary transition-colors hover:text-text-primary">
+              <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9.53 16.122a3 3 0 00-5.78 1.128 2.25 2.25 0 01-2.4 2.245 4.5 4.5 0 008.4-2.245c0-.399-.078-.78-.22-1.128zm0 0a15.998 15.998 0 003.388-1.62m-5.043-.025a15.994 15.994 0 011.622-3.395m3.42 3.42a15.995 15.995 0 004.764-4.648l3.876-5.814a1.151 1.151 0 00-1.597-1.597L14.146 6.32a15.996 15.996 0 00-4.649 4.763m3.42 3.42a6.776 6.776 0 00-3.42-3.42" />
+              </svg>
+              <span className="text-[10px] font-medium">Runes</span>
             </Link>
             <Link href="/leaderboard" className="flex flex-col items-center gap-0.5 px-3 py-1 text-text-secondary transition-colors hover:text-text-primary">
               <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
