@@ -1,0 +1,49 @@
+[
+  {
+    "version": "1.3.0",
+    "date": "2026-03-17",
+    "title": "Pro Polish Update",
+    "highlights": [
+      "Top loading bar for smooth navigation",
+      "Build & item recommender for 12+ champions",
+      "GDPR-compliant cookie consent banner",
+      "Summoner comparison tool"
+    ]
+  },
+  {
+    "version": "1.2.0",
+    "date": "2026-03-15",
+    "title": "Animation & UX Update",
+    "highlights": [
+      "Animated landing page hero with champion spotlight",
+      "Custom themed scrollbar",
+      "Toast notification system",
+      "Floating particle background"
+    ]
+  },
+  {
+    "version": "1.1.0",
+    "date": "2026-03-13",
+    "title": "Internationalization & Tools",
+    "highlights": [
+      "Multi-language support (German & English)",
+      "Champion comparison tool",
+      "Match history filters (champion, role, result)",
+      "Animated stats dashboard"
+    ]
+  },
+  {
+    "version": "1.0.0",
+    "date": "2026-03-10",
+    "title": "Initial Release",
+    "highlights": [
+      "Summoner profiles with ranked stats",
+      "Match history with timeline view",
+      "Live game tracking",
+      "Champion database with tier list",
+      "Regional leaderboards",
+      "Dark & light mode",
+      "PWA support"
+    ]
+  }
+]
