@@ -101,7 +101,7 @@ export default async function MatchHistoryPage({ params }: PageProps) {
           <div className="flex items-center gap-1.5">
             <UpdateButton region={region} name={name} />
             <FavoriteButton gameName={summoner.gameName} tagLine={summoner.tagLine} region={region} profileIconId={summoner.profileIconId} />
-            <ShareButton />
+            <ShareButton summonerName={summoner.gameName} region={region} />
           </div>
         }
       />

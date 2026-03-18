@@ -13,6 +13,7 @@ import { ToastProvider } from "@/components/Toast";
 import LanguageToggle from "@/components/LanguageToggle";
 import CookieConsent from "@/components/CookieConsent";
 import WhatsNew from "@/components/WhatsNew";
+import OfflineBanner from "@/components/OfflineBanner";
 import "./globals.css";
 
 const inter = Inter({
@@ -103,6 +104,7 @@ export default function RootLayout({
         <I18nProvider>
         <ToastProvider>
         <TopLoadingBar />
+        <OfflineBanner />
         <a
           href="#main-content"
           className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-[100] focus:rounded-md focus:bg-blue-600 focus:px-4 focus:py-2 focus:text-white focus:outline-none"
