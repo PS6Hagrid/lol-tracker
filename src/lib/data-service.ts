@@ -80,7 +80,7 @@ export interface DataService {
  * based on the `DATA_SOURCE` environment variable.
  *
  *   "mock"  -> MockDataService  (default)
- *   anything else -> RiotApiService
+ *   anything else -> RiotApiService (falls back to mock if API key is missing)
  */
 export async function getDataService(): Promise<DataService> {
   const source = process.env.DATA_SOURCE ?? "mock";
@@ -90,6 +90,32 @@ export async function getDataService(): Promise<DataService> {
     return new MockDataService();
   }
 
-  const { RiotApiService } = await import("@/lib/riot-api-service");
-  return new RiotApiService();
+  // If DATA_SOURCE is "riot" but no API key is set, fall back to mock
+  if (!process.env.RIOT_API_KEY) {
+    console.warn(
+      "DATA_SOURCE is set to 'riot' but RIOT_API_KEY is not configured. Falling back to MockDataService.",
+    );
+    const { MockDataService } = await import("@/lib/mock-data-service");
+    return new MockDataService();
+  }
+
+  try {
+    const { RiotApiService } = await import("@/lib/riot-api-service");
+    return new RiotApiService();
+  } catch {
+    console.warn(
+      "Failed to initialize RiotApiService. Falling back to MockDataService.",
+    );
+    const { MockDataService } = await import("@/lib/mock-data-service");
+    return new MockDataService();
+  }
+}
+
+/**
+ * Returns a MockDataService instance. Useful as a fallback when the
+ * primary data service fails at runtime (e.g. expired API key).
+ */
+export async function getMockDataService(): Promise<DataService> {
+  const { MockDataService } = await import("@/lib/mock-data-service");
+  return new MockDataService();
 }

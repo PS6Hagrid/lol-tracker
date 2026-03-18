@@ -12,7 +12,9 @@ export interface ChampionBuild {
   boots: number;
   situationalItems: number[];
   skillOrder: string[];
+  skillMaxOrder: string[];
   runeKeystone: string;
+  runeSecondary: string;
   summonerSpells: [string, string];
   winRate: number;
   pickRate: number;
@@ -40,8 +42,12 @@ const ITEM_NAMES: Record<number, string> = {
   3117: "Mobility Boots",
   3158: "Ionian Boots of Lucidity",
 
-  // Mythic / Core items
+  // Core / Legendary items
+  3004: "Manamune",
+  3026: "Guardian Angel",
   3031: "Infinity Edge",
+  3036: "Lord Dominik's Regards",
+  3053: "Sterak's Gage",
   3071: "Black Cleaver",
   3078: "Trinity Force",
   3085: "Runaan's Hurricane",
@@ -69,18 +75,18 @@ const ITEM_NAMES: Record<number, string> = {
   3814: "Edge of Night",
   4401: "Force of Nature",
   4629: "Cosmic Drive",
+  6333: "Death's Dance",
+  6630: "Goredrinker",
   6631: "Stridebreaker",
   6632: "Divine Sunderer",
   6655: "Luden's Tempest",
+  6672: "Kraken Slayer",
   6673: "Immortal Shieldbow",
+  6675: "Navori Flickerblade",
   6676: "The Collector",
   6693: "Prowler's Claw",
   6694: "Serylda's Grudge",
-  6333: "Death's Dance",
-  3004: "Manamune",
-  3026: "Guardian Angel",
-  3036: "Lord Dominik's Regards",
-  3053: "Sterak's Gage",
+  6701: "Opportunity",
   2065: "Shurelya's Battlesong",
 };
 

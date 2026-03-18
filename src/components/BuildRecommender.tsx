@@ -26,6 +26,18 @@ const ROLE_COLORS: Record<string, string> = {
   support: "bg-purple-500/20 text-purple-400",
 };
 
+const SPELL_COLORS: Record<string, string> = {
+  Flash: "bg-yellow-500/15 text-yellow-400 border-yellow-500/25",
+  Ignite: "bg-red-500/15 text-red-400 border-red-500/25",
+  Heal: "bg-green-500/15 text-green-400 border-green-500/25",
+  Barrier: "bg-amber-500/15 text-amber-400 border-amber-500/25",
+  Teleport: "bg-purple-500/15 text-purple-400 border-purple-500/25",
+  Smite: "bg-orange-500/15 text-orange-400 border-orange-500/25",
+  Ghost: "bg-sky-500/15 text-sky-400 border-sky-500/25",
+  Exhaust: "bg-slate-500/15 text-slate-400 border-slate-500/25",
+  Cleanse: "bg-teal-500/15 text-teal-400 border-teal-500/25",
+};
+
 const ALL_ROLES = ["all", "top", "jungle", "mid", "bot", "support"] as const;
 
 // ─── Sub-components ──────────────────────────────────────────────────────────
@@ -102,90 +114,185 @@ function PickRateIndicator({ pickRate }: { pickRate: number }) {
   );
 }
 
+function SkillMaxOrderVisual({ order }: { order: string[] }) {
+  return (
+    <div className="flex items-center gap-1">
+      {order.map((skill, idx) => (
+        <div key={idx} className="flex items-center gap-1">
+          <div
+            className={`flex h-8 w-8 items-center justify-center rounded border text-xs font-bold ${SKILL_COLORS[skill] ?? "bg-gray-500/20 text-gray-400 border-gray-500/30"}`}
+          >
+            {skill}
+          </div>
+          {idx < order.length - 1 && (
+            <svg
+              className="h-3 w-3 text-text-muted"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M9 5l7 7-7 7"
+              />
+            </svg>
+          )}
+        </div>
+      ))}
+    </div>
+  );
+}
+
 // ─── Build Card ──────────────────────────────────────────────────────────────
 
 function BuildCard({ build }: { build: ChampionBuild }) {
+  const [expanded, setExpanded] = useState(false);
+
   return (
-    <div className="rounded-lg border border-border-theme bg-bg-card p-5 transition-all duration-200 hover:border-cyan-500/30 hover:shadow-lg hover:shadow-cyan-500/5">
-      {/* Champion header */}
-      <div className="mb-4 flex items-center gap-3">
-        <div className="h-14 w-14 shrink-0 overflow-hidden rounded-lg border border-border-theme">
-          <Image
-            src={getChampionImageUrl(build.championId)}
-            alt={build.championName}
-            width={56}
-            height={56}
-            sizes="56px"
-            className="h-full w-full object-cover"
-          />
-        </div>
-        <div className="flex flex-col gap-1">
-          <h3 className="text-lg font-bold text-text-primary">
-            {build.championName}
-          </h3>
-          <div className="flex items-center gap-2">
-            <span
-              className={`rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider ${ROLE_COLORS[build.role] ?? "bg-gray-500/20 text-gray-400"}`}
-            >
-              {build.role}
-            </span>
-            <WinRateIndicator winRate={build.winRate} />
-            <PickRateIndicator pickRate={build.pickRate} />
-          </div>
-        </div>
-      </div>
-
-      {/* Build path */}
-      <div className="mb-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
-        <ItemSection label="Starting" itemIds={build.startingItems} />
-        <ItemSection label="Core Build" itemIds={build.coreItems} />
-        <ItemSection label="Boots" itemIds={[build.boots]} />
-        <ItemSection label="Situational" itemIds={build.situationalItems} />
-      </div>
-
-      {/* Skill order */}
-      <div className="mb-3">
-        <span className="mb-1.5 block text-[10px] font-semibold uppercase tracking-wider text-text-muted">
-          Skill Order (Lv 1-6)
-        </span>
-        <div className="flex gap-1">
-          {build.skillOrder.map((skill, idx) => (
-            <div
-              key={idx}
-              className={`flex h-7 w-7 items-center justify-center rounded border text-xs font-bold ${SKILL_COLORS[skill] ?? "bg-gray-500/20 text-gray-400 border-gray-500/30"}`}
-            >
-              {skill}
+    <div
+      className="cursor-pointer rounded-lg border border-border-theme bg-bg-card transition-all duration-200 hover:border-cyan-500/30 hover:shadow-lg hover:shadow-cyan-500/5"
+      onClick={() => setExpanded((prev) => !prev)}
+    >
+      {/* Main card content */}
+      <div className="p-5">
+        {/* Champion header */}
+        <div className="mb-4 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="h-14 w-14 shrink-0 overflow-hidden rounded-lg border border-border-theme">
+              <Image
+                src={getChampionImageUrl(build.championId)}
+                alt={build.championName}
+                width={56}
+                height={56}
+                sizes="56px"
+                className="h-full w-full object-cover"
+              />
             </div>
-          ))}
+            <div className="flex flex-col gap-1">
+              <h3 className="text-lg font-bold text-text-primary">
+                {build.championName}
+              </h3>
+              <div className="flex items-center gap-2">
+                <span
+                  className={`rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider ${ROLE_COLORS[build.role] ?? "bg-gray-500/20 text-gray-400"}`}
+                >
+                  {build.role}
+                </span>
+                <WinRateIndicator winRate={build.winRate} />
+                <PickRateIndicator pickRate={build.pickRate} />
+              </div>
+            </div>
+          </div>
+          {/* Expand indicator */}
+          <svg
+            className={`h-5 w-5 text-text-muted transition-transform duration-200 ${expanded ? "rotate-180" : ""}`}
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth={2}
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M19 9l-7 7-7-7"
+            />
+          </svg>
         </div>
-      </div>
 
-      {/* Runes & Summoner Spells */}
-      <div className="flex flex-wrap items-center gap-4 border-t border-border-theme pt-3">
-        <div className="flex items-center gap-1.5">
-          <span className="text-[10px] uppercase tracking-wider text-text-muted">
-            Keystone
-          </span>
-          <span className="rounded bg-yellow-500/10 px-2 py-0.5 text-xs font-semibold text-yellow-400">
-            {build.runeKeystone}
-          </span>
+        {/* Build path */}
+        <div className="mb-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
+          <ItemSection label="Starting" itemIds={build.startingItems} />
+          <ItemSection label="Core Build" itemIds={build.coreItems} />
+          <ItemSection label="Boots" itemIds={[build.boots]} />
+          <ItemSection label="Situational" itemIds={build.situationalItems} />
         </div>
-        <div className="flex items-center gap-1.5">
-          <span className="text-[10px] uppercase tracking-wider text-text-muted">
-            Spells
-          </span>
-          <div className="flex gap-1">
-            {build.summonerSpells.map((spell) => (
-              <span
-                key={spell}
-                className="rounded bg-blue-500/10 px-2 py-0.5 text-xs font-semibold text-blue-400"
-              >
-                {spell}
-              </span>
-            ))}
+
+        {/* Summoner Spells & Keystone row */}
+        <div className="flex flex-wrap items-center gap-4 border-t border-border-theme pt-3">
+          <div className="flex items-center gap-1.5">
+            <span className="text-[10px] uppercase tracking-wider text-text-muted">
+              Spells
+            </span>
+            <div className="flex gap-1">
+              {build.summonerSpells.map((spell) => (
+                <span
+                  key={spell}
+                  className={`rounded border px-2 py-0.5 text-xs font-semibold ${SPELL_COLORS[spell] ?? "bg-blue-500/10 text-blue-400 border-blue-500/25"}`}
+                >
+                  {spell}
+                </span>
+              ))}
+            </div>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <span className="text-[10px] uppercase tracking-wider text-text-muted">
+              Keystone
+            </span>
+            <span className="rounded bg-yellow-500/10 px-2 py-0.5 text-xs font-semibold text-yellow-400">
+              {build.runeKeystone}
+            </span>
           </div>
         </div>
       </div>
+
+      {/* Expanded details */}
+      {expanded && (
+        <div className="border-t border-border-theme px-5 pb-5 pt-4">
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+            {/* Skill max order */}
+            <div>
+              <span className="mb-2 block text-[10px] font-semibold uppercase tracking-wider text-text-muted">
+                Skill Max Order
+              </span>
+              <SkillMaxOrderVisual order={build.skillMaxOrder} />
+            </div>
+
+            {/* Rune details */}
+            <div>
+              <span className="mb-2 block text-[10px] font-semibold uppercase tracking-wider text-text-muted">
+                Rune Setup
+              </span>
+              <div className="flex flex-wrap items-center gap-2">
+                <div className="flex items-center gap-1.5">
+                  <span className="text-xs text-text-muted">Primary:</span>
+                  <span className="rounded bg-yellow-500/10 px-2 py-0.5 text-xs font-semibold text-yellow-400">
+                    {build.runeKeystone}
+                  </span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <span className="text-xs text-text-muted">Secondary:</span>
+                  <span className="rounded bg-emerald-500/10 px-2 py-0.5 text-xs font-semibold text-emerald-400">
+                    {build.runeSecondary}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Skill order levels 1-6 */}
+            <div className="sm:col-span-2">
+              <span className="mb-2 block text-[10px] font-semibold uppercase tracking-wider text-text-muted">
+                Skill Order (Levels 1-6)
+              </span>
+              <div className="flex gap-1">
+                {build.skillOrder.map((skill, idx) => (
+                  <div key={idx} className="flex flex-col items-center gap-1">
+                    <span className="text-[10px] text-text-muted">
+                      {idx + 1}
+                    </span>
+                    <div
+                      className={`flex h-7 w-7 items-center justify-center rounded border text-xs font-bold ${SKILL_COLORS[skill] ?? "bg-gray-500/20 text-gray-400 border-gray-500/30"}`}
+                    >
+                      {skill}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -226,6 +333,7 @@ export default function BuildRecommender({
         </h1>
         <p className="mt-1 text-sm text-text-muted">
           Recommended builds, runes, and skill orders for popular champions.
+          Click a card to see more details.
         </p>
       </div>
 
@@ -271,6 +379,13 @@ export default function BuildRecommender({
             className="h-9 w-full rounded-md border border-border-theme bg-bg-card pl-9 pr-3 text-sm text-text-primary placeholder:text-text-muted focus:border-cyan-500/50 focus:outline-none focus:ring-1 focus:ring-cyan-500/30 sm:w-56"
           />
         </div>
+      </div>
+
+      {/* Results count */}
+      <div className="mb-3">
+        <span className="text-xs text-text-muted">
+          Showing {filtered.length} of {builds.length} builds
+        </span>
       </div>
 
       {/* Results */}

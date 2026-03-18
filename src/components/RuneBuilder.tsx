@@ -199,7 +199,7 @@ export default function RuneBuilder() {
           </div>
 
           {/* Rune rows */}
-          <AnimatePresence mode="wait">
+          <AnimatePresence mode="popLayout">
             {primaryTree && (
               <motion.div
                 key={primaryTree.id}
@@ -267,7 +267,7 @@ export default function RuneBuilder() {
           </div>
 
           {/* Secondary rune rows (skip keystone row 0, pick 2 from 3 rows) */}
-          <AnimatePresence mode="wait">
+          <AnimatePresence mode="popLayout">
             {secondaryTree && (
               <motion.div
                 key={secondaryTree.id}
@@ -376,13 +376,10 @@ export default function RuneBuilder() {
         >
           <h3 className="mb-3 text-sm font-semibold text-text-primary">Summary</h3>
           <div className="flex flex-wrap gap-2">
-            {primaryTree && sel.keystone && (
-              <SummaryBadge
-                tree={primaryTree}
-                rune={primaryTree.slots[0].runes.find((r) => r.id === sel.keystone)!}
-                isKeystone
-              />
-            )}
+            {primaryTree && sel.keystone && (() => {
+              const ks = primaryTree.slots[0]?.runes.find((r) => r.id === sel.keystone);
+              return ks ? <SummaryBadge tree={primaryTree} rune={ks} isKeystone /> : null;
+            })()}
             {primaryTree &&
               sel.primaryRunes.map((id, i) => {
                 if (!id) return null;
@@ -470,8 +467,9 @@ function RuneIcon({
   onClick: () => void;
 }) {
   // Extract initials (first letter of first two words, or first two letters)
-  const initials = rune.name
+  const initials = (rune.name ?? "")
     .split(/\s+/)
+    .filter(Boolean)
     .slice(0, 2)
     .map((w) => w[0])
     .join("")
@@ -504,26 +502,24 @@ function RuneIcon({
       >
         {/* SVG circle with inner glow when selected */}
         <svg
-          width={size}
-          height={size}
-          viewBox={`0 0 ${size} ${size}`}
-          className="absolute inset-0"
+          viewBox="0 0 100 100"
+          className="absolute inset-0 h-full w-full"
           aria-hidden="true"
         >
           <circle
-            cx={size / 2}
-            cy={size / 2}
-            r={size / 2 - 3}
+            cx={50}
+            cy={50}
+            r={44}
             fill="none"
             stroke={selected ? color : "rgba(255,255,255,0.15)"}
-            strokeWidth={1.5}
+            strokeWidth={3}
             opacity={selected ? 0.6 : 0.3}
           />
           {selected && (
             <circle
-              cx={size / 2}
-              cy={size / 2}
-              r={size / 2 - 6}
+              cx={50}
+              cy={50}
+              r={38}
               fill={`${color}15`}
               stroke="none"
             />
@@ -541,9 +537,9 @@ function RuneIcon({
       </motion.button>
       {/* Tooltip */}
       <div className="pointer-events-none absolute bottom-full left-1/2 z-50 mb-2 w-56 -translate-x-1/2 rounded-lg border border-border-theme bg-bg-card p-3 opacity-0 shadow-xl transition-opacity duration-200 group-hover:opacity-100">
-        <div className="text-sm font-semibold text-text-primary">{rune.name}</div>
+        <div className="text-sm font-semibold text-text-primary">{rune.name ?? ""}</div>
         <div className="mt-1 text-xs leading-relaxed text-text-muted">
-          {rune.description}
+          {rune.description ?? ""}
         </div>
       </div>
     </div>
@@ -559,8 +555,9 @@ function SummaryBadge({
   rune: RuneInfo;
   isKeystone?: boolean;
 }) {
-  const initials = rune.name
+  const initials = (rune.name ?? "")
     .split(/\s+/)
+    .filter(Boolean)
     .slice(0, 2)
     .map((w) => w[0])
     .join("")

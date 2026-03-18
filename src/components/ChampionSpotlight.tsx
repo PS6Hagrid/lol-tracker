@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
+import Link from "next/link";
 
 const CHAMPIONS = [
   { name: "Ahri", id: "Ahri" },
@@ -84,9 +85,11 @@ export default function ChampionSpotlight() {
             <p className="text-xs font-medium uppercase tracking-widest text-cyan">
               Champion Spotlight
             </p>
-            <h3 className="text-2xl font-bold text-text-primary drop-shadow-lg sm:text-3xl">
-              {current.name}
-            </h3>
+            <Link href={`/champions/${current.id}`} className="group">
+              <h3 className="text-2xl font-bold text-text-primary drop-shadow-lg transition-colors group-hover:text-cyan sm:text-3xl">
+                {current.name}
+              </h3>
+            </Link>
           </motion.div>
         </AnimatePresence>
       </div>

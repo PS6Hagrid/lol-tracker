@@ -198,6 +198,11 @@ export const CHAMPION_ID_TO_NAME: Record<number, string> = {
   254: "Vi",
   157: "Yasuo",
   238: "Zed",
+  266: "Aatrox",
+  112: "Viktor",
+  134: "Syndra",
+  777: "Yone",
+  89: "Leona",
 };
 
 /** Reverse-lookup a champion's Data Dragon name by numeric ID. */

@@ -125,7 +125,7 @@ export default function RootLayout({
                 <span className="text-white">ino</span>
               </span>
             </Link>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-5">
               <Link
                 href="/champions"
                 className="hidden text-xs font-medium text-text-secondary transition-colors hover:text-text-primary sm:block"
